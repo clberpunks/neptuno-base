@@ -1,0 +1,43 @@
+
+/* styles/globals.css */
+
+/* styles/globals.css - ACTUALIZADO */
+/*
+  The following Tailwind directives require processing by Tailwind CSS (PostCSS).
+  Make sure your build tool (e.g., Next.js, Vite, Webpack) is configured to use Tailwind.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: 99, 102, 241;
+  --color-primary-light: 224, 231, 255;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 font-sans antialiased;
+}
+
+#__next {
+  @apply min-h-screen flex flex-col;
+}
+
+/* Focus styles for accessibility */
+a, button, input, textarea, select {
+  @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50;
+}
+
+/* Animation for dashboard cards */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
