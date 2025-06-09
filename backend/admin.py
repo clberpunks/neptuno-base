@@ -1,4 +1,4 @@
-# backend/routes/admin.py
+# backend/admin.py
 from fastapi import APIRouter, Depends
 from dependencies import get_current_user
 from schemas import UserInJWT, UserRole

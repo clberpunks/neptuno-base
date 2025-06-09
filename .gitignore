@@ -1,6 +1,7 @@
 .venv
 .next
 node_modules
+backend/alembic
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

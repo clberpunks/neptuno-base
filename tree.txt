@@ -1,0 +1,59 @@
+.
+├── backend
+│   ├── admin.py
+│   ├── auth.py
+│   ├── config.py
+│   ├── db.py
+│   ├── dependencies.py
+│   ├── main.py
+│   ├── models.py
+│   ├── requirements.txt
+│   ├── run.sh
+│   ├── schemas.py
+│   ├── user.py
+│   └── utils.py
+├── frontend
+│   ├── components
+│   │   ├── AccessHistory.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Layout.tsx
+│   │   ├── Navbar.tsx
+│   │   └── Sidebar.tsx
+│   ├── hooks
+│   │   └── useAuth.tsx
+│   ├── next.config.js
+│   ├── next-env.d.ts
+│   ├── next-i18next.config.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── pages
+│   │   ├── about.tsx
+│   │   ├── admin.tsx
+│   │   ├── api
+│   │   │   └── auth
+│   │   │       └── logout.ts
+│   │   ├── _app.tsx
+│   │   ├── auth
+│   │   │   ├── login.tsx
+│   │   │   ├── logout.tsx
+│   │   │   └── register.tsx
+│   │   ├── contact.tsx
+│   │   ├── dashboard.tsx
+│   │   ├── features.tsx
+│   │   ├── index.tsx
+│   │   ├── privacy.tsx
+│   │   └── terms.tsx
+│   ├── postcss.config.js
+│   ├── public
+│   │   └── locales
+│   │       ├── en
+│   │       │   └── common.json
+│   │       └── es
+│   │           └── common.json
+│   ├── styles
+│   │   └── globals.css
+│   ├── tailwind.config.js
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+
+

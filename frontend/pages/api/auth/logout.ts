@@ -1,3 +1,4 @@
+// frontend/pages/api/auth/logout.ts
 // API route: elimina las cookies y redirige
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
