@@ -8,7 +8,8 @@ module.exports = {
     domains: [
       'via.placeholder.com',
       'lh3.googleusercontent.com',
-      'ui-avatars.com'
+      'ui-avatars.com',
+      'www.gravatar.com'
     ]
   }
 };

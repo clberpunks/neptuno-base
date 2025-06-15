@@ -1,9 +1,9 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, user #, admin
+from routers import auth, user, admin
 from db import engine, Base, SessionLocal
-from models import User, UserRole
+from models.models import User, UserRole
 from utils import hash_password
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -23,7 +23,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(user.router)
-#app.include_router(admin.router)
+app.include_router(admin.router)
 
 @app.on_event("startup")
 def startup_event():
@@ -39,6 +39,7 @@ def startup_event():
                 password_hash=hash_password("123456"),
                 auth_method="local",
                 role=UserRole.user,
+                picture=None #f"https://ui-avatars.com/api/?name=Ejemplo+User&size=40"
             ))
         if not db.query(User).filter_by(email="admin@example.com").first():
             db.add(User(
@@ -48,6 +49,7 @@ def startup_event():
                 password_hash=hash_password("123456"),
                 auth_method="local",
                 role=UserRole.admin,
+                picture=None #f"https://ui-avatars.com/api/?name=Ejemplo+Admin&size=40"
             ))
         db.commit()
     except IntegrityError:

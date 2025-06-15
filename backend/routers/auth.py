@@ -7,8 +7,8 @@ from datetime import datetime
 import json
 from sqlalchemy.orm import Session
 from schemas.schemas import UserLogin, UserRegister
-from utils import hash_password, verify_password
-from models import User, UserRole, LoginHistory
+from utils import hash_password, verify_password, set_auth_cookies
+from models.models import User, UserRole, LoginHistory
 from config import settings
 from db import get_db
 
@@ -155,18 +155,5 @@ def login_user(data: UserLogin, request: Request, db: Session = Depends(get_db))
     db.commit()
 
     response = JSONResponse(content={"message": "Login exitoso"})
-    response.set_cookie(
-        "user_info",
-        json.dumps({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-            "picture": user.picture,
-            "role": user.role.value,
-            "created_at": user.created_at.isoformat(),
-            "last_login": user.last_login.isoformat(),
-        }),
-        httponly=True,
-        samesite="lax",
-    )
+    set_auth_cookies(response, user, "")
     return response

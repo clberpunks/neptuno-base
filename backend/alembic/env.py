@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from db import Base
-from models import User, LoginHistory  # importa tus modelos
+from models.models import User, LoginHistory  # importa tus modelos
 from config import settings
 
 

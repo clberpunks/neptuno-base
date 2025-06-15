@@ -231,7 +231,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
-      <Sidebar onSelect={setSection} currentSection={section} />
+      <Sidebar onSelect={setSection} currentSection={section} user={user} />
 
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">

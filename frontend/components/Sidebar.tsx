@@ -7,9 +7,14 @@ import Link from 'next/link';
 interface Props {
   onSelect: (section: 'summary' | 'profile' | 'logins') => void;
   currentSection: string;
+  user?: {
+    name: string;
+    email: string;
+    picture?: string;
+  };
 }
 
-export default function Sidebar({ onSelect, currentSection }: Props) {
+export default function Sidebar({ onSelect, currentSection, user }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -30,16 +35,24 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       </div>
       
       <div className="p-6 border-b border-gray-200 flex items-center">
-        <Image 
-          src="https://via.placeholder.com/40" 
-          alt="User" 
-          width={40}
-          height={40}
-          className="rounded-full w-10 h-10 mr-3"
-        />
+        {user?.picture || user?.email ? (
+          <Image 
+            src={user?.picture || `https://www.gravatar.com/avatar/${Buffer.from(user?.email || '').toString('base64')}?d=mp&s=40`}
+            alt="User Avatar" 
+            width={40}
+            height={40}
+            className="rounded-full w-10 h-10 mr-3"
+          />
+        ) : (
+          <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center">
+            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        )}
         <div>
-          <p className="font-medium text-gray-900 truncate">Nombre Usuario</p>
-          <p className="text-sm text-gray-500 truncate">usuario@email.com</p>
+          <p className="font-medium text-gray-900 truncate">{user?.name || 'Usuario'}</p>
+          <p className="text-sm text-gray-500 truncate">{user?.email || ''}</p>
         </div>
       </div>
       
