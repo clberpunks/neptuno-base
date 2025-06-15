@@ -2,7 +2,6 @@
 // pages/auth/login.tsx
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -209,11 +208,12 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 ¿No tienes cuenta?{" "}
-                <Link href="/auth/register" legacyBehavior>
-                  <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Regístrate
-                  </a>
-                </Link>
+                <a
+                  href="/auth/register"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Regístrate
+                </a>
               </p>
             </div>
           </div>

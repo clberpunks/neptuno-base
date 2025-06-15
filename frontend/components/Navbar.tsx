@@ -1,6 +1,6 @@
 
 // components/Navbar.tsx
-// components/Navbar.tsx  
+// components/Navbar.tsx - MODERNIZADO
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';

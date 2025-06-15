@@ -1,14 +1,15 @@
 # backend/dependencies.py
 from fastapi import Depends, HTTPException, status, Request
+from schemas.schemas import UserInJWT
+from config import settings
 import json
-from schemas import UserInJWT
 
 def get_current_user(request: Request) -> UserInJWT:
-    cookie = request.cookies.get("user_info")
-    if not cookie:
+    user_info = request.cookies.get("user_info")
+    if not user_info:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No autenticado")
     try:
-        user_dict = json.loads(cookie)
-        return UserInJWT(**user_dict)
+        data = json.loads(user_info)
+        return UserInJWT(**data)
     except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Cookie inválida")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Cookie de usuario inválida")

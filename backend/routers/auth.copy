@@ -6,12 +6,12 @@ import httpx
 from datetime import datetime
 import json
 from sqlalchemy.orm import Session
-from schemas import UserLogin, UserRegister
+from schemas.schemas import UserLogin, UserRegister
 from utils import hash_password, verify_password
-from models import User, UserRole
+from models.models import User, UserRole
 from config import settings
 from db import get_db
-from models import User, LoginHistory
+from models.models import User, LoginHistory
 from fastapi.responses import JSONResponse
 
 router = APIRouter(tags=["auth"])

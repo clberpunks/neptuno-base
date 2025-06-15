@@ -1,7 +1,7 @@
-# backend/admin.py
+# backend/routes/admin.py
 from fastapi import APIRouter, Depends
 from dependencies import get_current_user
-from schemas import UserInJWT, UserRole
+from schemas.schemas import UserInJWT, UserRole
 from fastapi import HTTPException, status
 
 router = APIRouter(prefix="/admin", tags=["admin"])

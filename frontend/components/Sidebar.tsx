@@ -1,7 +1,7 @@
 // components/Sidebar.tsx
-// components/Sidebar.tsx
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Props {
@@ -30,9 +30,11 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       </div>
       
       <div className="p-6 border-b border-gray-200 flex items-center">
-        <img 
+        <Image 
           src="https://via.placeholder.com/40" 
           alt="User" 
+          width={40}
+          height={40}
           className="rounded-full w-10 h-10 mr-3"
         />
         <div>
@@ -77,15 +79,14 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       </nav>
       
       <div className="p-4 border-t border-gray-200 mt-auto">
-        <a 
-          href="/auth/logout" 
-          className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md"
-        >
-          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          {t('logout')}
-        </a>
+        <Link href="/auth/logout" legacyBehavior>
+          <a className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md">
+            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            {t('logout')}
+          </a>
+        </Link>
       </div>
     </aside>
   );

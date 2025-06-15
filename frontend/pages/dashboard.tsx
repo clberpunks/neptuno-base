@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import Sidebar from "../components/Sidebar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Image from "next/image";
 
 interface UserInfo {
   name: string;
@@ -34,7 +35,7 @@ export default function Dashboard() {
         setUser(JSON.parse(data));
 
         // Obtener historial de accesos
-        fetch("http://localhost:8000/auth/access-history", {
+        fetch("http://localhost:8000/user/access-history", {
           credentials: "include",
         })
           .then((res) => (res.ok ? res.json() : []))
@@ -87,9 +88,11 @@ export default function Dashboard() {
           <div className="space-y-8">
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex flex-col md:flex-row items-center">
-                <img
+                <Image
                   src={user.picture}
                   alt="avatar"
+                  width={96}
+                  height={96}
                   className="rounded-full w-24 h-24 md:mr-8 mb-6 md:mb-0 border-4 border-indigo-100"
                 />
                 <div className="text-center md:text-left">
