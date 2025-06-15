@@ -132,7 +132,27 @@ export default function Dashboard() {
                 <p className="text-gray-700">{formatDate(user.last_login)}</p>
               </div>
             </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">{t("access_history")}</h3>
+              {accessHistory.length === 0 ? (
+                <p className="text-gray-500">{t("no_access_history")}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {accessHistory.map((entry, index) => (
+                    <li key={index} className="flex justify-between">
+                      <span className="text-gray-700">
+                        {formatDate(entry.timestamp)}
+                      </span>
+                      <span className="text-gray-500">
+                        {entry.login_method} • {entry.ip_address}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
+
         );
       case "profile":
         return (
@@ -155,6 +175,14 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-6">
+              <button
+                onClick={() => router.push("/user/edit-profile")}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                {t("edit_profile")}
+              </button>  
             </div>
           </div>
         );

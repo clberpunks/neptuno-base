@@ -1,4 +1,3 @@
-// frontend/components/AccessHistory.tsx
 // components/AccessHistory.tsx
 import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";

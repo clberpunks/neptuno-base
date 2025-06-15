@@ -31,3 +31,23 @@ The requested resource "https://ui-avatars.com/api/?name=mari" has type "image/s
  ○ Compiling /_error ...
  ✓ Compiled /_error in 4.7s (355 modules)
 react-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next { code: 'NO_I18NEXT_INSTANCE' }
+
+
+
+
+}
+TypeError: fetch failed
+    at node:internal/deps/undici/undici:13502:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async imageOptimizer (/home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/next/dist/server/image-optimizer.js:517:29)
+    at async cacheEntry.imageResponseCache.get.incrementalCache (/home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/next/dist/server/next-server.js:519:61)
+    at async /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/next/dist/server/response-cache/index.js:92:36
+    at async /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/next/dist/lib/batcher.js:43:32 {
+  [cause]: Error: getaddrinfo ENOTFOUND via.placeholder.com
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26) {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'via.placeholder.com'
+  }
+}

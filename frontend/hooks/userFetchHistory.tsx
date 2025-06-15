@@ -1,5 +1,4 @@
 // hooks/useFetchHistory.ts
-// hooks/useFetchHistory.ts
 import { useState, useEffect } from "react";
 
 interface HistoryEntry {
