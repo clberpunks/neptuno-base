@@ -1,9 +1,11 @@
 // hooks/useLogin.ts
 import { useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useAuth } from "./useAuth";
 
 export function useLogin() {
   const router = useRouter();
+  const { refresh } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -32,13 +34,14 @@ export function useLogin() {
         body: JSON.stringify({ email, password, remember }),
       });
       if (!res.ok) throw new Error("Credenciales incorrectas");
+      await refresh();
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {
       setLoading(false);
     }
-  }, [email, password, remember, router]);
+  }, [email, password, remember, router, refresh]);
 
   return { email, setEmail, password, setPassword, remember, setRemember, loading, error, handleSubmit };
 }

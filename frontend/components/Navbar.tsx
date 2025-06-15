@@ -1,26 +1,14 @@
-
 // components/Navbar.tsx
 // components/Navbar.tsx - MODERNIZADO
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    fetch('http://localhost:8000/auth/user', {
-      credentials: 'include'
-    })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data) setUser(JSON.parse(data));
-        else setUser(null);
-      });
-  }, []);
 
   const changeLang = (locale: string) => {
     router.push(router.pathname, router.asPath, { locale });

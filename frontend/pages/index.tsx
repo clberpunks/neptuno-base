@@ -2,28 +2,15 @@
 // pages/index.tsx - DISEÑO MODERNIZADO
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
   const { t } = useTranslation();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    fetch('http://localhost:8000/auth/user', {
-      credentials: 'include'
-    })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data) setUser(JSON.parse(data));
-        else setUser(null);
-      })
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

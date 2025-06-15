@@ -1,11 +1,12 @@
 // pages/auth/login.tsx
-// pages/auth/login.tsx
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { refresh } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -45,6 +46,7 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error("Credenciales incorrectas");
       } else {
+        await refresh();
         router.push("/dashboard");
       }
 
@@ -58,22 +60,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    fetch("http://localhost:8000/auth/user", {
-      credentials: "include",
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          router.replace("/dashboard");
-        } else {
-          window.location.href = "http://localhost:8000/auth/login";
-        }
-      })
-      .catch((err) => {
-        setIsRedirecting(false);
-        setError("Error al iniciar sesión. Inténtalo de nuevo.");
-        console.error("Login error:", err);
-      });
+    window.location.href = "http://localhost:8000/auth/login";
   };
 
   return (

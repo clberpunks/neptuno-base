@@ -1,7 +1,7 @@
 // frontend/hooks/useAuth.ts
-import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -17,7 +17,11 @@ interface AuthContextType {
   refresh: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true, refresh: () => {} });
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+  refresh: () => {},
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -25,15 +29,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUser = () => {
     setLoading(true);
-    fetch("http://localhost:8000/auth/user", { credentials: "include" })
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => setUser(data ?? null)) //.then(data => setUser(data ? JSON.parse(data) : null))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    fetch("http://localhost:8000/auth/user", {
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          try {
+            // Si el backend devuelve un string JSON, parsea
+            const parsed: User = typeof data === "string" ? JSON.parse(data) : data;
+            setUser(parsed);
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      })
+      .catch(() => {
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
     loadUser();
+    // Si quieres refrescar cada X minutos, podrías usar setInterval aquí
+    // return () => clearInterval(timerId);
   }, []);
 
   return (

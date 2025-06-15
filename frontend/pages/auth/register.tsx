@@ -1,12 +1,13 @@
 // pages/auth/register.tsx
-// pages/auth/register.tsx
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import { useAuth } from '../../hooks/useAuth';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { refresh } = useAuth();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -52,6 +53,7 @@ export default function RegisterPage() {
         setPassword("");
         setName("");
 
+        await refresh();
         // Mostrar el mensaje de éxito y redirigir tras 2 segundos
         setTimeout(() => {
           router.replace("/dashboard");

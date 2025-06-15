@@ -1,4 +1,3 @@
-
 // components/Layout.tsx
 // components/Layout.tsx - ACTUALIZADO
 import Navbar from './Navbar';
@@ -26,3 +25,4 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default Layout;
+// No changes needed here, Navbar will use context after its update.
