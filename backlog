@@ -85,3 +85,48 @@ Necesitamos importar json en utils.py:
 
 utils.py
 
+
+otro conflicto: 
+
+CLIENT_SECRET="your_client_secret_here"
+JWT_SECRET_KEY="your_jwt_secret_key_here"
+
+
+...............................
+error con la imagen:
+connected websocket.js:50:27
+Warning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+img
+ImageElement<@webpack-internal:///./node_modules/next/dist/client/image-component.js:129:225
+Image<@webpack-internal:///./node_modules/next/dist/client/image-component.js:238:47
+div
+aside
+Sidebar@webpack-internal:///./components/Sidebar.tsx:23:46
+div
+Dashboard@webpack-internal:///./pages/dashboard.tsx:28:76
+Layout@webpack-internal:///./components/Layout.tsx:16:24
+MyApp@webpack-internal:///./pages/_app.tsx:15:36
+I18nextProvider@webpack-internal:///./node_modules/react-i18next/dist/es/I18nextProvider.js:9:25
+AppWithTranslation@webpack-internal:///./node_modules/next-i18next/dist/esm/appWithTranslation.js:50:16
+PathnameContextProviderAdapter@webpack-internal:///./node_modules/next/dist/shared/lib/router/adapters.js:79:42
+ErrorBoundary@webpack-internal:///./node_modules/next/dist/compiled/@next/react-dev-overlay/dist/client.js:2:5389
+ReactDevOverlay@webpack-internal:///./node_modules/next/dist/compiled/@next/react-dev-overlay/dist/client.js:2:7774
+Container@webpack-internal:///./node_modules/next/dist/client/index.js:78:1
+AppContainer@webpack-internal:///./node_modules/next/dist/client/index.js:207:24
+Root@webpack-internal:///./node_modules/next/dist/client/index.js:421:35 client.js:1:909
+    error client.js:1
+    error setup-hydration-warning.js:18
+    React 14
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+Image with src "https://lh3.googleusercontent.com/a/ACg8ocJ_PXP8uJJ79FCCN04WUiL4htgpkhv-x8m9feTB7yfqRV9YcE-B=s96-c" was detected as the Largest Contentful Paint (LCP). Please add the "priority" property if this image is above the fold.
+Read more: https://nextjs.org/docs/api-reference/next/image#priority warn-once.js:16:20
+react-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next 
+Object { code: "NO_I18NEXT_INSTANCE" }
+utils.js:13
+Error: Loading initial props cancelled
+    _getData webpack-internal:///./node_modules/next/dist/shared/lib/router/router.js:1410
+client.js:1:909
+Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. dashboard:144:29
+Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped.

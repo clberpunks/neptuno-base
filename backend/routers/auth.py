@@ -119,21 +119,24 @@ async def callback(request: Request, db: Session = Depends(get_db)):
     return response
 
 @router.post("/register")
-def register_user(data: UserRegister, db: Session = Depends(get_db)):
-    """Registra un nuevo usuario con autenticación local."""
+def register_user(data: UserRegister, request: Request, db: Session = Depends(get_db)):
+    """Registra un nuevo usuario con autenticación local y lo loguea automáticamente."""
     if db.query(User).filter_by(email=data.email).first():
         raise HTTPException(status_code=400, detail="Email ya registrado")
     new_user = User(
         id=str(uuid.uuid4()),
         email=data.email,
         name=data.name,
-        picture=f"https://ui-avatars.com/api/?name={data.name}",
+        picture=None,
         password_hash=hash_password(data.password),
         auth_method="local",
     )
     db.add(new_user)
     db.commit()
-    return {"message": "Usuario creado correctamente"}
+    # Login automático
+    response = JSONResponse(content={"message": "Registro y login exitosos"})
+    set_auth_cookies(response, new_user, "")
+    return response
 
 @router.post("/login")
 def login_user(data: UserLogin, request: Request, db: Session = Depends(get_db)):

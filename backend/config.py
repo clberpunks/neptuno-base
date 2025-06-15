@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/auth/callback"
     DATABASE_URL: str = "sqlite:///./app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
-    JWT_SECRET_KEY: str = "your_jwt_secret_key_here"
     
     class Config:
         env_file = ".env"
