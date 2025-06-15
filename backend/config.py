@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
     
+    # Nuevas variables para Refresh Token
+    REFRESH_SECRET: str = "super_refresh_secret"
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+    
     class Config:
         env_file = ".env"
 

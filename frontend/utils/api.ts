@@ -1,18 +1,35 @@
+// frontend/utils/api.ts
+
+async function tryRefresh(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    ...options
-  });
+  let res = await fetch(url, { credentials: 'include', ...options });
 
   if (res.status === 401) {
-    // Si detectamos 401, la sesión expiró
-    window.location.href = '/auth/logout';
-    throw new Error("No autorizado, redirigiendo al login...");
+    const refreshed = await tryRefresh();
+    if (refreshed) {
+      // Vuelve a intentar la misma request original
+      res = await fetch(url, { credentials: 'include', ...options });
+    } else {
+      const err = new Error('Unauthorized');
+      (err as any).status = 401;
+      throw err;
+    }
   }
 
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Error en la petición");
+    const txt = await res.text();
+    throw new Error(txt || 'Error en la petición');
   }
 
   return res.json();

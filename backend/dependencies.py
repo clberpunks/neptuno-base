@@ -1,15 +1,18 @@
 # backend/dependencies.py
+# backend/dependencies.py
 from fastapi import Depends, HTTPException, status, Request
 from schemas.schemas import UserInJWT
 from config import settings
-import json
+import jwt
 
 def get_current_user(request: Request) -> UserInJWT:
-    user_info = request.cookies.get("user_info")
-    if not user_info:
+    token = request.cookies.get("jwt_token")
+    if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No autenticado")
     try:
-        data = json.loads(user_info)
-        return UserInJWT(**data)
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Cookie de usuario inválida")
+        payload = jwt.decode(token, settings.CLIENT_SECRET, algorithms=["HS256"])
+        return UserInJWT(**payload)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expirado")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")

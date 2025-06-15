@@ -1,4 +1,4 @@
-// pages/admin-only.tsx
+// pages/admin.tsx
 import { withAuth } from "../utils/withAuth";
 
 function AdminPage() {

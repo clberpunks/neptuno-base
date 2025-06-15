@@ -1,21 +1,14 @@
-// pages/auth/logout.ts
-// Página que ejecuta logout y redirige al home
+// pages/auth/logout.tsx
+// frontend/pages/auth/logout.tsx
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { apiFetch } from '../../utils/api';
 
 export default function LogoutPage() {
-  const router = useRouter();
-
+  const r = useRouter();
   useEffect(() => {
-    apiFetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
-      .then(() => {
-        router.push('/');
-      });
-  }, [router]);
-
-  return <p className="text-center p-4">Cerrando sesión...</p>;
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+      .then(() => r.push('/auth/login'))
+      .catch(() => r.push('/auth/login'));
+  }, []);
+  return <p>Cerrando sesión…</p>;
 }

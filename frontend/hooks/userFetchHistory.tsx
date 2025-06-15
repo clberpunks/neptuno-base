@@ -1,4 +1,6 @@
-// hooks/useFetchHistory.ts
+
+// hooks/useFetchHistory.tsx
+
 import { useState, useEffect } from "react";
 import { apiFetch } from '../utils/api';
 
@@ -11,14 +13,28 @@ interface HistoryEntry {
 
 export function useFetchHistory(user: any) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setHistory([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     apiFetch<HistoryEntry[]>("http://localhost:8000/user/access-history")
-      .then(setHistory)
-      .catch((err) => setError(err.message));
+      .then((data) => {
+        setHistory(data);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Error fetching access history:", err);
+        setError(err.message || "Error fetching history");
+      })
+      .finally(() => setLoading(false));
   }, [user]);
 
-  return { history, error };
+  return { history, loading, error };
 }
