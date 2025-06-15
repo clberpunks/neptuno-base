@@ -51,3 +51,37 @@ TypeError: fetch failed
     hostname: 'via.placeholder.com'
   }
 }
+
+
+--------------
+
+[{
+	"resource": "/home/vinxenxo/ciberpunk/neptuno-base/frontend/next.config.js",
+	"owner": "eslint",
+	"severity": 8,
+	"message": "Parsing error: Cannot find module 'next/babel'\nRequire stack:\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/core/lib/config/files/plugins.js\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/core/lib/config/files/index.js\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/core/lib/index.js\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/eslint-parser/lib/worker/babel-core.cjs\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/eslint-parser/lib/worker/handle-message.cjs\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/eslint-parser/lib/client.cjs\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@babel/eslint-parser/lib/index.cjs\n- /home/vinxenxo/ciberpunk/neptuno-base/frontend/node_modules/@eslint/eslintrc/dist/eslintrc.cjs\n\nMake sure that all the Babel plugins and presets you are using\nare defined as dependencies or devDependencies in your package.json\nfile. It's possible that the missing plugin is loaded by a preset\nyou are using that forgot to add the plugin to its dependencies: you\ncan workaround this problem by explicitly adding the missing package\nto your top-level package.json.",
+	"source": "eslint",
+	"startLineNumber": 1,
+	"startColumn": 1,
+	"endLineNumber": 1,
+	"endColumn": 1
+}]
+
+
+
+--------
+
+
+ vamos a revisar cómo se están manejando las cookies y la autenticación en el backend:
+
+Read auth.py, lines 1 to 50
+
+El problema principal está en que la cookie user_info no se está estableciendo correctamente. En utils.py vemos que solo estamos estableciendo jwt_token, pero también necesitamos establecer user_info.
+
+Vamos a modificar la función set_auth_cookies en utils.py:
+
+utils.py+2-1
+Necesitamos importar json en utils.py:
+
+utils.py
+
