@@ -2,12 +2,13 @@
 // Página que ejecuta logout y redirige al home
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { apiFetch } from '../../utils/api';
 
 export default function LogoutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/auth/logout', {
+    apiFetch('/api/auth/logout', {
       method: 'POST',
       credentials: 'include'
     })

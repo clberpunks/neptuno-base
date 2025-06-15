@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { useAuth } from '../../hooks/useAuth';
+import { apiFetch } from '../../utils/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -40,31 +41,24 @@ export default function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:8000/auth/register", {
+      await apiFetch<{ token: string }>("http://localhost:8000/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name, password }),
       });
+      setSuccess("¡Registro exitoso! Redirigiendo al panel...");
+      setEmail("");
+      setPassword("");
+      setName("");
 
-      if (response.ok) {
-        setSuccess("¡Registro exitoso! Redirigiendo al panel...");
-        setEmail("");
-        setPassword("");
-        setName("");
-
-        await refresh();
-        // Mostrar el mensaje de éxito y redirigir tras 2 segundos
-        setTimeout(() => {
-          router.replace("/dashboard");
-        }, 2000);
-      } else {
-        const data = await response.json();
-        setError(data.message || "Error al registrarse.");
-      }
+      await refresh();
+      // Mostrar el mensaje de éxito y redirigir tras 2 segundos
+      setTimeout(() => {
+        router.replace("/dashboard");
+      }, 2000);
     } catch (err) {
-      console.error(err);
-      setError("Ocurrió un error inesperado.");
+      setError((err as Error).message || "Error al registrarse.");
     } finally {
       setIsSubmitting(false);
     }

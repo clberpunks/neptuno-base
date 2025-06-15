@@ -1,5 +1,6 @@
 // hooks/useFetchHistory.ts
 import { useState, useEffect } from "react";
+import { apiFetch } from '../utils/api';
 
 interface HistoryEntry {
   id: string;
@@ -14,11 +15,7 @@ export function useFetchHistory(user: any) {
 
   useEffect(() => {
     if (!user) return;
-    fetch("http://localhost:8000/user/access-history", { credentials: "include" })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener el historial");
-        return res.json();
-      })
+    apiFetch<HistoryEntry[]>("http://localhost:8000/user/access-history")
       .then(setHistory)
       .catch((err) => setError(err.message));
   }, [user]);

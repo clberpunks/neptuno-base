@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "./useAuth";
+import { apiFetch } from "../utils/api";
 
 export function useLogin() {
   const router = useRouter();
@@ -27,13 +28,12 @@ export function useLogin() {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      await apiFetch<{ token: string }>("http://localhost:8000/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, remember }),
       });
-      if (!res.ok) throw new Error("Credenciales incorrectas");
       await refresh();
       router.push("/dashboard");
     } catch (err: any) {

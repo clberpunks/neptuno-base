@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
+import { apiFetch } from "../../utils/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      await apiFetch<{ token: string }>("http://localhost:8000/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -42,15 +43,8 @@ export default function LoginPage() {
         },
         body: JSON.stringify({ email, password, remember }),
       });
-
-      if (!res.ok) {
-        throw new Error("Credenciales incorrectas");
-      } else {
-        await refresh();
-        router.push("/dashboard");
-      }
-
-      router.replace("/dashboard");
+      await refresh();
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {
