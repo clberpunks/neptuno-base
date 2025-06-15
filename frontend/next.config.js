@@ -3,6 +3,13 @@ const { i18n } = require('./next-i18next.config');
 
 module.exports = {
   reactStrictMode: true,
-  i18n
+  i18n,
+  images: {
+    domains: [
+      'via.placeholder.com',
+      'lh3.googleusercontent.com',
+      'ui-avatars.com'
+    ]
+  }
 };
 

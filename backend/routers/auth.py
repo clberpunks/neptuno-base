@@ -8,7 +8,7 @@ import json
 from sqlalchemy.orm import Session
 from schemas.schemas import UserLogin, UserRegister
 from utils import hash_password, verify_password
-from models.models import User, UserRole, LoginHistory
+from models import User, UserRole, LoginHistory
 from config import settings
 from db import get_db
 

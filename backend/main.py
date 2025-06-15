@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth, user #, admin
 from db import engine, Base, SessionLocal
-from models.models import User, UserRole
+from models import User, UserRole
 from utils import hash_password
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
