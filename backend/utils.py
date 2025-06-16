@@ -16,31 +16,57 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-def create_refresh_token(user_id: str):
+
+def set_auth_cookies(response, user):
+    access_token = create_access_token(user)
+    refresh_token = create_refresh_token(user)
+
+    response.set_cookie(
+        "jwt_token",
+        access_token,
+        httponly=True,
+        samesite="lax",
+        secure=False,  # solo para dev
+        max_age=60  # duración igual al token
+    )
+    response.set_cookie(
+        "refresh_token",
+        refresh_token,
+        httponly=True,
+        samesite="lax",
+        secure=False,  # solo para dev
+        max_age=60*60*24*7  # refresh válido 7 días
+    )
+
+    
+
+# UTILIDADES DE TOKENS
+
+def create_access_token(user):
     payload = {
-        "sub": user_id,
-        "exp": datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "picture": user.picture or f"https://ui-avatars.com/api/?name={'+'.join(user.name.split())}&size=96&background=random&format=png",
+        "role": user.role.value,
+        "created_at": user.created_at.isoformat(),
+        "last_login": user.last_login.isoformat(),
+        "exp": datetime.utcnow() + timedelta(minutes=1),
+    }
+    return jwt.encode(payload, settings.CLIENT_SECRET, algorithm="HS256")
+
+
+def create_refresh_token(user):
+    payload = {
+        "sub": user.id,
+        "exp": datetime.utcnow() + timedelta(days=7),
         "iat": datetime.utcnow(),
     }
     return jwt.encode(payload, settings.REFRESH_SECRET, algorithm="HS256")
 
-def set_auth_cookies(response: RedirectResponse | JSONResponse, user, id_token: str):
-    # Genera avatar robusto con ui-avatars.com si no hay picture
-    avatar_url = user.picture or f"https://ui-avatars.com/api/?name={'+'.join(user.name.split())}&size=96&background=random&format=png"
-    user_data = {
-        "id": user.id, 
-        "name": user.name, 
-        "email": user.email, 
-        "role": user.role.value,
-        "picture": avatar_url,
-        "created_at": user.created_at.isoformat(), 
-        "last_login": user.last_login.isoformat()
-    }
-    
-    jwt_token = jwt.encode(user_data, settings.CLIENT_SECRET, algorithm="HS256")
-    refresh_token = create_refresh_token(user.id)
 
-    response.set_cookie("jwt_token", jwt_token, httponly=True, samesite="lax", secure=False)
-    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="lax", secure=False)
-    
-    
+def generate_tokens(user):
+    access_token = create_access_token(user)
+    refresh_token = create_refresh_token(user)
+    return access_token, refresh_token
+

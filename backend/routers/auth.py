@@ -13,34 +13,10 @@ from config import settings
 from db import get_db
 from models.models import User, UserRole, LoginHistory
 from schemas.schemas import UserLogin, UserRegister
-from utils import hash_password, verify_password
+from utils import generate_tokens, hash_password, set_auth_cookies, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-
-# UTILIDADES DE TOKENS
-
-def create_access_token(user):
-    payload = {
-        "id": user.id,
-        "name": user.name,
-        "email": user.email,
-        "picture": user.picture or f"https://ui-avatars.com/api/?name={'+'.join(user.name.split())}&size=96&background=random&format=png",
-        "role": user.role.value,
-        "created_at": user.created_at.isoformat(),
-        "last_login": user.last_login.isoformat(),
-        "exp": datetime.utcnow() + timedelta(minutes=15),
-    }
-    return jwt.encode(payload, settings.CLIENT_SECRET, algorithm="HS256")
-
-
-def create_refresh_token(user):
-    payload = {
-        "sub": user.id,
-        "exp": datetime.utcnow() + timedelta(days=30),
-        "iat": datetime.utcnow(),
-    }
-    return jwt.encode(payload, settings.REFRESH_SECRET, algorithm="HS256")
 
 
 @router.get("/login")
@@ -86,12 +62,10 @@ async def callback(request: Request, db: Session = Depends(get_db)):
     db.add(login_record)
     db.commit()
 
-    access_token = create_access_token(user)
-    refresh_token = create_refresh_token(user)
+    access_token, refresh_token = generate_tokens(user)
 
     response = RedirectResponse(url="http://localhost:3000/dashboard")
-    response.set_cookie("jwt_token", access_token, httponly=True, samesite="lax", secure=False)
-    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="lax", secure=False)
+    set_auth_cookies(response, user)
     return response
 
 
@@ -143,6 +117,7 @@ def get_user_info(request: Request):
 
 @router.post("/refresh")
 def refresh_token(request: Request, db: Session = Depends(get_db)):
+    print("Refresh token solicitado")
     token = request.cookies.get("refresh_token")
     if not token:
         return JSONResponse({"detail": "Refresh token missing"}, status_code=401)
@@ -159,12 +134,10 @@ def refresh_token(request: Request, db: Session = Depends(get_db)):
     if not user:
         return JSONResponse({"detail": "User not found"}, status_code=401)
 
-    new_access_token = create_access_token(user)
-    new_refresh_token = create_refresh_token(user)
+    access_token, refresh_token = generate_tokens(user)
 
     response = JSONResponse({"message": "Tokens refreshed"})
-    response.set_cookie("jwt_token", new_access_token, httponly=True, samesite="lax", secure=False)
-    response.set_cookie("refresh_token", new_refresh_token, httponly=True, samesite="lax", secure=False)
+    set_auth_cookies(response, user)
     return response
 
 @router.post("/register")
@@ -186,8 +159,7 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
     db.add(new_user)
     db.commit()
 
-    access_token = create_access_token(new_user)
-    refresh_token = create_refresh_token(new_user)
+    access_token, refresh_token = generate_tokens(new_user)
 
     response = JSONResponse(content={"message": "Registro y login exitosos"})
     response.set_cookie("jwt_token", access_token, httponly=True, samesite="lax", secure=False)
@@ -208,10 +180,9 @@ def login_user(data: UserLogin, request: Request, db: Session = Depends(get_db))
     db.add(login_record)
     db.commit()
 
-    access_token = create_access_token(user)
-    refresh_token = create_refresh_token(user)
+    access_token, refresh_token = generate_tokens(user)
+
 
     response = JSONResponse(content={"message": "Login exitoso"})
-    response.set_cookie("jwt_token", access_token, httponly=True, samesite="lax", secure=False)
-    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="lax", secure=False)
+    set_auth_cookies(response, user)
     return response

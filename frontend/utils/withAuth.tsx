@@ -3,6 +3,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import Spinner from '../components/Spinner';
 
 export function withAuth<P>(Component: React.ComponentType<P>, roles: string[] = []) {
   return function Protected(props: P) {
@@ -17,7 +18,7 @@ export function withAuth<P>(Component: React.ComponentType<P>, roles: string[] =
     }, [user, loading]);
 
     if (loading || !user) {
-      return <div className="spinner">Cargando…</div>;
+      return <Spinner />;
     }
     return <Component {...props} />;
   };

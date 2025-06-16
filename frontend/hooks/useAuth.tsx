@@ -48,6 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const refresh = async () => {
+    await loadUser();
+  };
+
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     setUser(null);
@@ -60,8 +64,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(id);
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, loading, refresh: loadUser, logout }}>
+    // Intervalo para refrescar token cada 1 minuto solo si user existe
+  useEffect(() => {
+    if (user) {
+      const intervalId = setInterval(() => {
+        refresh();
+      }, 60 * 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
+
+   return (
+    <AuthContext.Provider value={{ user, loading, refresh, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,7 @@
 // frontend/utils/api.ts
 
+import { useError } from "../contexts/ErrorContext";
+
 async function tryRefresh(): Promise<boolean> {
   try {
     const res = await fetch('/api/auth/refresh', {
@@ -18,13 +20,14 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
   if (res.status === 401) {
     const refreshed = await tryRefresh();
     if (refreshed) {
-      // Vuelve a intentar la misma request original
       res = await fetch(url, { credentials: 'include', ...options });
     } else {
-      const err = new Error('Unauthorized');
-      (err as any).status = 401;
-      throw err;
+      throw new Error("Unauthorized");
     }
+  }
+
+  if (res.status === 403) {
+    throw new Error("Forbidden");
   }
 
   if (!res.ok) {
