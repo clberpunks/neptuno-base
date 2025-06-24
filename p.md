@@ -284,6 +284,8 @@ withAuth	Protección de rutas según login y roles
 
 
 
+
+
 Refactorización:
 - Separación de responsabilidades (configuración, DB, dependencias, rutas).
 - Validación y tipos con Pydantic (UserInJWT, enums de roles).

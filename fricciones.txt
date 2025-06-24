@@ -1,0 +1,76 @@
+| Acción       | Competencia típica            | IA SHIELD ligero & sencillo                                     |
+| ------------ | ----------------------------- | --------------------------------------------------------------- |
+| **Eliminar** | ● Paneles sobre‑cargados      | ✗ 1 dashboard monolítico: un único widget de salud rápida       |
+|              | ● Integraciones complejas     | ✗ SDKs, APIs múltiples                                          |
+| **Reducir**  | ● Tiempo de onboarding (días) | ↓ De días a **2 minutos**: un snippet HTML + noscript           |
+|              | ● Coste fijo mensual elevado  | ↓ Coste base “freemium” + pago por petición sospechosa          |
+| **Elevar**   | ● Detección sólo en JS        | ↑ Añadimos honeypot HTML/noscript para bots sin ejecución JS    |
+|              | ● Alertas genéricas           | ↑ Alerta inmediata “⚠ IA maliciosa detectada” en tu email/Slack |
+| **Crear**    | —                             | ✚ Licenciamiento granular por modelo de IA                      |
+|              | —                             | ✚ “Portero de IA” en la puerta de tu web: decide quién entra    |
+|              | —                             | ✚ Plan freemium **siempre gratuito**                            |
+|              | —                             | ✚ Micro‑pago por uso: sólo pagas si de verdad te atacan         |
+
+
+🔥 Puntos de Dolor y Cómo los Explotamos
+
+    “No necesito un tanque, sólo un chaleco antibalas”
+
+        Dolor: las PYMEs rehúyen de WAFs corporativos caros.
+
+        Blue Ocean: ofrecemos un “chaleco ligero” — integración en 2 min con dos líneas de código.
+
+    “Mis recursos son limitados”
+
+        Dolor: consumo excesivo de CPU/banda por soluciones pesadas.
+
+        Blue Ocean: footprint mínimo en cliente y servidor, sin librerías ni peticiones masivas.
+
+    “¿Quién vigila a las IAs que no ejecutan JS?”
+
+        Dolor: scrapers avanzados y LLMs que ignoran tu protección JS.
+
+        Blue Ocean: honeypot en <noscript> y challenge HTML puro.
+
+    “Sufro clics falsos y fraudes, pero no sé cuántos ni de dónde vienen”
+
+        Dolor: analíticas contaminadas que distorsionan tu marketing.
+
+        Blue Ocean: dashboard inmediato con contadores “humanos vs IA” y webhook de alertas.
+
+    “No quiero comprometer mi UX”
+
+        Dolor: soluciones que ralentizan la web o muestran captchas invasivos.
+
+        Blue Ocean: absolutamente invisible para humanos — 0 impacto en velocidad ni experiencia.
+
+⚡ Mensaje de Miedo y Urgencia
+
+    “Cada click falso te está robando presupuesto publicitario.
+    Cada scrapper te está usurpando tu contenido.
+    Cada IA anónima que entra sin permiso te arriesga a filtraciones y fraudes masivos.
+    ¿Cuánto más estás dispuesto a tolerar antes de tomar una medida minimalista pero implacable?”
+
+🎯 Propuesta de Valor Diferencial
+
+    IA SHIELD es el “chaleco antibalas digital” que se instala en tu web en 2 minutos, 100 % invisible para tus visitantes reales, y bloquea todo comportamiento de IA no deseada — incluso aquellas que no ejecutan ni una sola línea de JavaScript.
+
+    Ligero: 2 KB de HTML/JS, sin frameworks ni dependencias.
+
+    Sencillo: 2 min de copy‑&‑paste, soporte cero.
+
+    Flexible: freemium + pago por petición sospechosa.
+
+    Integral: cubrimos bots con JS y sin JS.
+
+    Empoderado: licencia IA a tus aliados, bloquea a los depredadores.
+
+🚀 Primeros Pasos Rápidos
+
+    Copia‑&‑Pega el snippet IA SHIELD en tu <head>.
+
+    Activa tu plan freemium y comienza a monitorizar al instante.
+
+    Revisa tu dashboard en tiempo real.
+
+    Decide: bloquea, desafía o licencia cualquier IA según tus reglas.
