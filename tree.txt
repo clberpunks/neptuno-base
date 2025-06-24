@@ -1,39 +1,60 @@
 .
+├── LICENSE
+├── README.md
 ├── backend
-│   ├── admin.py
-│   ├── auth.py
+│   ├── app.db
 │   ├── config.py
 │   ├── db.py
 │   ├── dependencies.py
+│   ├── main.copy
 │   ├── main.py
-│   ├── models.py
+│   ├── migrations
+│   ├── models
+│   │   └── models.py
+│   ├── package-lock.json
 │   ├── requirements.txt
+│   ├── routers
+│   │   ├── admin.py
+│   │   ├── auth.py
+│   │   └── user.py
 │   ├── run.sh
-│   ├── schemas.py
-│   ├── user.py
+│   ├── schemas
+│   │   └── schemas.py
+│   ├── tests
 │   └── utils.py
+├── backlog
 ├── frontend
 │   ├── components
 │   │   ├── AccessHistory.tsx
+│   │   ├── ErrorBoundary.tsx
 │   │   ├── Footer.tsx
 │   │   ├── Layout.tsx
 │   │   ├── Navbar.tsx
-│   │   └── Sidebar.tsx
+│   │   ├── Sidebar.tsx
+│   │   └── Spinner.tsx
+│   ├── contexts
+│   │   └── ErrorContext.tsx
 │   ├── hooks
-│   │   └── useAuth.tsx
-│   ├── next.config.js
+│   │   ├── useAuth.tsx
+│   │   ├── userFetchHistory.tsx
+│   │   └── userLogin.tsx
 │   ├── next-env.d.ts
 │   ├── next-i18next.config.js
-│   ├── package.json
+│   ├── next.config.js
 │   ├── package-lock.json
+│   ├── package.json
 │   ├── pages
+│   │   ├── 403.tsx
+│   │   ├── ____admin.tsx
+│   │   ├── _app.tsx
 │   │   ├── about.tsx
 │   │   ├── admin.tsx
 │   │   ├── api
 │   │   │   └── auth
-│   │   │       └── logout.ts
-│   │   ├── _app.tsx
+│   │   │       ├── logout.ts
+│   │   │       └── refresh.ts
 │   │   ├── auth
+│   │   │   ├── login.copy
 │   │   │   ├── login.tsx
 │   │   │   ├── logout.tsx
 │   │   │   └── register.tsx
@@ -45,6 +66,7 @@
 │   │   └── terms.tsx
 │   ├── postcss.config.js
 │   ├── public
+│   │   ├── favicon.ico
 │   │   └── locales
 │   │       ├── en
 │   │       │   └── common.json
@@ -54,6 +76,11 @@
 │   │   └── globals.css
 │   ├── tailwind.config.js
 │   ├── tailwind.config.ts
-│   └── tsconfig.json
+│   ├── tsconfig.json
+│   └── utils
+│       ├── api.ts
+│       └── withAuth.tsx
+├── p.start
+└── tree.txt
 
-
+26 directories, 89 files

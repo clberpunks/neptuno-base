@@ -1,0 +1,123 @@
+Para proteger tus rutas con middleware en Next.js (Pages Router), vamos a crear un archivo middleware.ts en la raíz del proyecto que:
+
+    Lee la cookie user_info (donde guardamos el JSON del usuario).
+
+    Para rutas protegidas (por ejemplo /dashboard y cualquier ruta bajo /admin), si no existe o es inválida, redirige a /auth/login.
+
+    Para rutas públicas (home, login, register, assets), no hace nada.
+
+No necesitas ningún otro archivo: el middleware actúa antes de renderizar cualquier página.
+
+Para proteger tus rutas con middleware en Next.js (Pages Router), vamos a crear un archivo `middleware.ts` en la raíz del proyecto que:
+
+1. Lee la cookie `user_info` (donde guardamos el JSON del usuario).
+2. Para rutas protegidas (por ejemplo `/dashboard` y cualquier ruta bajo `/admin`), si **no** existe o es inválida, redirige a `/auth/login`.
+3. Para rutas públicas (home, login, register, assets), no hace nada.
+
+No necesitas ningún otro archivo: el middleware actúa antes de renderizar cualquier página.
+
+---
+
+## 1. Crear `middleware.ts`
+
+```ts
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// Rutas que NO requieren autenticación
+const PUBLIC_PATHS = [
+  "/", 
+  "/auth/login",
+  "/auth/register",
+  "/api/auth/logout", 
+  "/_next",      // Next.js internals
+  "/favicon.ico",
+  "/_next/static",
+  "/fonts",
+  "/images"
+];
+
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Si es ruta pública, dejamos pasar
+  if (
+    PUBLIC_PATHS.some((path) =>
+      pathname === path || pathname.startsWith(path)
+    )
+  ) {
+    return NextResponse.next();
+  }
+
+  // Intentamos leer la cookie `user_info`
+  const userInfo = req.cookies.get("user_info")?.value;
+
+  // Si no existe, redirigimos al login
+  if (!userInfo) {
+    const loginUrl = new URL("/auth/login", req.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Podrías aquí validar JSON.parse(userInfo) o verificar campos mínimos,
+  // pero asumimos que si existe, el middleware de fetch (apiFetch) mantendrá
+  // la sesión o destruirá la cookie cuando expire.
+
+  return NextResponse.next();
+}
+
+// Aplica middleware a todas las rutas excepto las APIs (opcional)
+export const config = {
+  matcher: [
+    /*
+     * Proteger todas las rutas bajo /dashboard y /admin
+     * Puedes añadir más patrones si lo necesitas.
+     */
+    "/dashboard/:path*",
+    "/admin/:path*",
+  ],
+};
+```
+
+### Explicación
+
+* **PUBLIC\_PATHS**: rutas que deben quedar abiertas (home, login, register, assets).
+* **matcher** en `config`: especifica a qué rutas aplicar la protección. Aquí, `/dashboard/*` y `/admin/*`.
+* **req.cookies.get("user\_info")**: lee tu cookie `user_info`. Si no existe → redirige.
+
+---
+
+## 2. Ajustes adicionales
+
+* Asegúrate de que **tus cookies** se envíen con `sameSite: "lax"` y `httpOnly: true` (ya lo tienes).
+* Cuando expire o sea inválida, el middleware detecta ausencia de cookie y redirige.
+* Tu frontend ya invoca `useAuth()` que por su parte intentará silent–refresh y, si no puede, redirigirá al login.
+
+---
+
+## 3. Verificación
+
+1. **Coloca** `middleware.ts` en la raíz de tu proyecto Next.js (a la par de `next.config.js`).
+2. Arranca el servidor de desarrollo (`npm run dev`).
+3. Intenta acceder a `/dashboard` sin estar autenticado → **debe** llevarte a `/auth/login`.
+4. Después de hacer login, `/dashboard` debe abrirse con normalidad.
+
+¡Y con esto tienes tu **protección de rutas server‑side** totalmente integrada! 🚀
+
+    Puedes centralizar las rutas públicas exportándolas desde un solo archivo de configuración, para no tener que duplicarlas en middleware, guards, etc.
+
+    Puedes usar patrones en lugar de rutas fijas:
+
+const PUBLIC_PATHS = [
+  /^\/$/, 
+  /^\/auth\/.*/,
+  /^\/api\/auth\/logout$/,
+  /^\/_next\/.*/,
+  /^\/favicon\.ico$/,
+  /^\/fonts\/.*/,
+  /^\/images\/.*/
+];
+
+    Así reduces el mantenimiento.
+
+    

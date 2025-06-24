@@ -36,6 +36,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
             width={40}
             height={40}
             className="rounded-full w-10 h-10 mr-3"
+            unoptimized={process.env.NODE_ENV === "development"}
           />
         ) : (
           <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center"></div>

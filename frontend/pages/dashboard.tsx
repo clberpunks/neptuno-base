@@ -55,6 +55,8 @@ function Dashboard() {
                   width={96}
                   height={96}
                   className="rounded-full w-24 h-24 md:mr-8 mb-6 md:mb-0 border-4 border-indigo-100"
+                  priority
+                  unoptimized={process.env.NODE_ENV === "development"}
                 />
                 <div className="text-center md:text-left">
                   <h1 className="text-2xl font-bold text-gray-900">

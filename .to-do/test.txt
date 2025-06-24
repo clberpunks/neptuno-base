@@ -1,0 +1,54 @@
+✅ 3. Añadir tests unitarios para OAuth
+
+Una práctica excelente. Vamos a enfocarnos en auth/callback, que es el endpoint crítico.
+🧪 Requisitos para test unitario:
+
+    Mockear httpx.AsyncClient (para no llamar a Google real).
+
+    Simular respuesta con access_token e id_token.
+
+    Comprobar que se crea el usuario si no existe.
+
+    Comprobar que se redirige correctamente.
+
+🧪 Ejemplo con pytest + httpx + async_asgi_testclient:
+
+import pytest
+from fastapi.testclient import TestClient
+from main import app
+from unittest.mock import AsyncMock, patch
+from models import User
+from db import SessionLocal
+
+client = TestClient(app)
+
+@pytest.fixture
+def db():
+    db = SessionLocal()
+    yield db
+    db.close()
+
+@patch("httpx.AsyncClient.post")
+@patch("httpx.AsyncClient.get")
+def test_google_oauth_callback_creates_user(mock_get, mock_post, db):
+    # Simular token de Google
+    mock_post.return_value = AsyncMock(status_code=200, json=lambda: {
+        "access_token": "test-access-token",
+        "id_token": "fake-id-token"
+    })
+    # Simular userinfo de Google
+    mock_get.return_value = AsyncMock(status_code=200, json=lambda: {
+        "sub": "123456",
+        "email": "test@example.com",
+        "name": "Test User",
+        "picture": None
+    })
+
+    response = client.get("/auth/callback?code=fake-code", allow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "http://localhost:3000/dashboard"
+
+    user = db.query(User).filter_by(email="test@example.com").first()
+    assert user is not None
+    assert user.name == "Test User"

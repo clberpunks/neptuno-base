@@ -1,0 +1,18 @@
+| Archivo                              | Ubicación típica  | Descripción                                                      |
+| ------------------------------------ | ----------------- | ---------------------------------------------------------------- |
+| `next.config.js` / `next.config.mjs` | raíz del proyecto | Configuración global de Next.js                                  |
+| `middleware.ts/js`                   | raíz del proyecto | Middleware a nivel global                                        |
+| `pages/_app.tsx`                     | `pages/`          | Custom App (envuelve todas las páginas, en el viejo router)      |
+| `pages/_document.tsx`                | `pages/`          | Custom Document (control sobre el HTML inicial, meta, lang, etc) |
+| `pages/_error.tsx`                   | `pages/`          | Custom error page (fallback para errores)                        |
+| `pages/404.tsx`                      | `pages/`          | Custom 404 page                                                  |
+| `pages/500.tsx`                      | `pages/`          | Custom 500 page                                                  |
+| `app/layout.tsx`                     | `app/`            | Layout raíz (en el app router)                                   |
+| `app/page.tsx`                       | `app/`            | Página raíz (home)                                               |
+| `app/error.tsx`                      | `app/`            | Error boundary a nivel de ruta                                   |
+| `app/not-found.tsx`                  | `app/`            | 404 personalizado para rutas no existentes                       |
+| `app/loading.tsx`                    | `app/`            | Loading fallback para rutas con `suspense`                       |
+| `app/template.tsx`                   | `app/`            | Plantilla (similar a layout, pero se recrea en cada navegación)  |
+| `.env.local`                         | raíz del proyecto | Variables de entorno                                             |
+| `.env.production`                    | raíz del proyecto | Variables de entorno para prod                                   |
+| `public/`                            | raíz del proyecto | Carpeta de assets públicos                                       |

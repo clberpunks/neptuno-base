@@ -11,7 +11,8 @@ import uuid
 
 app = FastAPI()
 
-origins = ["http://localhost:3000"]
+origins = ["http://localhost:3000","https://lh3.googleusercontent.com"]
+
 
 app.add_middleware(
     CORSMiddleware,

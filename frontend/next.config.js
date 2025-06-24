@@ -14,3 +14,16 @@ module.exports = {
   }
 };
 
+
+
+// configurar Next.js para hacer proxy a backend, para que la cookie se quede en el mismo dominio y puerto
+// module.exports = {
+//   async rewrites() {
+//     return [
+//       {
+//         source: '/api/:path*',
+//         destination: 'http://localhost:8000/:path*', // proxy a backend
+//       },
+//     ];
+//   },
+// };
