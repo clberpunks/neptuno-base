@@ -35,7 +35,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await apiFetch<{ token: string }>("http://localhost:8001/auth/login", {
+      await apiFetch<{ token: string }>("/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    window.location.href = "http://localhost:8001/auth/login";
+    window.location.href = "/auth/login";
   };
 
   return (

@@ -10,7 +10,7 @@ export default function TrackingCodePanel() {
   useEffect(() => {
     if (!loading && user) {
       // Cargar el JS generado dinámicamente desde el backend
-      fetch("http://localhost:8001/embed/snippet.js", {
+      fetch("/embed/snippet.js", {
         credentials: "include"
       })
         .then(res => res.text())
