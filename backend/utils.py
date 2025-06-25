@@ -25,16 +25,16 @@ def set_auth_cookies(response, user):
         "jwt_token",
         access_token,
         httponly=True,
-        samesite="lax",
-        secure=False,  # solo para dev
+        samesite="none",
+        secure=True,  # solo para dev
         max_age=60  # duración igual al token
     )
     response.set_cookie(
         "refresh_token",
         refresh_token,
         httponly=True,
-        samesite="lax",
-        secure=False,  # solo para dev
+        samesite="none",
+        secure=True,  # solo para dev
         max_age=60*60*24*7  # refresh válido 7 días
     )
 

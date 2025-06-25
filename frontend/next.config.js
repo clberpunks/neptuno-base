@@ -11,6 +11,10 @@ module.exports = {
       'ui-avatars.com',
       'www.gravatar.com'
     ]
+  },
+  serverOptions: {
+    host: '0.0.0.0',
+    port: 3000,
   }
 };
 

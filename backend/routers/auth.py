@@ -162,8 +162,8 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
     access_token, refresh_token = generate_tokens(new_user)
 
     response = JSONResponse(content={"message": "Registro y login exitosos"})
-    response.set_cookie("jwt_token", access_token, httponly=True, samesite="lax", secure=False)
-    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="lax", secure=False)
+    response.set_cookie("jwt_token", access_token, httponly=True, samesite="none", secure=True)
+    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="none", secure=True)
     return response
 
 

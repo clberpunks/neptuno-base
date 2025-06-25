@@ -1,25 +1,44 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "8282:8282"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.backend
+    container_name: backend
     ports:
       - "8001:8001"
-    volumes:
-      - ./backend:/app
     environment:
-      - PYTHONUNBUFFERED=1
+      - BACKEND_URL=http://localhost:8001  # Usar nombre de servicio
+    networks:
+      app_net:
+        ipv4_address: 172.80.0.200
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"  # Mapeo correcto: host:8282 → contenedor:3000
+    environment:
+      - NEXT_PUBLIC_API_URL=/api  # Ruta relativa
+      - HOST=0.0.0.0
+      - PORT=3000
+    depends_on:
+      - backend
+    networks:
+      app_net:
+        ipv4_address: 172.80.0.100
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.80.0.0/16
+
+
+
+
+
+
+

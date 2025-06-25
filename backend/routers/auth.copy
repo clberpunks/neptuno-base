@@ -90,7 +90,7 @@ async def callback(request: Request, db: Session = Depends(get_db)):
 
     # 4) Armar respuesta redirigiendo e insertando cookies
     response = RedirectResponse(url="http://localhost:3000/dashboard")
-    response.set_cookie("id_token", id_token, httponly=True, samesite="lax")
+    response.set_cookie("id_token", id_token, httponly=True, samesite="none")
     response.set_cookie("user_info",
                         json.dumps({
                             "id": user.id,
@@ -102,7 +102,7 @@ async def callback(request: Request, db: Session = Depends(get_db)):
                             "last_login": user.last_login.isoformat()
                         }),
                         httponly=True,
-                        samesite="lax")
+                        samesite="none")
     return response
 
 
@@ -165,7 +165,7 @@ def login_user(data: UserLogin,
         "role": user.role.value,
         "created_at": user.created_at.isoformat(),
         "last_login": user.last_login.isoformat()
-    }), httponly=True, samesite="lax")
+    }), httponly=True, samesite="none")
     return response
 
 
@@ -209,7 +209,7 @@ def register_user(data: UserRegister, db: Session = Depends(get_db)):
     #         "role": user.role.value,
     #         "created_at": user.created_at.isoformat(),
     #         "last_login": user.last_login.isoformat()
-    #     }), httponly=True, samesite="lax")
+    #     }), httponly=True, samesite="none")
     #     return response
 
 
