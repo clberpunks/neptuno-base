@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user) {
       const intervalId = setInterval(() => {
         refresh();
-      }, 60 * 1000);
+      }, 5 * 60 * 1000);
       return () => clearInterval(intervalId);
     }
   }, [user]);

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Detection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .test-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .human {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .bot {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Human Verification Test</h1>
+    <div class="content">
+        <p>Prueba de detección de bots con controles para falsos positivos</p>
+        
+        <div class="test-controls">
+            <h3>Controles de prueba:</h3>
+            <button onclick="runTest(false)">Ejecutar como HUMANO</button>
+            <button onclick="runTest(true)">Ejecutar como BOT</button>
+            <button onclick="forceWebDriver()">Forzar webdriver = true</button>
+            <button onclick="forceFastRAF()">Forzar RAF rápido</button>
+        </div>
+        
+        <div id="result">Esperando prueba...</div>
+    </div>
+
+    <script>
+    // Variables para manipular las pruebas
+    let fakeWebDriver = false;
+    let fakeFastRAF = false;
+    
+    function forceWebDriver() {
+        fakeWebDriver = !fakeWebDriver;
+        alert(`navigator.webdriver forzado a: ${fakeWebDriver}`);
+    }
+    
+    function forceFastRAF() {
+        fakeFastRAF = !fakeFastRAF;
+        alert(`RAF rápido forzado: ${fakeFastRAF}`);
+    }
+    
+    function isHuman(){
+        // 1) webdriver check (modificado para pruebas)
+        if (fakeWebDriver || navigator.webdriver) {
+            return Promise.resolve({human: false, fp: null});
+        }
+        
+        // 2) timing test (modificado para pruebas)
+        var t0 = performance.now();
+        var ok = true;
+        
+        if (!fakeFastRAF) {
+            requestAnimationFrame(function(){
+                var dt = performance.now() - t0;
+                if (dt < 2) ok = false;
+            });
+        } else {
+            // Simulamos un RAF muy rápido como tendrían los bots
+            var dt = performance.now() - t0;
+            if (dt < 2) ok = false;
+        }
+        
+        // 3) passive fingerprint
+        var fp = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width+'x'+screen.height,
+            Intl.DateTimeFormat().resolvedOptions().timeZone
+        ].join('|');
+        
+        return new Promise(res => setTimeout(() => res({human: ok, fp: fp}), 5));
+    }
+
+    function runTest(forceBot) {
+        const resultDiv = document.getElementById('result');
+        resultDiv.textContent = "Ejecutando prueba...";
+        resultDiv.className = '';
+        
+        if (forceBot) {
+            fakeWebDriver = true;
+            fakeFastRAF = true;
+        } else {
+            fakeWebDriver = false;
+            fakeFastRAF = false;
+        }
+        
+        isHuman().then(function(result){
+            if (result.human) {
+                resultDiv.textContent = "Resultado: HUMANO detectado";
+                resultDiv.className = 'human';
+                console.log("Huella digital:", result.fp);
+            } else {
+                resultDiv.textContent = "Resultado: BOT detectado";
+                resultDiv.className = 'bot';
+                
+                if (result.fp) {
+                    console.log("Huella digital del bot detectado:", result.fp);
+                    // Simulamos el envío de la huella al servidor
+                    var img = new Image();
+                    img.src = "/detect/117753426081227092986.png?fp="+encodeURIComponent(result.fp);
+                    img.style.display = "none";
+                    document.body.appendChild(img);
+                }
+            }
+        });
+    }
+    
+    // Ejecutar prueba inicial
+    runTest(false);
+    </script>
+    
+    <noscript>
+        <a href="/detect/117753426081227092986.png?noscript=1" style="display:none">.</a>
+    </noscript>
+</body>
+</html>

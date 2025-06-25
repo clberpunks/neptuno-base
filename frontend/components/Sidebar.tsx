@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '../hooks/useAuth';
 
 interface Props {
-  onSelect: (section: 'summary' | 'profile' | 'logins') => void;
+  onSelect: (section: 'summary' | 'profile' | 'logins' | 'radar' | 'firewall') => void;
   currentSection: string;
 }
 
@@ -78,6 +78,30 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           </svg>
           {t('access')}
         </button>
+
+         <button 
+          onClick={() => onSelect('radar')} 
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive('radar')}`}
+          aria-current={currentSection === 'radar' ? 'page' : undefined}
+        >
+          <svg className="w-5 h-5 mr-3" /* ícono de radar */ fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0"/>
+          </svg>
+          {t('radar')}
+        </button>
+
+        <button 
+          onClick={() => onSelect('firewall')} 
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive('firewall')}`}
+          aria-current={currentSection === 'firewall' ? 'page' : undefined}
+        >
+          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" />
+          </svg>
+          {t('firewall')}
+        </button>
+
+
       </nav>
       <div className="p-4 border-t border-gray-200 mt-auto">
         <Link href="/auth/logout" legacyBehavior>

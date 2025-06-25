@@ -1,15 +1,37 @@
 # /backend/models.py
-from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey
-from sqlalchemy.orm import relationship
-from datetime import datetime
-import enum
-from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime, Integer, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
+import enum
 import uuid
 
+class FirewallRule(Base):
+    __tablename__ = "firewall_rules"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id = Column(String, index=True)
+    llm_name = Column(String)
+    pattern = Column(String)
+    policy = Column(String)  # "allow" | "block" | "restricted" | "redirect"
+    limit = Column(Integer, nullable=True)
+    redirect_url = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
+class AccessLog(Base):
+    __tablename__ = "access_log"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    tenant_id = Column(String, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    ip_address = Column(String)
+    user_agent = Column(String)
+    fingerprint = Column(String)
+    path = Column(String)
+    outcome = Column(String)   # "allow" | "block" | "limit" | "redirect"
+    rule = Column(String)
+    redirect_url = Column(String, nullable=True)
+
+    
+    
 class UserRole(str, enum.Enum):
     admin = "admin"
     user = "user"

@@ -8,6 +8,12 @@ import { useAuth } from "../hooks/useAuth";
 import { withAuth } from "../utils/withAuth";
 import Image from "next/image";
 import { useFetchHistory } from "../hooks/userFetchHistory";
+import RiskPanel from "../components/RiskPanel";
+import FirewallManager from '../components/FirewallManager'
+import Firewall from "../components/Firewall";
+import Radar from "../components/Radar";
+import TrackingCodePanel from "../components/TrackingCode";
+
 
 interface LoginEntry {
   timestamp: string;
@@ -18,7 +24,7 @@ interface LoginEntry {
 function Dashboard() {
   const { user } = useAuth();
   const { t } = useTranslation("common");
-  const [section, setSection] = useState<"summary" | "profile" | "logins">(
+  const [section, setSection] = useState<"summary" | "profile" | "logins" | "radar" | "firewall">(
     "summary"
   );
   const { history: accessHistory, error: accessHistoryError } = useFetchHistory(
@@ -38,12 +44,16 @@ function Dashboard() {
     });
   };
 
+
+
   const renderSection = () => {
     if (!user) return null;
     switch (section) {
       case "summary":
         return (
           <div className="space-y-8">
+            <RiskPanel />
+            <TrackingCodePanel />
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex flex-col md:flex-row items-center">
                 <Image
@@ -161,6 +171,13 @@ function Dashboard() {
             )}
           </div>
         );
+      
+      case "radar":
+        return <Radar />;
+      case "firewall":
+        /* return <Firewall />; */
+        return <FirewallManager />
+
       default:
         return null;
     }
@@ -176,12 +193,18 @@ function Dashboard() {
               {section === "summary" ? t("dashboard") : t(section)}
             </h1>
             <p className="text-gray-600">
-              {section === "summary"
-                ? t("dashboard_welcome")
-                : section === "profile"
-                ? t("manage_profile")
-                : t("view_access_history")}
+              {(() => {
+                switch (section) {
+                  case "summary": return t("dashboard_welcome");
+                  case "profile": return t("manage_profile");
+                  case "logins": return t("view_access_history");
+                  case "radar": return "Monitorea toda la actividad IA detectada en tu web.";
+                  case "firewall": return "Gestiona las reglas de acceso para bots, IA y LLMs.";
+                  default: return "";
+                }
+              })()}
             </p>
+
           </div>
           {renderSection()}
         </div>

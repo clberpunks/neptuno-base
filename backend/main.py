@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, user, admin
+from routers import auth, user, admin, embed, detect, logs, firewall
 from db import engine, Base, SessionLocal
 from models.models import User, UserRole
 from utils import hash_password
@@ -25,6 +25,14 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(admin.router)
+
+app.include_router(embed.router)
+app.include_router(detect.router)
+
+app.include_router(logs.router)
+
+app.include_router(firewall.router)
+
 
 @app.on_event("startup")
 def startup_event():
