@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8282:8282"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
