@@ -22,7 +22,7 @@ module.exports = {
 //     return [
 //       {
 //         source: '/api/:path*',
-//         destination: 'http://localhost:8000/:path*', // proxy a backend
+//         destination: 'http://localhost:8001/:path*', // proxy a backend
 //       },
 //     ];
 //   },

@@ -14,10 +14,10 @@ EMBED_TEMPLATE = (
     "return new Promise(r=>setTimeout(()=>r(o),5))}"
     "h().then(e=>{if(!e){var f=[navigator.userAgent,navigator.language,"
     "screen.width+'x'+screen.height,Intl.DateTimeFormat().resolvedOptions().timeZone]"
-    ".join('|'),i=new Image;i.src='http://localhost:8000/detect/{t}.png?fp='+encodeURIComponent(f)"
+    ".join('|'),i=new Image;i.src='http://localhost:8001/detect/{t}.png?fp='+encodeURIComponent(f)"
     "+'&src='+encodeURIComponent(location.href);"
     "i.style.display='none';document.body.appendChild(i)}})})();"
-    "<noscript><img src='http://localhost:8000/detect/{t}.png?noscript=1' style='display:none'/></noscript>"
+    "<noscript><img src='http://localhost:8001/detect/{t}.png?noscript=1' style='display:none'/></noscript>"
 )
 
 @router.get("/embed/snippet.js", response_class=PlainTextResponse)

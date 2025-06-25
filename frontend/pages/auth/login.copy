@@ -32,7 +32,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://localhost:8001/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    fetch("http://localhost:8000/auth/user", {
+    fetch("http://localhost:8001/auth/user", {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -65,7 +65,7 @@ export default function LoginPage() {
         if (data) {
           router.replace("/dashboard");
         } else {
-          window.location.href = "http://localhost:8000/auth/login";
+          window.location.href = "http://localhost:8001/auth/login";
         }
       })
       .catch((err) => {

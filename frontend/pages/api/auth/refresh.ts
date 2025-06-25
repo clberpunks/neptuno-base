@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Llamada al backend FastAPI
-  const backendRes = await fetch("http://localhost:8000/auth/refresh", {
+  const backendRes = await fetch("http://localhost:8001/auth/refresh", {
     method: "POST",
     credentials: "include",
     // reenvía la cookie que trae el cliente

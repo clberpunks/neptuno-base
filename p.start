@@ -329,7 +329,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Ciberpunk"
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/auth/callback"
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8001/auth/callback"
     DATABASE_URL: str = "sqlite:///./app.db"
     CLIENT_SECRET: str = "your_client_secret_here"  
     
@@ -615,7 +615,7 @@ export default function AccessHistory() {
 
   useEffect(() => {
     if (!user) return;
-    fetch("http://localhost:8000/user/access-history", {
+    fetch("http://localhost:8001/user/access-history", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -701,7 +701,7 @@ const Navbar = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch('http://localhost:8000/auth/user', {
+    fetch('http://localhost:8001/auth/user', {
       credentials: 'include'
     })
       .then(res => res.ok ? res.json() : null)
@@ -891,7 +891,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUser = () => {
     setLoading(true);
-    fetch("http://localhost:8000/auth/user", { credentials: "include" })
+    fetch("http://localhost:8001/auth/user", { credentials: "include" })
       .then(res => (res.ok ? res.json() : null))
       .then(data => setUser(data ?? null)) //.then(data => setUser(data ? JSON.parse(data) : null))
       .catch(() => setUser(null))
@@ -962,7 +962,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://localhost:8001/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -987,7 +987,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    fetch("http://localhost:8000/auth/user", {
+    fetch("http://localhost:8001/auth/user", {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -995,7 +995,7 @@ export default function LoginPage() {
         if (data) {
           router.replace("/dashboard");
         } else {
-          window.location.href = "http://localhost:8000/auth/login";
+          window.location.href = "http://localhost:8001/auth/login";
         }
       })
       .catch((err) => {
@@ -1284,7 +1284,7 @@ export default function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:8000/auth/register", {
+      const response = await fetch("http://localhost:8001/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -1972,7 +1972,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('http://localhost:8000/auth/user', {
+    fetch('http://localhost:8001/auth/user', {
       credentials: 'include'
     })
       .then(res => res.ok ? res.json() : null)
