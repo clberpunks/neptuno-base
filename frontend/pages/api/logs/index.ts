@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await fetch('/logs', {
+    const response = await fetch('http://localhost:8001/logs', {
       headers: {
         'Content-Type': 'application/json',
         cookie: req.headers.cookie || '', // pasar cookies si hay sesión

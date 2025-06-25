@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      await apiFetch<{ token: string }>("/auth/register", {
+      await apiFetch<{ token: string }>("http://localhost:8001/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
