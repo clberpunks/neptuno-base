@@ -64,7 +64,7 @@ async def callback(request: Request, db: Session = Depends(get_db)):
 
     access_token, refresh_token = generate_tokens(user)
 
-    response = RedirectResponse(url="/dashboard")
+    response = RedirectResponse(url="http://localhost:3000/dashboard")
     set_auth_cookies(response, user)
     return response
 
