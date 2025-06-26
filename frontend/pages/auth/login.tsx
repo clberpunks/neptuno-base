@@ -52,11 +52,31 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    setIsRedirecting(true);
-    window.location.href = "/api/auth/login";
-  };
+  //const handleGoogleLogin = () => {
+  //  setIsRedirecting(true);
+  //  window.location.href = "/api/auth/login";
+  //};
 
+    const handleGoogleLogin = () => {
+    setIsRedirecting(true);
+    fetch("http://localhost:8001/auth/user", {
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          router.replace("/dashboard");
+        } else {
+          window.location.href = "http://localhost:8001/auth/login";
+        }
+      })
+      .catch((err) => {
+        setIsRedirecting(false);
+        setError("Error al iniciar sesión. Inténtalo de nuevo.");
+        console.error("Login error:", err);
+      });
+  };
+  
   return (
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Contenido */}
