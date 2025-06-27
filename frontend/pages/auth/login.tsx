@@ -44,7 +44,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
-      router.push("/dashboard");
+      router.push("/dashboard"); // ialert
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {
@@ -65,7 +65,7 @@ export default function LoginPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          router.replace("/dashboard");
+          router.replace("/dashboard"); // ialert
         } else {
           window.location.href = "http://localhost:8001/auth/login";
         }
@@ -76,7 +76,7 @@ export default function LoginPage() {
         console.error("Login error:", err);
       });
   };
-  
+
   return (
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Contenido */}
