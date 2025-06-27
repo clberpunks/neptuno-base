@@ -4,7 +4,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Llamada al backend FastAPI
-  const backendRes = await fetch("http://localhost:8001/auth/refresh", {
+  const backendUrl = process.env.BACKEND_URL;
+  if (!backendUrl) {
+    res.status(500).json({ error: "BACKEND_URL not configured" });
+    return;
+  }
+
+  const backendRes = await fetch(`${backendUrl}/auth/refresh`, {
     method: "POST",
     credentials: "include",
     // reenvía la cookie que trae el cliente

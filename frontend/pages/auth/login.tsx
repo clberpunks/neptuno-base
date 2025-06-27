@@ -59,7 +59,7 @@ export default function LoginPage() {
 
     const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    fetch("http://localhost:8001/auth/user", {
+    fetch("/_backend/auth/user", {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -67,7 +67,7 @@ export default function LoginPage() {
         if (data) {
           router.replace("/dashboard"); // ialert
         } else {
-          window.location.href = "http://localhost:8001/auth/login";
+          window.location.href = `/_backend/auth/login`;
         }
       })
       .catch((err) => {

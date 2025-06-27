@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require('./next-i18next.config');
 
+const backendUrl = process.env.BACKEND_URL;
+
 module.exports = {
   reactStrictMode: true,
   i18n,
@@ -20,7 +22,7 @@ module.exports = {
      return [
        {
          source: '/_backend/:path*',
-         destination: 'http://localhost:8001/:path*', // proxy a backend
+         destination: `${backendUrl}/:path*`, // proxy a backend
        },
     ];
    },

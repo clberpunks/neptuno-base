@@ -3,7 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const r = await fetch('http://localhost:8001/logs/stats', {
+    const backendUrl = process.env.BACKEND_URL;
+    const r = await fetch(`${backendUrl}/logs/stats`, {
       credentials: 'include',
       headers: { cookie: req.headers.cookie || '' }
     });

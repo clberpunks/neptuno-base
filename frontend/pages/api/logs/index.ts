@@ -1,9 +1,10 @@
 // pages/api/logs/index.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
+const BACKEND_URL = process.env.BACKEND_URL;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await fetch('http://localhost:8001/logs', {
+    const response = await fetch(`${BACKEND_URL}/logs`, {
       headers: {
         'Content-Type': 'application/json',
         cookie: req.headers.cookie || '', // pasar cookies si hay sesión
