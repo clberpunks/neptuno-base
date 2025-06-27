@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadUser = async () => {
     setLoading(true);
     try {
-      const u = await apiFetch<User>("http://localhost:8001/auth/user");
+      const u = await apiFetch<User>("/_backend/auth/user");
       setUser(u);
     } catch (err: any) {
       if (err.status === 401) {

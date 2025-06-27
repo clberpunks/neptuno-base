@@ -6,7 +6,7 @@ export default function RiskPanel() {
   const [spikeAlert, setSpikeAlert] = useState(false);
 
   useEffect(() => {
-    apiFetch("/api/logs/stats").then((data: { allow: number; block: number; limit: number }) => {
+    apiFetch("/_backend/logs/stats").then((data: { allow: number; block: number; limit: number }) => {
       const total = data.allow + data.block + data.limit;
       const rate = total > 0 ? (data.block / total) * 100 : 0;
       setBlockRate(rate);

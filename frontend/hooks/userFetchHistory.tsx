@@ -24,7 +24,7 @@ export function useFetchHistory(user: any) {
     }
 
     setLoading(true);
-    apiFetch<HistoryEntry[]>("http://localhost:8001/user/access-history")
+    apiFetch<HistoryEntry[]>("/_backend/user/access-history")
       .then((data) => {
         setHistory(data);
         setError(null);
