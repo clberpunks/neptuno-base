@@ -15,7 +15,7 @@ export default function TrackingCodePanel() {
       })
         .then(res => res.text())
         .then(code => {
-          const fullScript = `<script>\n${code.trim()}\n</script>`;
+          const fullScript = `\n${code.trim()}\n`;
           setSnippet(fullScript);
         });
     }

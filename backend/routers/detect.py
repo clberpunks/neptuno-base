@@ -1,27 +1,35 @@
-# backend/routers/detect.py
+# File: backend/routers/detect.py
 from datetime import datetime, timezone
 import re, time, io
+from collections import defaultdict, deque
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import RedirectResponse, StreamingResponse
 from db import SessionLocal
 from models.models import AccessLog, FirewallRule
-from collections import defaultdict
 
 router = APIRouter()
 
+# 1x1 transparent PNG
 EMPTY_PNG = (
     b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01'
     b'\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4'
     b'\x89\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00'
-    b'\x01\xe2!\xbc\x33\x00\x00\x00\x00IEND\xaeB`\x82'
+    b'\x01\xe2!\xbc#\x00\x00\x00\x00IEND\xaeB`\x82'
 )
 
+# Rate limit settings (per minute)
+IP_RATE_LIMIT = 60        # max requests per IP per minute
+TENANT_RATE_LIMIT = 100000  # max requests per tenant per minute
+WINDOW_SIZE = 60          # seconds
 
+# In-memory stores for rate limiting
+ip_counters = defaultdict(lambda: deque())
+tenant_counters = defaultdict(lambda: deque())
 
-# Caché de reglas en memoria
+# Caching firewall rules
 tenant_rules_cache = {}
 tenant_rules_last = defaultdict(lambda: 0)
-TTL = 60
+TTL = 60  # seconds
 
 def load_rules_from_db(tenant_id: str):
     db = SessionLocal()
@@ -41,58 +49,103 @@ def get_rules(tenant_id: str):
     now = time.time()
     if now - tenant_rules_last[tenant_id] > TTL:
         fetched = load_rules_from_db(tenant_id)
-        if not fetched["blockedAgents"] and not fetched["limitedAgents"] and not fetched["redirectAgents"]:
-            fetched = tenant_rules_cache.get("default")
+        if not any(fetched.values()):
+            fetched = tenant_rules_cache.get("default", fetched)
         tenant_rules_cache[tenant_id] = fetched
         tenant_rules_last[tenant_id] = now
     return tenant_rules_cache[tenant_id]
 
-
-# Always keep a default entry to avoid KeyError
+# Default rules
 tenant_rules_cache["default"] = {
-  "blockedAgents": [r"GPTBot", r"Perplexity"],
-  "limitedAgents": {
-    r"ClaudeAI": {"maxPerHour": 5}
-  },
-  "redirectAgents": [
-    {"pattern": r"PaywallLLM", "url": "https://example.com/paywall"}
-  ]
+    "blockedAgents": [r"GPTBot", r"Perplexity"],
+    "limitedAgents": {r"ClaudeAI": {"maxPerHour": 5}},
+    "redirectAgents": [{"pattern": r"PaywallLLM", "url": "https://example.com/paywall"}]
 }
 
-
 @router.get("/detect/{tenant}.png")
-def detect_png(tenant: str, request: Request, noscript: str = None, fp: str = None):
-    ua = request.query_params.get("ua") or request.headers.get("user-agent","")
-    ip = request.client.host
-    # path = request.url.path + ("?"+request.url.query if request.url.query else "")
+def detect_png(tenant: str,
+               request: Request,
+               noscript: str = None,
+               fp: str = None,
+               js: str = None):
+    # Real IP detection behind proxy
+    xff = request.headers.get("x-forwarded-for")
+    ip = xff.split(",")[0].strip() if xff else request.client.host
+    ua = request.query_params.get("ua") or request.headers.get("user-agent", "")
+    
+    referer = request.headers.get("referer", "")
+    utm_source = (
+        request.query_params.get("utm")
+        or request.query_params.get("utm_source")
+        or ""
+    )
+
+    # Intenta extraer utm_source del Referer si no vino directamente
+    if not utm_source and "utm_source=" in referer:
+        import urllib.parse as urlparse
+        parsed = urlparse.urlparse(referer)
+        qs = urlparse.parse_qs(parsed.query)
+        utm_source = qs.get("utm_source", [""])[0]
+
+    # Detección simple de IA en utm
+    suspicious_keywords = ["gpt", "openai", "claude", "perplexity", "ai", "llm", "copilot"]
+    if any(bot in utm_source.lower() for bot in suspicious_keywords):
+        outcome = "flagged"
+        rule_applied = f"suspicious_utm:{utm_source}"
+
+
     path = request.query_params.get("src") or request.url.path
+
+    # Rate limiting
+    now = time.time()
+    # IP
+    ip_deque = ip_counters[ip]
+    while ip_deque and now - ip_deque[0] > WINDOW_SIZE:
+        ip_deque.popleft()
+    ip_deque.append(now)
+    if len(ip_deque) > IP_RATE_LIMIT:
+        outcome, rule_applied = "ratelimit", f"ip_rate_limit ({len(ip_deque)}/{IP_RATE_LIMIT})"
+    else:
+        # Tenant
+        t_deque = tenant_counters[tenant]
+        while t_deque and now - t_deque[0] > WINDOW_SIZE:
+            t_deque.popleft()
+        t_deque.append(now)
+        if len(t_deque) > TENANT_RATE_LIMIT:
+            outcome, rule_applied = "ratelimit", f"tenant_rate_limit ({len(t_deque)}/{TENANT_RATE_LIMIT})"
+        else:
+            outcome, rule_applied = "allow", None
+
+    # Load firewall rules
     rules = get_rules(tenant)
 
-    outcome, rule_applied, redirect_url = "allow", None, None
+    # Check block
+    if outcome == "allow":
+        for pat in rules["blockedAgents"]:
+            if re.search(pat, ua):
+                outcome, rule_applied = "block", f"blocked:{pat}"
+                break
 
-    # BLOCK
-    for pat in rules["blockedAgents"]:
-        if re.search(pat, ua):
-            outcome, rule_applied = "block", f"blocked:{pat}"
-            break
-
-    # REDIRECT
+    # Check redirect
     if outcome == "allow":
         for r in rules["redirectAgents"]:
             if re.search(r["pattern"], ua):
-                outcome, rule_applied, redirect_url = "redirect", f"redirect:{r['pattern']}", r["url"]
+                outcome, rule_applied = "redirect", f"redirect:{r['pattern']}"
+                redirect_url = r["url"]
                 break
+    else:
+        redirect_url = None
 
-    # LIMIT
-    if outcome == "allow":
+    # Check limited per hour
+    if outcome == "allow" and rules["limitedAgents"]:
         for pat, cfg in rules["limitedAgents"].items():
             if re.search(pat, ua):
                 db = SessionLocal()
-                today = datetime.now(timezone.utc).replace(hour=0,minute=0,second=0,microsecond=0)
+                today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
                 used = db.query(AccessLog).filter(
-                    AccessLog.tenant_id==tenant,
+                    AccessLog.tenant_id == tenant,
                     AccessLog.rule.like(f"limit:{pat}%"),
-                    AccessLog.timestamp>=today
+                    AccessLog.timestamp >= today
                 ).count()
                 db.close()
                 if used >= cfg["maxPerHour"]:
@@ -101,7 +154,10 @@ def detect_png(tenant: str, request: Request, noscript: str = None, fp: str = No
                     outcome, rule_applied = "limit", f"limit:{pat} ({used+1}/{cfg['maxPerHour']})"
                 break
 
-    # SAVE LOG
+    # Detect JS execution
+    js_executed = js == "1"
+
+    # Save log
     db = SessionLocal()
     db.add(AccessLog(
         tenant_id=tenant,
@@ -111,12 +167,13 @@ def detect_png(tenant: str, request: Request, noscript: str = None, fp: str = No
         path=path,
         outcome=outcome,
         rule=rule_applied or "none",
-        redirect_url=redirect_url
+        redirect_url=locals().get('redirect_url'),
+        js_executed=js_executed
     ))
     db.commit()
     db.close()
 
-    # RESPONSES
+    # Responses
     if outcome == "block":
         return Response(status_code=401)
     if outcome == "redirect":

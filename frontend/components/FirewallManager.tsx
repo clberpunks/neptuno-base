@@ -19,7 +19,8 @@ export default function FirewallManager() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (!loading && user) {
+    // Evita recargar si ya hay reglas cargadas
+    if (!loading && user && rules.length === 0) {
       apiFetch<Rule[]>('/api/firewall')
         .then(setRules)
         .catch(console.error)
@@ -55,11 +56,37 @@ export default function FirewallManager() {
     }
   }
 
+  const handleDelete = async (idx: number) => {
+    const newRules = rules.filter((_, i) => i !== idx);
+    setRules(newRules);
+    setSaving(true);
+    try {
+      // Limpiar reglas para enviar solo los campos esperados por el backend
+      const cleanRules = newRules.map(({ llm_name, pattern, policy, limit, redirect_url }) => ({
+        llm_name,
+        pattern,
+        policy,
+        limit: limit === undefined ? null : limit,
+        redirect_url: redirect_url || null
+      }));
+      await apiFetch('/api/firewall', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cleanRules)
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Error eliminando regla');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-md space-y-4">
       <h2 className="text-2xl font-semibold mb-4">Firewall LLM – Administración</h2>
       {rules.map((r, idx) => (
-        <div key={r.id} className="flex items-center space-x-4 border-b py-2">
+        <div key={r.id ?? r.llm_name+"-"+idx} className="flex items-center space-x-4 border-b py-2">
           <div className="w-48 font-medium">{r.llm_name}</div>
           <select
             className="border rounded px-2 py-1"
@@ -97,6 +124,14 @@ export default function FirewallManager() {
             onClick={() => updateRule(idx, { policy: r.policy })}
           >
             Edit
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2"
+            onClick={() => handleDelete(idx)}
+            disabled={saving}
+            aria-label="Eliminar regla"
+          >
+            Eliminar
           </button>
         </div>
       ))}

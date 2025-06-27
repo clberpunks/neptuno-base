@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
     
+    NODE_ENV: str = "development"
+    
     BACKEND_URL: str ="http://localhost:8001"
     FRONTEND_URL: str ="https://ialert.ciberpunk.es"
     

@@ -57,10 +57,10 @@ function Dashboard() {
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex flex-col md:flex-row items-center">
                 <Image
-                  src={
-                    user.picture ||
-                    `https://ui-avatars.com/api/?name=${user.name}`
-                  }
+                  //src={
+                  //  user.picture ||
+                  //  `https://ui-avatars.com/api/?name=${user.name}`}
+                  src={`https://ui-avatars.com/api/?name=${user.name}`}
                   alt={`${user.name} avatar`}
                   width={96}
                   height={96}

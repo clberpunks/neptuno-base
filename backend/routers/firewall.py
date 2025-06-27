@@ -28,24 +28,29 @@ DEFAULT_RULES = [
 
 @router.get("/")
 def list_rules(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    # Evita duplicados: si ya existen reglas, devuélvelas
     rows = db.query(FirewallRule).filter(FirewallRule.tenant_id == current_user.id).all()
-
     if not rows:
         now = datetime.utcnow()
+        # Comprobación extra: revisa si otro proceso ya las creó tras el primer select
         for rule in DEFAULT_RULES:
-            db.add(FirewallRule(
-                id=str(uuid.uuid4()),
-                tenant_id=current_user.id,
-                llm_name=rule["llm_name"],
-                pattern=rule["pattern"],
-                policy=rule["policy"],
-                limit=rule.get("limit"),
-                redirect_url=None,
-                created_at=now
-            ))
+            exists = db.query(FirewallRule).filter(
+                FirewallRule.tenant_id == current_user.id,
+                FirewallRule.llm_name == rule["llm_name"]
+            ).first()
+            if not exists:
+                db.add(FirewallRule(
+                    id=str(uuid.uuid4()),
+                    tenant_id=current_user.id,
+                    llm_name=rule["llm_name"],
+                    pattern=rule["pattern"],
+                    policy=rule["policy"],
+                    limit=rule.get("limit"),
+                    redirect_url=None,
+                    created_at=now
+                ))
         db.commit()
         rows = db.query(FirewallRule).filter(FirewallRule.tenant_id == current_user.id).all()
-
     return rows
 
 @router.put("/")

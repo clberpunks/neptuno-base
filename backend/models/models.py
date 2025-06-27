@@ -1,10 +1,9 @@
-# /backend/models.py
-from sqlalchemy import Column, String, DateTime, Integer, Enum, ForeignKey
+# File: backend/models.py
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
-import enum
-import uuid
+import enum, uuid
 
 class FirewallRule(Base):
     __tablename__ = "firewall_rules"
@@ -24,14 +23,19 @@ class AccessLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     ip_address = Column(String)
     user_agent = Column(String)
+    referrer = Column(String, nullable=True)
+    accept_language = Column(String, nullable=True)
+    sec_ch_ua = Column(String, nullable=True)
+    sec_ch_ua_mobile = Column(String, nullable=True)
+    sec_ch_ua_platform = Column(String, nullable=True)
+    utm_source = Column(String, nullable=True)
     fingerprint = Column(String)
     path = Column(String)
-    outcome = Column(String)   # "allow" | "block" | "limit" | "redirect"
+    outcome = Column(String, index=True)   # "allow" | "block" | "limit" | "redirect" | "ratelimit" | "flagged"
     rule = Column(String)
     redirect_url = Column(String, nullable=True)
+    js_executed = Column(Boolean, default=False)
 
-    
-    
 class UserRole(str, enum.Enum):
     admin = "admin"
     user = "user"

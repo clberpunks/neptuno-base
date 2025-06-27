@@ -31,14 +31,17 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       <div className="p-6 border-b border-gray-200 flex items-center">
         {user?.picture || user?.email ? (
           <Image 
-            src={user?.picture || `https://www.gravatar.com/avatar/${Buffer.from(user?.email || '').toString('base64')}?d=mp&s=40`}
+            // src={user?.picture || `https://www.gravatar.com/avatar/${Buffer.from(user?.email || '').toString('base64')}?d=mp&s=40`}
+            src={
+              `https://www.gravatar.com/avatar/${user?.email ? require('crypto').createHash('md5').update(user.email.trim().toLowerCase()).digest('hex') : ''}?d=mp&s=40`
+            }
             alt="User Avatar" 
             width={40}
             height={40}
             className="rounded-full w-10 h-10 mr-3"
             unoptimized={process.env.NODE_ENV === "development"}
-          />
-        ) : (
+            />
+          ) : (
           <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center"></div>
         )}
         <div>
