@@ -9,3 +9,5 @@ __pycache__
 __init__
 #alembic
 #alembic.ini
+.env.local
+.env
