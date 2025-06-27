@@ -35,7 +35,11 @@ export function useLogin() {
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
+<<<<<<< HEAD
       router.push("/dashboard"); //ialert
+=======
+      router.push("http://localhost:3000/dashboard");
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {

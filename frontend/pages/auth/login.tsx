@@ -35,7 +35,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+<<<<<<< HEAD
       await apiFetch<{ token: string }>("/_backend/auth/login", {
+=======
+      await apiFetch<{ token: string }>("/api/auth/login", {
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
         method: "POST",
         credentials: "include",
         headers: {
@@ -59,7 +63,11 @@ export default function LoginPage() {
 
     const handleGoogleLogin = () => {
     setIsRedirecting(true);
+<<<<<<< HEAD
     fetch("/_backend/auth/user", {
+=======
+    fetch("http://localhost:8001/auth/user", {
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -67,7 +75,11 @@ export default function LoginPage() {
         if (data) {
           router.replace("/dashboard"); // ialert
         } else {
+<<<<<<< HEAD
           window.location.href = "/_backend/auth/login";
+=======
+          window.location.href = "http://localhost:8001/auth/login";
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
         }
       })
       .catch((err) => {
