@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     CLIENT_SECRET: str = "your_client_secret_here"
     
     BACKEND_URL: str ="http://localhost:8001"
-    FRONTEND_URL: str ="http://localhost:3000"
+    FRONTEND_URL: str ="https://ialert.ciberpunk.es"
     
     # Nuevas variables para Refresh Token
     REFRESH_SECRET: str = "super_refresh_secret"

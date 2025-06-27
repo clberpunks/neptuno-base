@@ -2,7 +2,7 @@
 const { i18n } = require('./next-i18next.config');
 
 module.exports = {
-  reactStrictMode: false, // true,
+  reactStrictMode: true,
   i18n,
   images: {
     domains: [
@@ -15,19 +15,17 @@ module.exports = {
   serverOptions: {
     host: '0.0.0.0',
     port: 3000,
-  }
+  },
+  async rewrites() {
+     return [
+       {
+<<<<<<< HEAD
+         source: '/_backend/:path*',
+=======
+         source: '/api/:path*',
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
+         destination: 'http://localhost:8001/:path*', // proxy a backend
+       },
+    ];
+   },
 };
-
-
-
-// configurar Next.js para hacer proxy a backend, para que la cookie se quede en el mismo dominio y puerto
-// module.exports = {
-//   async rewrites() {
-//     return [
-//       {
-//         source: '/api/:path*',
-//         destination: 'http://localhost:8001/:path*', // proxy a backend
-//       },
-//     ];
-//   },
-// };

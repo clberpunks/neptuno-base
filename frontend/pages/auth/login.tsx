@@ -35,7 +35,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await apiFetch<{ token: string }>("http://localhost:8001/auth/login", {
+<<<<<<< HEAD
+      await apiFetch<{ token: string }>("/_backend/auth/login", {
+=======
+      await apiFetch<{ token: string }>("/api/auth/login", {
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
         method: "POST",
         credentials: "include",
         headers: {
@@ -44,7 +48,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
-      router.push("/dashboard");
+      router.push("/dashboard"); // ialert
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {
@@ -52,9 +56,37 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
+  //const handleGoogleLogin = () => {
+  //  setIsRedirecting(true);
+  //  window.location.href = "/api/auth/login";
+  //};
+
+    const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    window.location.href = "http://localhost:8001/auth/login";
+<<<<<<< HEAD
+    fetch("/_backend/auth/user", {
+=======
+    fetch("http://localhost:8001/auth/user", {
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          router.replace("/dashboard"); // ialert
+        } else {
+<<<<<<< HEAD
+          window.location.href = "/_backend/auth/login";
+=======
+          window.location.href = "http://localhost:8001/auth/login";
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
+        }
+      })
+      .catch((err) => {
+        setIsRedirecting(false);
+        setError("Error al iniciar sesión. Inténtalo de nuevo.");
+        console.error("Login error:", err);
+      });
   };
 
   return (

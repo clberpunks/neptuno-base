@@ -28,14 +28,18 @@ export function useLogin() {
     }
     setLoading(true);
     try {
-      await apiFetch<{ token: string }>("http://localhost:8001/auth/login", {
+      await apiFetch<{ token: string }>("/_backend/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
-      router.push("/dashboard");
+<<<<<<< HEAD
+      router.push("/dashboard"); //ialert
+=======
+      router.push("http://localhost:3000/dashboard");
+>>>>>>> b0f8d237981ee306cfe22d785894aaa0b277b5e3
     } catch (err: any) {
       setError(err.message || "Error desconocido");
     } finally {

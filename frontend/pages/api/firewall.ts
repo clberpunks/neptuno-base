@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const cookie = req.headers.cookie || '';
-  const backend = 'http://localhost:8001/firewall/';
+  const backend = '/_backend/firewall/';
 
   if (req.method === 'GET') {
     const r = await fetch(backend, { headers: { cookie }, credentials:'include' });
