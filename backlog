@@ -163,3 +163,14 @@ Root@webpack-internal:///./node_modules/next/dist/client/index.js:421:35
 
 
 The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
+
+
+ ✓ Ready in 873ms
+(node:23229) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
+The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
+The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
+Warning: For production Image Optimization with Next.js, the optional 'sharp' package is strongly recommended. Run 'npm i sharp', and Next.js will use it automatically for Image Optimization.
+Read more: https://nextjs.org/docs/messages/sharp-missing-in-production
+The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
