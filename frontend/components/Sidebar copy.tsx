@@ -4,10 +4,9 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../hooks/useAuth';
-import { useEffect, useState } from 'react';
 
 interface Props {
-  onSelect: (section: 'summary' | 'profile' | 'logins' | 'radar' | 'firewall' | 'help') => void;
+  onSelect: (section: 'summary' | 'profile' | 'logins' | 'radar' | 'firewall') => void;
   currentSection: string;
 }
 
@@ -15,74 +14,9 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Tailwind's md breakpoint
-    };
-
-    // Set initial value
-    handleResize();
-
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-
-    // Clean up
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const isActive = (section: string) => 
     currentSection === section ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600' : 'text-gray-700 hover:bg-gray-100';
-
-  // Mobile menu items in the specified order
-  const mobileMenuItems = [
-    { section: 'summary', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    )},
-    { section: 'profile', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    )},
-    { section: 'radar', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0"/>
-      </svg>
-    )},
-    { section: 'firewall', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    )},
-    { section: 'help', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    )}
-  ];
-
-  if (isMobile) {
-    return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="flex justify-around py-2">
-          {mobileMenuItems.map((item) => (
-            <button
-              key={item.section}
-              onClick={() => onSelect(item.section as any)}
-              className={`flex flex-col items-center p-2 ${currentSection === item.section ? 'text-indigo-600' : 'text-gray-600'}`}
-              aria-current={currentSection === item.section ? 'page' : undefined}
-            >
-              {item.icon}
-              <span className="text-xs mt-1">{t(item.section)}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col">
@@ -97,6 +31,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       <div className="p-6 border-b border-gray-200 flex items-center">
         {user?.picture || user?.email ? (
           <Image 
+            // src={user?.picture || `https://www.gravatar.com/avatar/${Buffer.from(user?.email || '').toString('base64')}?d=mp&s=40`}
             src={
               `https://www.gravatar.com/avatar/${user?.email ? require('crypto').createHash('md5').update(user.email.trim().toLowerCase()).digest('hex') : ''}?d=mp&s=40`
             }
@@ -136,13 +71,23 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           </svg>
           {t('profile')}
         </button>
-
         <button 
+          onClick={() => onSelect('logins')} 
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive('logins')}`}
+          aria-current={currentSection === 'logins' ? 'page' : undefined}
+        >
+          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          {t('access')}
+        </button>
+
+         <button 
           onClick={() => onSelect('radar')} 
           className={`w-full text-left px-6 py-3 flex items-center ${isActive('radar')}`}
           aria-current={currentSection === 'radar' ? 'page' : undefined}
         >
-          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 mr-3" /* ícono de radar */ fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0"/>
           </svg>
           {t('radar')}
@@ -154,21 +99,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           aria-current={currentSection === 'firewall' ? 'page' : undefined}
         >
           <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" />
           </svg>
           {t('firewall')}
         </button>
 
-        <button 
-          onClick={() => onSelect('help')} 
-          className={`w-full text-left px-6 py-3 flex items-center ${isActive('help')}`}
-          aria-current={currentSection === 'help' ? 'page' : undefined}
-        >
-          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          {t('help')}
-        </button>
+
       </nav>
       <div className="p-4 border-t border-gray-200 mt-auto">
         <Link href="/auth/logout" legacyBehavior>
