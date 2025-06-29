@@ -157,3 +157,9 @@ ReactDevOverlay@webpack-internal:///./node_modules/next/dist/compiled/@next/reac
 Container@webpack-internal:///./node_modules/next/dist/client/index.js:78:1
 AppContainer@webpack-internal:///./node_modules/next/dist/client/index.js:207:24
 Root@webpack-internal:///./node_modules/next/dist/client/index.js:421:35
+
+
+
+
+
+The requested resource "https://ui-avatars.com/api/?name=Ejemplo%20Admin" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
