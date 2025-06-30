@@ -1,5 +1,5 @@
 // pages/dashboard.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import Sidebar from "../components/Sidebar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -23,10 +23,20 @@ interface LoginEntry {
 function Dashboard() {
   const { user } = useAuth();
   const { t } = useTranslation("common");
-  const [section, setSection] = useState<"summary" | "profile" | "logins" | "radar" | "firewall" | "help">(
+  const [section, setSection] = useState<"summary" | "profile" | "logins" | "radar" | "firewall" | "help" | "compliance" | "reports">(
     "summary"
   );
   const { history: accessHistory } = useFetchHistory(user);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return t("not_available");
@@ -59,6 +69,12 @@ function Dashboard() {
       case "help":
         return <HelpSection />;
       
+      case "compliance":
+        return <div>Compliance Section</div>;
+      
+      case "reports":
+        return <div>Reports Section</div>;
+      
       default:
         return null;
     }
@@ -67,9 +83,9 @@ function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <Sidebar onSelect={setSection} currentSection={section} />
-      <main className="flex-1 p-4 md:p-8">
+      <main className={`flex-1 ${isMobile ? 'pt-16 pb-16' : 'p-4 md:p-8'}`}>
         <div className="max-w-6xl mx-auto">
-          <div className="mb-6">
+          <div className={`${isMobile ? 'pt-4 px-4' : 'mb-6'}`}>
             <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {section === "summary" ? t("dashboard") : t(section)}
             </h1>
@@ -81,12 +97,16 @@ function Dashboard() {
                   case "radar": return t("monitor_ai_activity");
                   case "firewall": return t("manage_access_rules");
                   case "help": return t("find_answers_and_support");
+                  case "compliance": return "Compliance management";
+                  case "reports": return "View detailed reports";
                   default: return "";
                 }
               })()}
             </p>
           </div>
-          {renderSection()}
+          <div className={isMobile ? "px-4" : ""}>
+            {renderSection()}
+          </div>
         </div>
       </main>
     </div>

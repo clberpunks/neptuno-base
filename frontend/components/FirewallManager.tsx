@@ -39,38 +39,50 @@ export default function FirewallManager() {
     setRules(rules.map((r, i) => i === idx ? { ...r, ...updated } : r))
   }
 
-  const handleSave = async () => {
-    setSaving(true)
-    try {
-      const cleanRules = rules.map(({ llm_name, pattern, policy, limit }) => ({
-        llm_name,
-        pattern,
-        policy,
-        limit: limit === undefined ? null : limit
-      }));
-      await apiFetch('/api/firewall', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanRules)
-      });
-      alert('Reglas actualizadas')
-    } catch (e) {
-      console.error(e)
-      alert('Error guardando reglas')
-    } finally {
-      setSaving(false)
+const handleSave = async () => {
+  setSaving(true)
+  try {
+    const cleanRules = rules.map(({ llm_name, pattern, policy, limit }) => ({
+      llm_name,
+      pattern,
+      policy,
+      limit: limit === undefined ? null : limit
+    }));
+    
+    const response = await fetch('/api/firewall', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cleanRules)
+    });
+    
+    // Manejar respuesta no JSON
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP error ${response.status}`);
     }
+    
+    // Intentar parsear solo si la respuesta es JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      await response.json();
+    }
+    
+    alert('Reglas actualizadas')
+  } catch (e) {
+    console.error('Error saving rules:', e)
+    alert(`Error guardando reglas: ${e instanceof Error ? e.message : 'Error desconocido'}`)
+  } finally {
+    setSaving(false)
   }
-
-  // Función para obtener el color según la política
-  const getPolicyColor = (policy: string) => {
-    switch(policy) {
-      case "allow": return "bg-green-500";
-      case "block": return "bg-red-500";
-      case "restricted": return "bg-orange-500";
-      default: return "bg-gray-500";
-    }
-  };
+}
+  // Calcular estadísticas
+  const blockedCount = rules.filter(r => r.policy === "block").length;
+  const allowedCount = rules.filter(r => r.policy === "allow").length;
+  const restrictedCount = rules.filter(r => r.policy === "restricted").length;
+  const totalRules = rules.length;
+  const totalTokens = rules
+    .filter(r => r.policy === "restricted" && r.limit)
+    .reduce((acc, r) => acc + (r.limit || 0), 0);
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-xl space-y-6">
@@ -96,6 +108,84 @@ export default function FirewallManager() {
             </span>
           ) : 'Guardar cambios'}
         </button>
+      </div>
+
+      {/* Bloque de estadísticas KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Permitidos */}
+        <div className="bg-gradient-to-br from-green-100 to-green-50 border border-green-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="bg-green-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <div className="text-2xl font-bold text-green-800">{allowedCount}</div>
+              <div className="text-sm font-medium text-green-600">Permitidos</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bloqueados */}
+        <div className="bg-gradient-to-br from-red-100 to-red-50 border border-red-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="bg-red-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <div className="text-2xl font-bold text-red-800">{blockedCount}</div>
+              <div className="text-sm font-medium text-red-600">Bloqueados</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Restringidos */}
+        <div className="bg-gradient-to-br from-orange-100 to-orange-50 border border-orange-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="bg-orange-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <div className="text-2xl font-bold text-orange-800">{restrictedCount}</div>
+              <div className="text-sm font-medium text-orange-600">Restringidos</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reglas aplicadas */}
+        <div className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="bg-blue-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <div className="text-2xl font-bold text-blue-800">{totalRules}</div>
+              <div className="text-sm font-medium text-blue-600">Reglas aplicadas</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tokens permitidos */}
+        <div className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="bg-purple-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <div className="text-2xl font-bold text-purple-800">{totalTokens.toLocaleString()}</div>
+              <div className="text-sm font-medium text-purple-600">Tokens permitidos</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -129,7 +219,7 @@ export default function FirewallManager() {
                         key={policy}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           r.policy === policy 
-                            ? `${getPolicyColor(policy)} text-white shadow-inner`
+                            ? `${policy === "allow" ? "bg-green-500" : policy === "block" ? "bg-red-500" : "bg-orange-500"} text-white shadow-inner`
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                         onClick={() => updateRule(idx, { policy })}
