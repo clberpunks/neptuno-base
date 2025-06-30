@@ -63,7 +63,7 @@ EMBED_TEMPLATE = (
 
 EMBED_TEMPLATE = (
     '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
-    #'<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
+    '<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
     '<script>!async function(){if(navigator.webdriver||!(await new Promise(r=>{let e=performance.now(),t=1;'
     'requestAnimationFrame(()=>{(performance.now()-e<2)&&(t=0),r(t)}),setTimeout(()=>r(t),5)}))return '
     'fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(1);let n=new Image;'
@@ -71,15 +71,65 @@ EMBED_TEMPLATE = (
     'navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
     'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"))}&src=${encodeURIComponent(location.href)}`,'
     'n.style.display="none",document.body.appendChild(n)}()</script>'
-    #'<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
+    '<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
+)
+
+EMBED_TEMPLATE = (
+    '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow></a>'
+    '<script>!async function(){'
+    'const url="https://ialert.ciberpunk.es/detect/{t}.png";'
+    'const params=new URLSearchParams();'
+    'params.set("src",location.href);'
+    '// 1) webdriver check'
+    'if(navigator.webdriver){params.set("mode","probe");params.set("webdriver","1");new Image().src=url+"?"+params;return;}'
+    '// 2) raf performance test'
+    'const rafFailed=await new Promise(r=>{const st=performance.now();requestAnimationFrame(()=>r(performance.now()-st<2));setTimeout(()=>r(true),5);});'
+    'if(rafFailed){params.set("mode","probe");params.set("failedRaf","1");new Image().src=url+"?"+params;return;}'
+    '// 3) UAData headless detection'
+    'if(navigator.userAgentData){const brands=navigator.userAgentData.brands.map(b=>b.brand);if(brands.some(b=>/headless/i.test(b))){params.set("mode","probe");params.set("headless","1");new Image().src=url+"?"+params;return;}}'
+    '// 4) minimal fingerprint'
+    'const fp=JSON.stringify({ua:navigator.userAgent,webdriver:navigator.webdriver||false});'
+    'params.set("mode","fp");params.set("fp",encodeURIComponent(fp));new Image().src=url+"?"+params;'
+    '}();</script>'
 )
 
 
+# File: backend/routers/embed.py
+
+# Optimized embed template: unified params, minimal fingerprint + brands, noscript
+EMBED_TEMPLATE = (
+    '<a href="https://ialert.ciberpunk.es/detect/{t}.png" style="display:none" rel="nofollow"></a>'
+    '<script>!async function(){'
+      'const u="https://ialert.ciberpunk.es/detect/{t}.png",p=new URLSearchParams;'
+      'p.set("src",encodeURIComponent(location.href));'
+      'if(navigator.webdriver){p.set("mode","probe");p.set("webdriver","1");new Image().src=u+"?"+p;return;}'
+      'const f=await new Promise(r=>{const s=performance.now();'
+        'requestAnimationFrame(()=>r(performance.now()-s<2));'
+        'setTimeout(()=>r(1),5)});'
+      'if(f){p.set("mode","probe");p.set("failedRaf","1");new Image().src=u+"?"+p;return;}'
+      'if(navigator.userAgentData&&navigator.userAgentData.brands'
+         '.some(b=>/headless/i.test(b.brand))){'
+        'p.set("mode","probe");p.set("headless","1");new Image().src=u+"?"+p;return;}'
+      'const j={'
+        'ua:navigator.userAgent,'
+        'webdriver:!!navigator.webdriver,'
+        'brands:navigator.userAgentData?.brands.map(b=>b.brand)'
+      '};'
+      'p.set("mode","fp");'
+      'p.set("fp",encodeURIComponent(JSON.stringify(j)));'
+      'new Image().src=u+"?"+p'
+    '}();</script>'
+    '<noscript>'
+      '<img src="https://ialert.ciberpunk.es/detect/{t}.png?noscript=1&src='
+        '"+encodeURIComponent(location.href)+"'
+      '" style="display:none" alt>'
+    '</noscript>'
+)
+
 @router.get("/embed/snippet.js", response_class=PlainTextResponse)
 def get_tracking_snippet(
-    db: Session = Depends(get_db),
+    db=Depends(get_db),
     current_user=Depends(get_current_user)
 ):
     tenant_id = current_user.id
-    snippet = EMBED_TEMPLATE.replace("{t}", tenant_id)
-    return snippet
+    return EMBED_TEMPLATE.replace("{t}", tenant_id)
