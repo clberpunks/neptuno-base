@@ -8,7 +8,7 @@ from db import SessionLocal
 from models.models import AccessLog, FirewallRule
 
 router = APIRouter()
-
+ 
 # 1×1 transparent PNG
 EMPTY_PNG = (
     b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01'
