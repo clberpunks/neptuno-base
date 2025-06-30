@@ -117,7 +117,7 @@ EMBED_TEMPLATE = (
  
 EMBED_TEMPLATE = (
     '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
-    #'<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
+    '<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
     '<script>!async function(){if(navigator.webdriver||!(await new Promise(r=>{let e=performance.now(),t=1;'
     'requestAnimationFrame(()=>{(performance.now()-e<2)&&(t=0),r(t)}),setTimeout(()=>r(t),5)}))return '
     'fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(1);let n=new Image;'
@@ -125,7 +125,7 @@ EMBED_TEMPLATE = (
     'navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
     'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"))}&src=${encodeURIComponent(location.href)}`,'
     'n.style.display="none",document.body.appendChild(n)}()</script>'
-    #'<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
+    '<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
 )
 
 @router.get("/embed/snippet.js", response_class=PlainTextResponse)
