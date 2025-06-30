@@ -166,7 +166,7 @@ def detect_png(tenant: str,
         for r in rules["redirectAgents"]:
             if re.search(r["pattern"], ua):
                 outcome, rule_applied, redirect_url = "redirect", f"redirect:{r['pattern']}", r["url"]
-                break
+                break 
     if outcome == "allow" and rules["limitedAgents"]:
         for pat, cfg in rules["limitedAgents"].items():
             if re.search(pat, ua):

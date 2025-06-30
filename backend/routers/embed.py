@@ -114,7 +114,7 @@ EMBED_TEMPLATE = (
       '" style="display:none" alt>'
     '</noscript>'
 )
-
+ 
 EMBED_TEMPLATE = (
     '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
     '<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
