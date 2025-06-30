@@ -61,18 +61,7 @@ EMBED_TEMPLATE = (
     'style="display:none" alt=""/></noscript>'
 )
 
-EMBED_TEMPLATE = (
-    '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
-    '<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
-    '<script>!async function(){if(navigator.webdriver||!(await new Promise(r=>{let e=performance.now(),t=1;'
-    'requestAnimationFrame(()=>{(performance.now()-e<2)&&(t=0),r(t)}),setTimeout(()=>r(t),5)}))return '
-    'fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(1);let n=new Image;'
-    'n.src=`https://ialert.ciberpunk.es/detect/{t}.png?js=2&fp=${encodeURIComponent(['
-    'navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
-    'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"))}&src=${encodeURIComponent(location.href)}`,'
-    'n.style.display="none",document.body.appendChild(n)}()</script>'
-    '<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
-)
+
 
 EMBED_TEMPLATE = (
     '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow></a>'
@@ -124,6 +113,19 @@ EMBED_TEMPLATE = (
         '"+encodeURIComponent(location.href)+"'
       '" style="display:none" alt>'
     '</noscript>'
+)
+
+EMBED_TEMPLATE = (
+    '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
+    '<img src=https://ialert.ciberpunk.es/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
+    '<script>!async function(){if(navigator.webdriver||!(await new Promise(r=>{let e=performance.now(),t=1;'
+    'requestAnimationFrame(()=>{(performance.now()-e<2)&&(t=0),r(t)}),setTimeout(()=>r(t),5)}))return '
+    'fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(1);let n=new Image;'
+    'n.src=`https://ialert.ciberpunk.es/detect/{t}.png?js=2&fp=${encodeURIComponent(['
+    'navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
+    'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"))}&src=${encodeURIComponent(location.href)}`,'
+    'n.style.display="none",document.body.appendChild(n)}()</script>'
+    '<noscript><img src=https://ialert.ciberpunk.es/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
 )
 
 @router.get("/embed/snippet.js", response_class=PlainTextResponse)
