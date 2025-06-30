@@ -1,8 +1,7 @@
-// components/SummarySection.tsx
+// components/SummarySection.tsx (refactorizado)
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import RiskPanel from "./RiskPanel";
-import TrackingCodePanel from "./TrackingCode";
 
 interface SummarySectionProps {
   user: {
@@ -21,7 +20,7 @@ export default function SummarySection({ user, formatDate }: SummarySectionProps
   return (
     <div className="space-y-8">
       <RiskPanel />
-      <TrackingCodePanel />
+      
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="flex flex-col md:flex-row items-center">
           <Image
@@ -70,6 +69,7 @@ export default function SummarySection({ user, formatDate }: SummarySectionProps
           <p className="text-gray-700">{formatDate(user.last_login)}</p>
         </div>
       </div>
+      
     </div>
   );
 }
