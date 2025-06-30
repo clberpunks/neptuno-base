@@ -132,14 +132,14 @@
   "manage_access_rules": "Gestiona las reglas de acceso para tus modelos de lenguaje",
   "allowed": "Permitidos",
   "blocked": "Bloqueados",
+  "restricted": "Restringidos",
   "allowed_tokens": "Tokens permitidos",
   "bot": "Bot",
-  "pattern": "Patrón",
   "policy": "Política",
   "configuration": "Configuración",
+  "details": "Detalles",
   "allow": "Permitir",
   "block": "Bloquear",
-  "restricted": "Restringido",
   "token_limit": "Límite de tokens",
   "no_rules_configured": "No hay reglas configuradas",
   "add_new_rules": "Comienza agregando nuevas reglas para tu firewall",
@@ -147,6 +147,28 @@
   "saving": "Guardando...",
   "rules_updated": "Reglas actualizadas",
   "error_saving_rules": "Error guardando reglas",
-  "unknown_error": "Error desconocido"
+  "unknown_error": "Error desconocido",
+  "show_details": "Mostrar detalles",
+  "hide_details": "Ocultar detalles",
+  "rule_details": "Detalles de la regla",
+  "pattern": "Patrón",
+  "additional_info": "Información adicional",
+  "rule_created": "Regla creada",
+
+
+   "onboarding_title": "Configuración Inicial",
+  "onboarding_subtitle": "Completa estos pasos para configurar tu firewall web",
+  "onboarding_analyze_title": "Analizar Tráfico",
+  "onboarding_analyze_desc": "Inserta nuestro código de seguimiento para comenzar a analizar el tráfico",
+  "onboarding_protect_title": "Proteger Sitio",
+  "onboarding_protect_desc": "Configura las reglas del firewall para proteger tu sitio",
+  "onboarding_legal_title": "Documentación Legal",
+  "onboarding_legal_desc": "Genera los documentos legales requeridos para el cumplimiento",
+  "onboarding_reports_title": "Crear Informes",
+  "onboarding_reports_desc": "Configura tus informes automáticos y personalizados",
+  "completed": "Completado",
+
+  "collapse": "Contraer",
+  "expand": "Expandir"
   
 }

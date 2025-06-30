@@ -130,18 +130,18 @@
   "error_loading_data": "Error loading risk data",
   "no_data_available": "No data available",
 
-   "firewall_management": "LLM Firewall - Management",
+"firewall_management": "LLM Firewall - Management",
   "manage_access_rules": "Manage access rules for your language models",
   "allowed": "Allowed",
   "blocked": "Blocked",
-  "restricted": "Restricted",
   "allowed_tokens": "Allowed tokens",
   "bot": "Bot",
-  "pattern": "Pattern",
   "policy": "Policy",
   "configuration": "Configuration",
+  "details": "Details",
   "allow": "Allow",
   "block": "Block",
+  "restricted": "Restricted",
   "token_limit": "Token limit",
   "no_rules_configured": "No rules configured",
   "add_new_rules": "Start by adding new firewall rules",
@@ -149,5 +149,28 @@
   "saving": "Saving...",
   "rules_updated": "Rules updated",
   "error_saving_rules": "Error saving rules",
-  "unknown_error": "Unknown error"
+  "unknown_error": "Unknown error",
+  "show_details": "Show details",
+  "hide_details": "Hide details",
+  "rule_details": "Rule Details",
+  "pattern": "Pattern",
+  "additional_info": "Additional Information",
+  "rule_created": "Rule created",
+
+
+  "onboarding_title": "Getting Started",
+  "onboarding_subtitle": "Complete these steps to set up your web firewall",
+  "onboarding_analyze_title": "Analyze Traffic",
+  "onboarding_analyze_desc": "Insert our tracking code to start analyzing traffic",
+  "onboarding_protect_title": "Protect Site",
+  "onboarding_protect_desc": "Configure firewall rules to protect your site",
+  "onboarding_legal_title": "Legal Compliance",
+  "onboarding_legal_desc": "Generate required legal documentation for compliance",
+  "onboarding_reports_title": "Create Reports",
+  "onboarding_reports_desc": "Set up your automated and custom reports",
+  "completed": "Completed",
+
+  "collapse": "Collapse",
+  "expand": "Expand"
+
 }

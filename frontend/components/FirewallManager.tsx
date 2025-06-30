@@ -1,4 +1,5 @@
 // frontend/components/FirewallManager.tsx
+// frontend/components/FirewallManager.tsx
 import { useEffect, useState } from 'react'
 import { apiFetch } from '../utils/api'
 import { useAuth } from '../hooks/useAuth'
@@ -17,6 +18,7 @@ export default function FirewallManager() {
   const { user, loading } = useAuth()
   const [rules, setRules] = useState<Rule[]>([])
   const [saving, setSaving] = useState(false)
+  const [expandedRule, setExpandedRule] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && user && rules.length === 0) {
@@ -63,6 +65,10 @@ export default function FirewallManager() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const toggleExpandRule = (ruleId: string) => {
+    setExpandedRule(expandedRule === ruleId ? null : ruleId)
   }
 
   // Calcular estadísticas
@@ -148,44 +154,41 @@ export default function FirewallManager() {
           <thead className="bg-gray-50">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('bot')}</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pattern')}</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('policy')}</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('configuration')}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('details')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {rules.map((r, idx) => (
-              <tr key={r.id ?? r.llm_name+"-"+idx} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{r.llm_name}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500">{r.pattern}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex flex-wrap gap-2">
-                    {(["allow", "block", "restricted"] as const).map(policy => (
-                      <button
-                        key={policy}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          r.policy === policy 
-                            ? `${policy === "allow" ? "bg-green-500" : policy === "block" ? "bg-red-500" : "bg-orange-500"} text-white shadow-inner`
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                        onClick={() => updateRule(idx, { policy })}
-                      >
-                        {policy === "allow" && t('allow')}
-                        {policy === "block" && t('block')}
-                        {policy === "restricted" && t('restricted')}
-                      </button>
-                    ))}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  {r.policy === 'restricted' && (
-                    <div className="flex flex-col gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('token_limit')}</label>
+            {rules.map((r, idx) => {
+              const ruleId = r.id ?? r.llm_name+"-"+idx;
+              return (
+                <>
+                  <tr key={ruleId} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{r.llm_name}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-wrap gap-2">
+                        {(["allow", "block", "restricted"] as const).map(policy => (
+                          <button
+                            key={policy}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              r.policy === policy 
+                                ? `${policy === "allow" ? "bg-green-500" : policy === "block" ? "bg-red-500" : "bg-orange-500"} text-white shadow-inner`
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                            onClick={() => updateRule(idx, { policy })}
+                          >
+                            {policy === "allow" && t('allow')}
+                            {policy === "block" && t('block')}
+                            {policy === "restricted" && t('restricted')}
+                          </button>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {r.policy === 'restricted' && (
                         <div className="flex items-center gap-4">
                           <input
                             type="range"
@@ -206,12 +209,50 @@ export default function FirewallManager() {
                             className="w-24 border border-gray-300 rounded-lg px-2 py-1 text-center focus:ring-orange-500 focus:border-orange-500"
                           />
                         </div>
-                      </div>
-                    </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => toggleExpandRule(ruleId)}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                        aria-label={expandedRule === ruleId ? t('hide_details') : t('show_details')}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-5 w-5 transform transition-transform ${expandedRule === ruleId ? 'rotate-180' : ''}`}
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedRule === ruleId && (
+                    <tr className="bg-gray-50">
+                      <td colSpan={4} className="px-6 py-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <h4 className="font-medium text-gray-900 mb-2">{t('rule_details')}</h4>
+                            <div className="space-y-1">
+                              <p><span className="font-medium">{t('pattern')}:</span> {r.pattern}</p>
+                              <p><span className="font-medium">{t('policy')}:</span> {t(r.policy)}</p>
+                              {r.policy === 'restricted' && (
+                                <p><span className="font-medium">{t('token_limit')}:</span> {r.limit ?? 0}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900 mb-2">{t('additional_info')}</h4>
+                            <p className="text-gray-600">{t('rule_created')}: {new Date().toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
                   )}
-                </td>
-              </tr>
-            ))}
+                </>
+              )
+            })}
           </tbody>
         </table>
       </div>
