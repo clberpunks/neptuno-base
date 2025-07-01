@@ -1,5 +1,5 @@
 # File: backend/models.py
-from sqlalchemy import Column, String, DateTime, Integer, Boolean, Enum, ForeignKey
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, Enum, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
@@ -11,8 +11,9 @@ class FirewallRule(Base):
     tenant_id = Column(String, index=True)
     llm_name = Column(String)
     pattern = Column(String)
-    policy = Column(String)  # "allow" | "block" | "restricted" | "redirect"
+    policy = Column(String)  # "allow" | "block" | "restricted" | "tariff" | "redirect"
     limit = Column(Integer, nullable=True)
+    fee = Column(Float, nullable=True)  # <-- CORREGIDO
     redirect_url = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -31,7 +32,7 @@ class AccessLog(Base):
     utm_source = Column(String, nullable=True)
     fingerprint = Column(String)
     path = Column(String)
-    outcome = Column(String, index=True)   # "allow" | "block" | "limit" | "redirect" | "ratelimit" | "flagged"
+    outcome = Column(String, index=True)   # "allow" | "block" | "limit" | "redirect" | "ratelimit" | "flagged" | "tariff"
     rule = Column(String)
     redirect_url = Column(String, nullable=True)
     js_executed = Column(Boolean, default=False)

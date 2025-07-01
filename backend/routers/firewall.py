@@ -1,4 +1,5 @@
 # backend/routers/firewall.py
+# backend/routers/firewall.py
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -15,6 +16,7 @@ class RuleIn(BaseModel):
     pattern: str
     policy: str
     limit: int | None = None
+    fee: float | None = None  # Nuevo campo para tarifa
     redirect_url: HttpUrl | None = None
 
 DEFAULT_RULES = [
@@ -33,23 +35,18 @@ def list_rules(current_user=Depends(get_current_user), db: Session = Depends(get
     rows = db.query(FirewallRule).filter(FirewallRule.tenant_id == current_user.id).all()
     if not rows:
         now = datetime.utcnow()
-        # Comprobación extra: revisa si otro proceso ya las creó tras el primer select
         for rule in DEFAULT_RULES:
-            exists = db.query(FirewallRule).filter(
-                FirewallRule.tenant_id == current_user.id,
-                FirewallRule.llm_name == rule["llm_name"]
-            ).first()
-            if not exists:
-                db.add(FirewallRule(
-                    id=str(uuid.uuid4()),
-                    tenant_id=current_user.id,
-                    llm_name=rule["llm_name"],
-                    pattern=rule["pattern"],
-                    policy=rule["policy"],
-                    limit=rule.get("limit"),
-                    redirect_url=None,
-                    created_at=now
-                ))
+            db.add(FirewallRule(
+            id=str(uuid.uuid4()),
+            tenant_id=current_user.id,
+            llm_name=rule["llm_name"],
+            pattern=rule["pattern"],
+            policy=rule["policy"],
+            limit=rule.get("limit"),
+            fee=None,
+            redirect_url=None,
+            created_at=now
+            ))
         db.commit()
         rows = db.query(FirewallRule).filter(FirewallRule.tenant_id == current_user.id).all()
     return rows
@@ -65,6 +62,7 @@ def update_rules(rules: list[RuleIn], current_user=Depends(get_current_user), db
             pattern=r.pattern,
             policy=r.policy,
             limit=r.limit,
+            fee=r.fee,  # Nuevo campo
             redirect_url=str(r.redirect_url) if r.redirect_url else None
         ))
     db.commit()

@@ -7,12 +7,15 @@ import { useAuth } from "../hooks/useAuth";
 import { withAuth } from "../utils/withAuth";
 import { useFetchHistory } from "../hooks/userFetchHistory";
 import RiskPanel from "../components/RiskPanel";
-import FirewallManager from '../components/FirewallManager';
+import FirewallManager from "../components/FirewallManager";
 import Radar from "../components/Radar";
 import TrackingCodePanel from "../components/TrackingCode";
 import SummarySection from "../components/SummarySection";
 import ProfileSection from "../components/ProfileSection";
 import HelpSection from "../components/HelpSection";
+import CompliancePanel from "../components/CompliancePanel";
+import TermsPanel from "../components/TermsPanel";
+import ReportsPanel from "../components/ReportsPanel";
 
 interface LoginEntry {
   timestamp: string;
@@ -23,9 +26,16 @@ interface LoginEntry {
 function Dashboard() {
   const { user } = useAuth();
   const { t } = useTranslation("common");
-  const [section, setSection] = useState<"summary" | "profile" | "logins" | "radar" | "firewall" | "help" | "compliance" | "reports">(
-    "summary"
-  );
+  const [section, setSection] = useState<
+    | "summary"
+    | "profile"
+    | "logins"
+    | "radar"
+    | "firewall"
+    | "help"
+    | "compliance"
+    | "reports"
+  >("summary");
   const { history: accessHistory } = useFetchHistory(user);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -34,8 +44,8 @@ function Dashboard() {
       setIsMobile(window.innerWidth < 768);
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const formatDate = (dateString?: string) => {
@@ -52,29 +62,44 @@ function Dashboard() {
 
   const renderSection = () => {
     if (!user) return null;
-    
+
     switch (section) {
       case "summary":
         return <SummarySection user={user} formatDate={formatDate} />;
-      
+
       case "profile":
-        return <ProfileSection user={user} accessHistory={accessHistory} formatDate={formatDate} />;
-      
+        return (
+          <ProfileSection
+            user={user}
+            accessHistory={accessHistory}
+            formatDate={formatDate}
+          />
+        );
+
       case "radar":
         return <Radar />;
-      
+
       case "firewall":
         return <FirewallManager />;
-      
+
       case "help":
         return <HelpSection />;
-      
+
       case "compliance":
-        return <div>Compliance Section</div>;
-      
+        //return <CompliancePanel />//<div>Compliance Section</div>;
+        return (
+          <div className="space-y-6">
+            <CompliancePanel />
+            <TermsPanel />
+          </div>
+        );
+
       case "reports":
-        return <div>Reports Section</div>;
-      
+        return (
+          <div className="space-y-6">
+            <ReportsPanel />
+          </div>
+        );
       default:
         return null;
     }
@@ -83,30 +108,36 @@ function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <Sidebar onSelect={setSection} currentSection={section} />
-      <main className={`flex-1 ${isMobile ? 'pt-16 pb-16' : 'p-4 md:p-8'}`}>
+      <main className={`flex-1 ${isMobile ? "pt-16 pb-16" : "p-4 md:p-8"}`}>
         <div className="max-w-6xl mx-auto">
-          <div className={`${isMobile ? 'pt-4 px-4' : 'mb-6'}`}>
+          <div className={`${isMobile ? "pt-4 px-4" : "mb-6"}`}>
             <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {section === "summary" ? t("dashboard") : t(section)}
             </h1>
             <p className="text-gray-600">
               {(() => {
                 switch (section) {
-                  case "summary": return t("dashboard_welcome");
-                  case "profile": return t("manage_profile_and_access");
-                  case "radar": return t("monitor_ai_activity");
-                  case "firewall": return t("manage_access_rules");
-                  case "help": return t("find_answers_and_support");
-                  case "compliance": return "Compliance management";
-                  case "reports": return "View detailed reports";
-                  default: return "";
+                  case "summary":
+                    return t("dashboard_welcome");
+                  case "profile":
+                    return t("manage_profile_and_access");
+                  case "radar":
+                    return t("monitor_ai_activity");
+                  case "firewall":
+                    return t("manage_access_rules");
+                  case "help":
+                    return t("find_answers_and_support");
+                  case "compliance":
+                    return "Compliance management";
+                  case "reports":
+                    return "View detailed reports";
+                  default:
+                    return "";
                 }
               })()}
             </p>
           </div>
-          <div className={isMobile ? "px-4" : ""}>
-            {renderSection()}
-          </div>
+          <div className={isMobile ? "px-4" : ""}>{renderSection()}</div>
         </div>
       </main>
     </div>
