@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadUser = async () => {
     setLoading(true);
     try {
-      const u = await apiFetch<User>("/_backend/auth/user");
+      const u = await apiFetch<User>("/rest/auth/user");
       setUser(u);
     } catch (err: any) {
       if (err.status === 401) {
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     setUser(null);
-    router.push('/auth/login');
+    router.push('/login');
   };
 
   useEffect(() => {

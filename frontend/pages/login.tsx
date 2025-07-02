@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAuth } from "../../hooks/useAuth";
-import { apiFetch } from "../../utils/api";
+import { useAuth } from "../hooks/useAuth";
+import { apiFetch } from "../utils/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await apiFetch<{ token: string }>("/_backend/auth/login", {
+      await apiFetch<{ token: string }>("/rest/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -59,7 +59,7 @@ export default function LoginPage() {
 
     const handleGoogleLogin = () => {
     setIsRedirecting(true);
-    fetch("/_backend/auth/user", {
+    fetch("/rest/auth/user", {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -67,7 +67,7 @@ export default function LoginPage() {
         if (data) {
           router.replace("/dashboard"); // ialert
         } else {
-          window.location.href = `/_backend/auth/login`;
+          window.location.href = `/rest/auth/login`;
         }
       })
       .catch((err) => {
@@ -210,7 +210,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 ¿No tienes cuenta?{" "}
-                <Link href="/auth/register" legacyBehavior>
+                <Link href="/register" legacyBehavior>
                   <a className="font-medium text-indigo-600 hover:text-indigo-500">
                     Regístrate
                   </a>

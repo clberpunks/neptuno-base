@@ -25,7 +25,7 @@ export default function TrackingCodePanel() {
 
   useEffect(() => {
     if (!loading && user) {
-      fetch("/_backend/embed/snippet.js", {
+      fetch("/rest/embed/snippet.js", {
         credentials: "include"
       })
         .then(res => res.text())

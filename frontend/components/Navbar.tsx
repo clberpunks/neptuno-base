@@ -57,7 +57,7 @@ const Navbar = () => {
               {t('dashboard')}
             </Link>
           ) : (
-            <Link href="/auth/login" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            <Link href="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
               {t('login')}
             </Link>
           )}

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { useAuth } from '../../hooks/useAuth';
-import { apiFetch } from '../../utils/api';
+import { useAuth } from '../hooks/useAuth';
+import { apiFetch } from '../utils/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      await apiFetch<{ token: string }>("/_backend/auth/register", {
+      await apiFetch<{ token: string }>("/rest/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -176,7 +176,7 @@ export default function RegisterPage() {
               <div className="mt-6 text-center">
                 <p className="text-gray-600 text-sm">
                   ¿Ya tienes una cuenta?{" "}
-                  <Link href="/auth/login" legacyBehavior>
+                  <Link href="/login" legacyBehavior>
                     <a className="font-medium text-indigo-600 hover:text-indigo-500">
                       Inicia sesión
                     </a>

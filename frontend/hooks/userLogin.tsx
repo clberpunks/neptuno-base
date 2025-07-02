@@ -28,7 +28,7 @@ export function useLogin() {
     }
     setLoading(true);
     try {
-      await apiFetch<{ token: string }>("/_backend/auth/login", {
+      await apiFetch<{ token: string }>("/rest/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

@@ -7,13 +7,13 @@ class Settings(BaseSettings):
     APP_NAME: str = "Ciberpunk"
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8001/auth/callback"
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8001/rest/auth/callback"
     DATABASE_URL: str = "sqlite:///./app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
     
     NODE_ENV: str = "development"
     
-    BACKEND_URL: str ="http://localhost:8001"
+    BACKEND_URL: str ="http://localhost:8001/rest/"
     FRONTEND_URL: str ="https://ialert.ciberpunk.es"
     
     # Nuevas variables para Refresh Token

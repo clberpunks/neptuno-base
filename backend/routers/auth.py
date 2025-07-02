@@ -15,7 +15,7 @@ from models.models import User, UserRole, LoginHistory
 from schemas.schemas import UserLogin, UserRegister
 from utils import generate_tokens, hash_password, set_auth_cookies, verify_password
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter( tags=["auth"]) # prefix="/auth", 
 
 
 

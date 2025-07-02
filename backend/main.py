@@ -24,16 +24,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(user.router)
-app.include_router(admin.router)
+app.include_router(auth.router,prefix="/rest/auth")
+app.include_router(user.router,prefix="/rest/user")
+app.include_router(admin.router,prefix="/rest/admin")
 
-app.include_router(embed.router)
-app.include_router(detect.router)
+app.include_router(embed.router,prefix="/rest")
+app.include_router(detect.router,prefix="/rest")
 
-app.include_router(logs.router)
+app.include_router(logs.router,prefix="/rest/logs")
 
-app.include_router(firewall.router)
+app.include_router(firewall.router,prefix="/rest/firewall")
 
 
 @app.on_event("startup")

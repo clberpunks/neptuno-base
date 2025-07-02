@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("jwt_token")?.value;
 
   if (!token) {
-    const loginUrl = new URL("/auth/login", request.url);
+    const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 

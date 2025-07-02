@@ -28,7 +28,7 @@ export default function TermsPanel() {
     setError(null);
     
     try {
-      const response = await apiFetch(`/_backend/terms/generate?type=${docType}`, {
+      const response = await apiFetch(`/rest/terms/generate?type=${docType}`, {
         method: 'POST'
       }) as Response;
       

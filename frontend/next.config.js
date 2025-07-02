@@ -21,9 +21,9 @@ module.exports = {
   async rewrites() {
      return [
        {
-         source: '/_backend/:path*',
+         source: '/rest/:path*',
          destination: `${backendUrl}/:path*`, // proxy a backend
        },
     ];
-   },
+  },
 };

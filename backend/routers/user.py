@@ -5,7 +5,7 @@ from dependencies import get_current_user
 from db import get_db
 from models.models import LoginHistory, User
 
-router = APIRouter(prefix="/user", tags=["user"])
+router = APIRouter( tags=["user"]) #prefix="/user",
 
 @router.get("/access-history")
 def get_access_history(

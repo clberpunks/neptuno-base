@@ -58,7 +58,7 @@ export default function ReportsPanel() {
     setLoading(prev => ({ ...prev, [reportType]: true }));
     setError(null);
     try {
-      const data = await apiFetch<{ reportUrl: string }>(`/_backend/reports/generate?type=${reportType}&range=${timeRange}`, {
+      const data = await apiFetch<{ reportUrl: string }>(`/rest/reports/generate?type=${reportType}&range=${timeRange}`, {
         method: 'POST'
       });
       setReports(prev => ({ ...prev, [reportType]: data.reportUrl }));

@@ -4,7 +4,7 @@ from dependencies import get_current_user
 from schemas.schemas import UserInJWT, UserRole
 from fastapi import HTTPException, status
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(tags=["admin"]) #prefix="/admin", 
 
 @router.get("/overview")
 def admin_overview(current_user: UserInJWT = Depends(get_current_user)):

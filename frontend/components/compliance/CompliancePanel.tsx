@@ -29,7 +29,7 @@ export default function CompliancePanel() {
     setError(null);
     
     try {
-      const response = await apiFetch(`/_backend/compliance/generate?framework=${framework}`, {
+      const response = await apiFetch(`/rest/compliance/generate?framework=${framework}`, {
         method: 'POST'
       }) as Response;
       

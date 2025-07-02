@@ -9,7 +9,7 @@ from models.models import FirewallRule
 from pydantic import BaseModel, HttpUrl
 import uuid
 
-router = APIRouter(prefix="/firewall", tags=["firewall"])
+router = APIRouter(tags=["firewall"]) # prefix="/firewall"
 
 class RuleIn(BaseModel):
     llm_name: str

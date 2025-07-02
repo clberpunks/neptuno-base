@@ -224,7 +224,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         </button>
       </nav>
       <div className="p-4 border-t border-gray-200 mt-auto">
-        <Link href="/auth/logout" legacyBehavior>
+        <Link href="/logout" legacyBehavior>
           <a className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md">
             Logout
           </a>

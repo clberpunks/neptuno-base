@@ -7,7 +7,7 @@ from dependencies import get_current_user
 from db import get_db
 from models.models import AccessLog
 
-router = APIRouter(prefix="/logs", tags=["logs"])
+router = APIRouter(tags=["logs"])
 
 @router.get("/")
 def list_logs(current_user=Depends(get_current_user), db: Session = Depends(get_db)):

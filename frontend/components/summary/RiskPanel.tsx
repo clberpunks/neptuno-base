@@ -41,7 +41,7 @@ export default function RiskPanel() {
   useEffect(() => {
     const fetchRiskData = async () => {
       try {
-        const data = await apiFetch<RiskData>("/_backend/logs/insights");
+        const data = await apiFetch<RiskData>("/rest/logs/insights");
         setRiskData(data);
         setError(null);
       } catch (error) {
