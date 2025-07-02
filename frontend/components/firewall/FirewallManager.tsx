@@ -1,8 +1,8 @@
 // frontend/components/FirewallManager.tsx
 // frontend/components/FirewallManager.tsx
 import { useEffect, useState } from "react";
-import { apiFetch } from "../utils/api";
-import { useAuth } from "../hooks/useAuth";
+import { apiFetch } from "../../utils/api";
+import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import RobotsGenerator from "./RobotsGenerator";
 import MetaSEO from "./MetaSEO";

@@ -6,16 +6,16 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useAuth } from "../hooks/useAuth";
 import { withAuth } from "../utils/withAuth";
 import { useFetchHistory } from "../hooks/userFetchHistory";
-import RiskPanel from "../components/RiskPanel";
-import FirewallManager from "../components/FirewallManager";
-import Radar from "../components/Radar";
-import TrackingCodePanel from "../components/TrackingCode";
-import SummarySection from "../components/SummarySection";
-import ProfileSection from "../components/ProfileSection";
-import HelpSection from "../components/HelpSection";
-import CompliancePanel from "../components/CompliancePanel";
-import TermsPanel from "../components/TermsPanel";
-import ReportsPanel from "../components/ReportsPanel";
+import RiskPanel from "../components/summary/RiskPanel";
+import FirewallManager from "../components/firewall/FirewallManager";
+import Radar from "../components/radar/Radar";
+import TrackingCodePanel from "../components/radar/TrackingCode";
+import SummarySection from "../components/summary/SummarySection";
+import ProfileSection from "../components/perfil/ProfileSection";
+import HelpSection from "../components/help/HelpSection";
+import CompliancePanel from "../components/compliance/CompliancePanel";
+import TermsPanel from "../components/compliance/TermsPanel";
+import ReportsPanel from "../components/reports/ReportsPanel";
 
 interface LoginEntry {
   timestamp: string;

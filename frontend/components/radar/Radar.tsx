@@ -1,6 +1,6 @@
 // frontend/components/Radar.tsx
 import { useEffect, useState } from "react";
-import { apiFetch } from "../utils/api";
+import { apiFetch } from "../../utils/api";
 import { Pie, Line, Doughnut } from "react-chartjs-2";
 import "chart.js/auto";
 import { t } from "i18next";

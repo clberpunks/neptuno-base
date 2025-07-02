@@ -1,7 +1,7 @@
 // components/RiskPanel.tsx
 // components/RiskPanel.tsx
 import { useEffect, useState } from "react";
-import { apiFetch } from "../utils/api";
+import { apiFetch } from "../../utils/api";
 import { Pie } from "react-chartjs-2";
 import 'chart.js/auto';
 import { useTranslation } from "next-i18next";

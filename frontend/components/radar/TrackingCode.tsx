@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 // Hook para ajustar automáticamente la altura del textarea
 function useAutoResizeTextArea(value: string) {

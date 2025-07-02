@@ -1,7 +1,7 @@
 // components/AccessHistory.tsx
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { useFetchHistory } from "../hooks/userFetchHistory";
+import { useFetchHistory } from "../../hooks/userFetchHistory";
 
 export default function AccessHistory() {
   const { t } = useTranslation();

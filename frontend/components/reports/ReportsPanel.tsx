@@ -6,7 +6,7 @@ import {
   ChevronUpIcon,
   DocumentChartBarIcon,
 } from "@heroicons/react/24/outline";
-import { apiFetch } from "../utils/api";
+import { apiFetch } from "../../utils/api";
 import SummaryReportPreview from "./SummaryReportPreview";
 import SecurityReportPreview from "./SecurityReportPreview";
 import SEOReportPreview from "./SEOReportPreview";
