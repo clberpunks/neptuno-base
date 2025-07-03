@@ -9,7 +9,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 import uuid
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/rest/docs",               # Swagger UI docs
+    redoc_url=None,                      # 
+    openapi_url="/rest/openapi.json",    # 
+)
+
 
 
 origins = ["play.google.com","accounts.google.com","http://localhost:3000","https://lh3.googleusercontent.com","http://localhost:8001","https://ialert.ciberpunk.es","http://172.80.0.200","http://172.80.0.200:8001"]

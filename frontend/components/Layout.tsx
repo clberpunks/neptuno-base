@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   
   // Excluir layout para rutas específicas
-  const noLayoutRoutes = ['/login', '/dashboard', '/dashboard/profile', '/dashboard/logins', '/dashboard/summary', '/register', '/forgot-password', '/reset-password'];
+  const noLayoutRoutes = ['/404','/403','/login', '/dashboard', '/register', '/forgot-password', '/reset-password'];
   const shouldUseLayout = !noLayoutRoutes.includes(router.pathname);
 
   return shouldUseLayout ? (
