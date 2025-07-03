@@ -51,7 +51,7 @@ def create_access_token(user):
         "role": user.role.value,
         "created_at": user.created_at.isoformat(),
         "last_login": user.last_login.isoformat(),
-        "exp": datetime.utcnow() + timedelta(minutes=1),
+        "exp": datetime.utcnow() + timedelta(minutes=30),
     }
     return jwt.encode(payload, settings.CLIENT_SECRET, algorithm="HS256")
 
