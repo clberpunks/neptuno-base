@@ -70,7 +70,7 @@ export default function About() {
             {t('about_cta_description')}
           </p>
           <div className="mt-8">
-            <Link href="/contact" legacyBehavior>
+            <Link href="contact" legacyBehavior>
               <a className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 {t('contact_us')}
                 <svg className="ml-2 -mr-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -101,7 +101,7 @@ export default function FeaturesPage() {
                 {t('features_cta_text')}
               </p>
               <Link 
-                href="/login" 
+                href="login" 
                 className="flex-shrink-0 bg-indigo-600 text-white py-2 px-6 rounded-full font-medium hover:bg-indigo-700 transition-colors duration-300"
               >
                 {t('get_started')}

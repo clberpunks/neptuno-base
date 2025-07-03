@@ -176,7 +176,7 @@ export default function RegisterPage() {
               <div className="mt-6 text-center">
                 <p className="text-gray-600 text-sm">
                   ¿Ya tienes una cuenta?{" "}
-                  <Link href="/login" legacyBehavior>
+                  <Link href="login" legacyBehavior>
                     <a className="font-medium text-indigo-600 hover:text-indigo-500">
                       Inicia sesión
                     </a>

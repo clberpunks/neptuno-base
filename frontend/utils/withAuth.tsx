@@ -12,7 +12,7 @@ export function withAuth<P>(Component: React.ComponentType<P>, roles: string[] =
 
     useEffect(() => {
       if (!loading) {
-        if (!user) router.replace('/login');
+        if (!user) router.replace('login');
         else if (roles.length && !roles.includes(user.role)) router.replace('/403');
       }
     }, [user, loading]);

@@ -23,7 +23,7 @@ export default function Home() {
         </p>
         
         {!loading && !user && (
-          <Link href="/register">
+          <Link href="register">
             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               {t('get_started')} &rarr;
             </button>
@@ -31,7 +31,7 @@ export default function Home() {
         )}
         
         {!loading && user && (
-          <Link href="/dashboard">
+          <Link href="dashboard">
             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               {t('go_to_dashboard')} &rarr;
             </button>

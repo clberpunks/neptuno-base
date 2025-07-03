@@ -22,13 +22,13 @@ const Navbar = () => {
             MyApp
           </Link>
           <nav className="hidden md:flex space-x-8">
-            <Link href="/about" className="text-gray-700 hover:text-indigo-600 transition-colors">
+            <Link href="about" className="text-gray-700 hover:text-indigo-600 transition-colors">
               {t('about')}
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-indigo-600 transition-colors">
+            <Link href="contact" className="text-gray-700 hover:text-indigo-600 transition-colors">
               {t('contact')}
             </Link>
-            <Link href="/features" className="text-gray-700 hover:text-indigo-600 transition-colors">
+            <Link href="features" className="text-gray-700 hover:text-indigo-600 transition-colors">
               {t('features')}
             </Link>
           </nav>
@@ -53,11 +53,11 @@ const Navbar = () => {
           </div>
           
           {user ? (
-            <Link href="/dashboard" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            <Link href="dashboard" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
               {t('dashboard')}
             </Link>
           ) : (
-            <Link href="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            <Link href="login" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
               {t('login')}
             </Link>
           )}

@@ -7,8 +7,8 @@ export default function LogoutPage() {
   const r = useRouter();
   useEffect(() => {
     fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-      .then(() => r.push('/login'))
-      .catch(() => r.push('/login'));
+      .then(() => r.push('login'))
+      .catch(() => r.push('login'));
   }, []);
   return <p>Cerrando sesión…</p>;
 }

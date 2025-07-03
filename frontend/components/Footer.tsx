@@ -6,17 +6,17 @@ const Footer = () => (
     <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
       <div className="mb-4 md:mb-0">© 2025 MyApp. {new Date().getFullYear()}</div>
       <div className="flex space-x-6">
-        <Link href="/terms" legacyBehavior>
+        <Link href="terms" legacyBehavior>
           <a className="hover:text-white transition-colors duration-200" aria-label="Términos de Servicio">
             Terms
           </a>
         </Link>
-        <Link href="/privacy" legacyBehavior>
+        <Link href="privacy" legacyBehavior>
           <a className="hover:text-white transition-colors duration-200" aria-label="Política de Privacidad">
             Privacy
           </a>
         </Link>
-        <Link href="/contact" legacyBehavior>
+        <Link href="contact" legacyBehavior>
           <a className="hover:text-white transition-colors duration-200" aria-label="Contáctanos">
             Contact
           </a>
