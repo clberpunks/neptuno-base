@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { apiFetch } from '../utils/api';
 
 export default function RegisterPage() {
+  const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const router = useRouter();
   const { refresh } = useAuth();
   const [email, setEmail] = useState("");
@@ -66,11 +67,11 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Head>
-        <title>Registro | MyApp</title>
+       <Head>
+        <title>Registro | {appName}</title>
         <meta
           name="description"
-          content="Crea una cuenta en MyApp para acceder a todas tus herramientas"
+          content={`Crea una cuenta en ${appName} para acceder a todas tus herramientas`}
         />
       </Head>
 
@@ -186,7 +187,7 @@ export default function RegisterPage() {
             </form>
 
             <div className="mt-8 text-center text-sm text-gray-600">
-              <p>© 2025 MyApp. Todos los derechos reservados.</p>
+              <p>© 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos reservados.</p>
             </div>
           </div>
         </div>
