@@ -9,6 +9,9 @@
 
 - cuando pulso intro en el login se va por defecto a google no al iniciar sesion
 
+ The requested resource "https://ui-avatars.com/api/?name=Vicente%20Blas" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
+
+
 
 dos errores cuando usuario nativo
 

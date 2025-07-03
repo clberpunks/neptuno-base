@@ -8,7 +8,9 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - BACKEND_URL=http://localhost:8001  # Usar nombre de servicio
+      - BACKEND_URL=http://localhost:8001
+    volumes:
+      - ./data:/data  # Volumen persistente en el host local
     networks:
       app_net:
         ipv4_address: 172.80.0.200
@@ -18,9 +20,9 @@ services:
       context: ./frontend
     container_name: frontend
     ports:
-      - "3000:3000"  # Mapeo correcto: host:8282 → contenedor:3000
+      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=/api  # Ruta relativa
+      - NEXT_PUBLIC_API_URL=/api
       - HOST=0.0.0.0
       - PORT=3000
     depends_on:
@@ -35,10 +37,3 @@ networks:
     ipam:
       config:
         - subnet: 172.80.0.0/16
-
-
-
-
-
-
-

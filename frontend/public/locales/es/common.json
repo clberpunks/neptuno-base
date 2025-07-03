@@ -105,7 +105,7 @@
   "risk_low_description": "Actividad normal, todo bajo control",
   "risk_medium_description": "Actividad inusual detectada, monitorear",
   "risk_high_description": "Actividad sospechosa elevada, acción recomendada",
-  
+
   "protection_level": "Nivel de protección",
   "protection_low": "Bajo",
   "protection_medium": "Medio",
@@ -114,18 +114,18 @@
   "protection_low_description": "Protección básica, considera actualizar",
   "protection_medium_description": "Protección estándar, adecuada para la mayoría",
   "protection_high_description": "Protección avanzada, máxima seguridad",
-  
+
   "last_7_days_insights": "Insights últimos 7 días",
   "total_detected": "Total detectados",
   "bots_blocked": "Bots disuadidos",
   "bots_limited": "Bots limitados",
   "bots_allowed": "Bots permitidos",
-  
+
   "detections_by_bot_type": "Detecciones por tipo de bot",
   "bot_type": "Tipo de Bot",
   "detections": "Detecciones",
   "distribution": "Distribución",
-  
+
   "error_loading_data": "Error cargando datos de riesgo",
 
   "firewall_management": "Firewall LLM - Administración",
@@ -155,8 +155,7 @@
   "additional_info": "Información adicional",
   "rule_created": "Regla creada",
 
-
-   "onboarding_title": "Configuración Inicial",
+  "onboarding_title": "Configuración Inicial",
   "onboarding_subtitle": "Completa estos pasos para configurar tu firewall web",
   "onboarding_analyze_title": "Analizar Tráfico",
   "onboarding_analyze_desc": "Inserta nuestro código de seguimiento para comenzar a analizar el tráfico",
@@ -171,7 +170,7 @@
   "collapse": "Contraer",
   "expand": "Expandir",
 
-   "robots_generator": "Generador de robots.txt",
+  "robots_generator": "Generador de robots.txt",
   "robots_generator_description": "Genera un archivo robots.txt basado en tus reglas de firewall",
   "generate_robots": "Generar robots.txt",
   "robots_content": "Contenido de robots.txt",
@@ -205,8 +204,7 @@
   "gdpr_description": "Reglamento General de Protección de Datos de la UE. Requiere consentimiento explícito para el procesamiento de datos personales.",
   "ccpa_description": "Ley de Privacidad del Consumidor de California. Otorga a los residentes de California derechos sobre sus datos personales.",
   "compliance_warning": "Los documentos generados son plantillas. Consulte con un experto legal para garantizar el cumplimiento completo.",
-  
-  
+
   "terms_conditions": "Términos y Condiciones",
   "privacy_policy": "Política de Privacidad",
   "ai_use_policy": "Política de Uso de IA",
@@ -231,24 +229,24 @@
   "report_generation_error": "Error generando el reporte",
   "report_preview": "Vista Previa",
   "report_for": "Reporte para",
-  
+
   "malicious_bots": "Bots Maliciosos",
   "blocked_requests": "Solicitudes Bloqueadas",
   "scrapers": "Scrapers",
   "botnets": "Botnets",
   "blacklisted": "IPs en Lista Negra",
-  
+
   "crawlers": "Rastreadores",
   "ai_agents": "Agentes de IA",
   "llm_referrals": "Referidos de LLMs",
   "chatbot_traffic": "Tráfico de Chatbots",
-  
+
   "usage_costs": "Costes de Uso",
   "demand_costs": "Costes de Demanda",
   "monetization": "Monetización",
   "ai_tariffs": "Tarifas de IA",
   "revenue": "Ingresos",
-  
+
   "security_overview": "Seguridad",
   "threats_blocked": "Amenazas bloqueadas",
   "seo_performance": "Rendimiento SEO",
@@ -258,11 +256,11 @@
   "security_insight": "Se detectaron 1,245 bots maliciosos (+24%)",
   "seo_insight": "El tráfico de LLMs aumentó un 12%",
   "financial_insight": "Los ingresos por IA alcanzaron $1,245",
-  
+
   "security_recommendations": "Recomendaciones de Seguridad",
   "security_rec_1": "Aumentar restricciones para bots de scraping detectados",
   "security_rec_2": "Implementar CAPTCHA para solicitudes sospechosas",
-  
+
   "source": "Fuente",
   "traffic": "Tráfico",
   "change": "Cambio",
@@ -270,7 +268,7 @@
   "seo_recommendations": "Recomendaciones SEO",
   "seo_rec_1": "Optimizar contenido para búsquedas de IA",
   "seo_rec_2": "Mejorar estructura de datos para rastreadores",
-  
+
   "infrastructure": "Infraestructura",
   "ai_requests": "Solicitudes de IA",
   "ad_revenue": "Publicidad",
@@ -279,5 +277,4 @@
   "financial_insights": "Conclusiones Financieras",
   "finance_insight_1": "La monetización de tráfico de IA aumentó un 24%",
   "finance_insight_2": "Los costes de infraestructura disminuyeron un 8%"
-  
 }

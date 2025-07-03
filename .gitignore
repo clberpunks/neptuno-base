@@ -11,3 +11,4 @@ __init__
 #alembic.ini
 .env.local
 .env
+data/*

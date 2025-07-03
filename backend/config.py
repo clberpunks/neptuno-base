@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str = "http://localhost:8001/rest/auth/callback"
-    DATABASE_URL: str = "sqlite:///./app.db"
+    DATABASE_URL: str = "sqlite:///../data/app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
     
     NODE_ENV: str = "development"

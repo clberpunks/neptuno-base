@@ -4,9 +4,9 @@ import { useError } from "../contexts/ErrorContext";
 
 async function tryRefresh(): Promise<boolean> {
   try {
-    const res = await fetch('/api/auth/refresh', {
-      method: 'POST',
-      credentials: 'include',
+    const res = await fetch("/api/auth/refresh", {
+      method: "POST",
+      credentials: "include",
     });
     return res.ok;
   } catch {
@@ -14,13 +14,16 @@ async function tryRefresh(): Promise<boolean> {
   }
 }
 
-export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
-  let res = await fetch(url, { credentials: 'include', ...options });
+export async function apiFetch<T>(
+  url: string,
+  options: RequestInit = {}
+): Promise<T> {
+  let res = await fetch(url, { credentials: "include", ...options });
 
   if (res.status === 401) {
     const refreshed = await tryRefresh();
     if (refreshed) {
-      res = await fetch(url, { credentials: 'include', ...options });
+      res = await fetch(url, { credentials: "include", ...options });
     } else {
       throw new Error("Unauthorized");
     }
@@ -32,7 +35,7 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
 
   if (!res.ok) {
     const txt = await res.text();
-    throw new Error(txt || 'Error en la petición');
+    throw new Error(txt || "Error en la petición");
   }
 
   return res.json();

@@ -57,7 +57,7 @@ export default function LoginPage() {
   //  window.location.href = "/api/auth/login";
   //};
 
-    const handleGoogleLogin = () => {
+  const handleGoogleLogin = () => {
     setIsRedirecting(true);
     fetch("/rest/auth/user", {
       credentials: "include",
@@ -220,7 +220,10 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 text-center text-sm text-gray-600">
-              <p>© 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos reservados.</p>
+            <p>
+              © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos
+              reservados.
+            </p>
           </div>
         </div>
       </div>
