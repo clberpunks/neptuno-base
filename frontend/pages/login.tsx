@@ -220,7 +220,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 text-center text-sm text-gray-600">
-            © 2025 MyApp. Todos los derechos reservados.
+              <p>© 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos reservados.</p>
           </div>
         </div>
       </div>
