@@ -36,7 +36,7 @@ export default function RiskPanel() {
   const [riskData, setRiskData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const fetchRiskData = async () => {

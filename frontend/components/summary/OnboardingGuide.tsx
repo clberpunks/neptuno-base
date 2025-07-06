@@ -20,7 +20,7 @@ interface OnboardingStep {
 
 export default function OnboardingGuide() {
   const { t } = useTranslation('common');
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [steps, setSteps] = useState<OnboardingStep[]>([
     {
       id: "analyze",

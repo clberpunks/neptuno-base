@@ -12,7 +12,7 @@ import { apiFetch } from "../../utils/api";
 
 export default function TermsPanel() {
   const { t } = useTranslation("common");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Record<string, string>>({});

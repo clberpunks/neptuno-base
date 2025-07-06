@@ -14,7 +14,7 @@ import FinancialReportPreview from "./FinancialReportPreview";
 
 export default function ReportsPanel() {
   const { t } = useTranslation("common");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [reports, setReports] = useState<Record<string, string>>({});

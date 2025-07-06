@@ -17,7 +17,7 @@ import CompliancePanel from "../components/compliance/CompliancePanel";
 import TermsPanel from "../components/compliance/TermsPanel";
 import ReportsPanel from "../components/reports/ReportsPanel";
 import AdminDashboard from "../components/admin/AdminDashboard";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/shared/Spinner";
 
 interface LoginEntry {
   timestamp: string;

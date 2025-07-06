@@ -3,7 +3,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/shared/Spinner";
 
 export function withAuth<P>(
   Component: React.ComponentType<P>,

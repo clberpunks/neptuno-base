@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { withAuth } from '../../utils/withAuth';
 import { apiFetch } from '../../utils/api';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../components/shared/Spinner';
 
 // Definición de tipos
 interface PlanDistribution {
