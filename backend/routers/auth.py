@@ -136,6 +136,7 @@ def get_user_info(request: Request, db: Session = Depends(get_db)):
             "traffic_limit": user.subscription.traffic_limit,
             "domain_limit": user.subscription.domain_limit,
             "user_limit": user.subscription.user_limit,
+            "price": user.subscription.price,
         } if user.subscription else None,
     }
 
@@ -193,6 +194,12 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
         "business":  (1_000_000, 10, 10),
         "enterprise": (10_000_000, 9999, 9999),
     }
+    plan_prices = {
+        "free": 0,
+        "pro": 10,
+        "business": 50,
+        "enterprise": 200
+    }
     if plan not in limits:
         plan = "free"
     subscription = Subscription(
@@ -201,6 +208,7 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
         traffic_limit=limits[plan][0],
         domain_limit=limits[plan][1],
         user_limit=limits[plan][2],
+        price=plan_prices[plan],
         renews_at=datetime.utcnow() + timedelta(days=365)
     )
     db.add(subscription)
@@ -247,6 +255,12 @@ def ensure_subscription(user: User, db: Session):
         "business":  (1_000_000, 10, 10),
         "enterprise": (10_000_000, 9999, 9999),
     }
+    plan_prices = {
+        "free": 0,
+        "pro": 10,
+        "business": 50,
+        "enterprise": 200
+    }
 
     sub = Subscription(
         user_id=user.id,
@@ -254,6 +268,7 @@ def ensure_subscription(user: User, db: Session):
         traffic_limit=limits[default_plan][0],
         domain_limit=limits[default_plan][1],
         user_limit=limits[default_plan][2],
+        price=plan_prices[default_plan],
         created_at=datetime.utcnow(),
         renews_at=datetime.utcnow() + timedelta(days=365),
     )

@@ -16,6 +16,8 @@ import HelpSection from "../components/help/HelpSection";
 import CompliancePanel from "../components/compliance/CompliancePanel";
 import TermsPanel from "../components/compliance/TermsPanel";
 import ReportsPanel from "../components/reports/ReportsPanel";
+import AdminDashboard from "../components/admin/AdminDashboard";
+import Spinner from "../components/Spinner";
 
 interface LoginEntry {
   timestamp: string;
@@ -35,6 +37,7 @@ function Dashboard() {
     | "help"
     | "compliance"
     | "reports"
+    | "admin"
   >("summary");
   const { history: accessHistory } = useFetchHistory(user);
   const [isMobile, setIsMobile] = useState(false);
@@ -61,12 +64,11 @@ function Dashboard() {
   };
 
   const renderSection = () => {
-    if (!user) return null;
+    if (!user) return <Spinner />;
 
     switch (section) {
       case "summary":
         return <SummarySection user={user} formatDate={formatDate} />;
-
       case "profile":
         return (
           <ProfileSection
@@ -75,31 +77,27 @@ function Dashboard() {
             formatDate={formatDate}
           />
         );
-
       case "radar":
         return <Radar />;
-
       case "firewall":
         return <FirewallManager />;
-
       case "help":
         return <HelpSection />;
-
       case "compliance":
-        //return <CompliancePanel />//<div>Compliance Section</div>;
         return (
           <div className="space-y-6">
             <CompliancePanel />
             <TermsPanel />
           </div>
         );
-
       case "reports":
         return (
           <div className="space-y-6">
             <ReportsPanel />
           </div>
         );
+      case "admin":
+        return <AdminDashboard />;
       default:
         return null;
     }
@@ -112,7 +110,11 @@ function Dashboard() {
         <div className="max-w-6xl mx-auto">
           <div className={`${isMobile ? "pt-4 px-4" : "mb-6"}`}>
             <h1 className="text-2xl font-bold text-gray-900 capitalize">
-              {section === "summary" ? t("dashboard") : t(section)}
+              {section === "summary" 
+                ? t("dashboard") 
+                : section === "admin"
+                ? "Administración"
+                : t(section)}
             </h1>
             <p className="text-gray-600">
               {(() => {
@@ -131,6 +133,8 @@ function Dashboard() {
                     return "Compliance management";
                   case "reports":
                     return "View detailed reports";
+                  case "admin":
+                    return "Panel de administración del sistema";
                   default:
                     return "";
                 }

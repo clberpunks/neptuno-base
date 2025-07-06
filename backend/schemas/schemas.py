@@ -23,6 +23,7 @@ class SubscriptionOut(BaseModel):
     traffic_limit: int
     domain_limit: int
     user_limit: int
+    price: int  # Nuevo campo
 
     class Config:
         orm_mode = True

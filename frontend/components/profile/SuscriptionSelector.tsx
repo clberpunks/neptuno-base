@@ -11,6 +11,7 @@ interface SubscriptionPlan {
     domain_limit: string;
     user_limit: string;
   };
+  price: number; // Nuevo campo
 }
 
 const plans: SubscriptionPlan[] = [
@@ -23,6 +24,7 @@ const plans: SubscriptionPlan[] = [
       domain_limit: "1 dominio",
       user_limit: "1 usuario",
     },
+    price: 0,
   },
   {
     id: "pro",
@@ -33,6 +35,7 @@ const plans: SubscriptionPlan[] = [
       domain_limit: "5 dominios",
       user_limit: "5 usuarios",
     },
+    price: 10,
   },
   {
     id: "business",
@@ -43,6 +46,7 @@ const plans: SubscriptionPlan[] = [
       domain_limit: "10 dominios",
       user_limit: "10 usuarios",
     },
+    price: 50,
   },
   {
     id: "enterprise",
@@ -53,6 +57,7 @@ const plans: SubscriptionPlan[] = [
       domain_limit: "Ilimitado",
       user_limit: "Ilimitado",
     },
+    price: 200,
   },
 ];
 
@@ -105,6 +110,9 @@ export default function SubscriptionSelector() {
                 </li>
                 <li>
                   <strong>Usuarios:</strong> {plan.features.user_limit}
+                </li>
+                <li>
+                  <strong>Precio:</strong> {plan.price === 0 ? "Gratis" : `€${plan.price}/mes`}
                 </li>
               </ul>
 

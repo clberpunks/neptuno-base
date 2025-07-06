@@ -10,6 +10,7 @@ interface SubscriptionData {
   traffic_limit: number;
   domain_limit: number;
   user_limit: number;
+  price: number; // Nuevo campo
 }
 
 export interface User {

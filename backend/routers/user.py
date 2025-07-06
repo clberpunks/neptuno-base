@@ -1,6 +1,6 @@
 # backend/routes/user.py
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_current_user
 from db import get_db
@@ -30,10 +30,13 @@ def update_subscription(data: PlanUpdate,
     }
 
     t, d, u = limits[plan]
-
-    # Crea suscripción si no existe
-
-
+    plan_prices = {
+        "free": 0,
+        "pro": 10,
+        "business": 50,
+        "enterprise": 200
+    }
+    price = plan_prices[plan]
     # Buscar suscripción existente en la base de datos
     sub = db.query(Subscription).filter_by(user_id=current_user.id).first()
     if sub is None:
@@ -43,13 +46,15 @@ def update_subscription(data: PlanUpdate,
                         domain_limit=d,
                         user_limit=u,
                         created_at=datetime.utcnow(),
-                        renews_at=datetime.utcnow() + timedelta(days=365))
+                        renews_at=datetime.utcnow() + timedelta(days=365),
+                        price=price)
         db.add(sub)
     else:
         sub.plan = plan
         sub.traffic_limit = t
         sub.domain_limit = d
         sub.user_limit = u
+        sub.price = price
 
     db.commit()
     return {"message": "Plan actualizado correctamente"}

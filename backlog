@@ -11,6 +11,7 @@
 
  The requested resource "https://ui-avatars.com/api/?name=Vicente%20Blas" has type "image/svg+xml" but dangerouslyAllowSVG is disabled
 
+-- logica decremento de tokens
 
 
 dos errores cuando usuario nativo

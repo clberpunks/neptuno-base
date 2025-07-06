@@ -92,6 +92,9 @@ export default function ProfileSection({
               <strong>Usuarios permitidos:</strong>{" "}
               {user.subscription.user_limit}
             </li>
+            <li>
+              <strong>Precio:</strong> {user.subscription.price === 0 ? "Gratis" : `€${user.subscription.price}/mes`}
+            </li>
           </ul>
         </div>
       )}

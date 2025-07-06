@@ -11,6 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const noLayoutRoutes = [
     "/404",
     "/403",
+    "/admin",
     "/login",
     "/dashboard",
     "/register",

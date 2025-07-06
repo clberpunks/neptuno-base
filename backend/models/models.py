@@ -42,6 +42,7 @@ class Subscription(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     renews_at = Column(DateTime)
     remaining_tokens = Column(Integer)
+    price = Column(Integer, default=0)  # Nuevo campo para el precio
     
     user = relationship("User", back_populates="subscription")
 
