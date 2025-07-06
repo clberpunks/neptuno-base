@@ -52,7 +52,7 @@ export default function Radar() {
 
   useEffect(() => {
     Promise.all([
-      apiFetch<Stats>("/api/logs/stats"),
+      apiFetch<Stats>("/api/logs/stats/user"),
       apiFetch<Log[]>("/api/logs"),
       // apiFetch<Rule[]>('/api/firewall'), // ← No necesario para Radar, solo logs y stats
     ])
