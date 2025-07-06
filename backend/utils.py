@@ -81,6 +81,8 @@ def send_email(to: str, subject: str, html: str):
     msg["From"] = settings.MAIL_FROM
     msg["To"] = to
 
-    with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
+    with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
+        server.ehlo()
+        server.starttls()
         server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
         server.send_message(msg)

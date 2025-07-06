@@ -2,6 +2,8 @@
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import SubscriptionSelector from "./SuscriptionSelector";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface ProfileSectionProps {
   user: {
@@ -22,6 +24,30 @@ export default function ProfileSection({
   formatDate,
 }: ProfileSectionProps) {
   const { t } = useTranslation("common");
+  const [isSending, setIsSending] = useState(false);
+
+  const handleForceSendReport = async () => {
+    setIsSending(true);
+    try {
+      const response = await fetch('/rest/user/send-weekly-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        toast.success(t('report_sent_successfully'));
+      } else {
+        throw new Error(await response.text());
+      }
+    } catch (error) {
+      console.error('Error sending report:', error);
+      toast.error(t('failed_to_send_report'));
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -96,7 +122,26 @@ export default function ProfileSection({
               <strong>Precio:</strong> {user.subscription.price === 0 ? "Gratis" : `€${user.subscription.price}/mes`}
             </li>
           </ul>
+          {/* Add this button section */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h4 className="text-md font-medium mb-3">Reporte Semanal</h4>
+            <button
+              onClick={handleForceSendReport}
+              disabled={isSending}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${
+                isSending 
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              }`}
+            >
+              {isSending ? t('sending') : t('force_send_weekly_report')}
+            </button>
+            <p className="mt-2 text-xs text-gray-500">
+              {t('force_send_report_description')}
+            </p>
+          </div>
         </div>
+        
       )}
 
       <SubscriptionSelector />

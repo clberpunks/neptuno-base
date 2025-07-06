@@ -20,11 +20,11 @@ class Settings(BaseSettings):
     REFRESH_SECRET: str = "super_refresh_secret"
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
-    mail_server: str
-    mail_port: int
-    mail_username: str
-    mail_password: str
-    mail_from: str
+    MAIL_SERVER: str
+    MAIL_PORT: int
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
     
     class Config:
         env_file = ".env"
