@@ -31,6 +31,25 @@ services:
       app_net:
         ipv4_address: 172.80.0.100
 
+  db:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ciberpunk
+      POSTGRES_PASSWORD: ciberpunk123
+      POSTGRES_DB: ciberpunkdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      app_net:
+        ipv4_address: 172.80.0.150
+
+volumes:
+  postgres_data:
+
 networks:
   app_net:
     driver: bridge

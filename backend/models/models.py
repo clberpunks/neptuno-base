@@ -29,6 +29,20 @@ class PlanLevel(str, enum.Enum):
     business = "business"
     enterprise = "enterprise"
 
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    title = Column(String, nullable=False)
+    body = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    read = Column(Boolean, default=False)
+
+    user = relationship("User", back_populates="notifications")
+
+
+
 class Subscription(Base):
     __tablename__ = "subscriptions"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -60,6 +74,9 @@ class User(Base):
     subscription = relationship("Subscription", uselist=False, back_populates="user")
 
     login_history = relationship("LoginHistory", back_populates="user")
+
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+
 
 
 

@@ -85,6 +85,36 @@ def get_access_history(current_user: User = Depends(get_current_user),
         "login_method": entry.login_method,
     } for entry in history]
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from db import get_db
+from dependencies import get_current_user
+from models.models import Notification, User
+from schemas.schemas import NotificationOut
+
+
+@router.get("/notifications", response_model=list[NotificationOut])
+def get_notifications(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return db.query(Notification).filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).all()
+
+@router.post("/notifications/{notification_id}/read")
+def mark_as_read(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
+    if not notif:
+        raise HTTPException(status_code=404, detail="Notificación no encontrada")
+    notif.read = True
+    db.commit()
+    return {"message": "Marcada como leída"}
+
+@router.delete("/{notification_id}")
+def delete_notification(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
+    if not notif:
+        raise HTTPException(status_code=404, detail="No existe")
+    db.delete(notif)
+    db.commit()
+    return {"message": "Eliminada"}
+
 
 @router.post("/send-weekly-report")
 def send_weekly_report(
@@ -119,38 +149,17 @@ def send_weekly_report(
         html=html
     )
 
+    notification = Notification(
+    user_id=current_user.id,
+    title="📊 Resumen semanal enviado",
+    body=f"Tu informe semanal incluye {stats['total']} eventos, con {stats['blocked']} bloqueos y {stats['limited']} limitaciones detectadas."
+)
+    db.add(notification)
+    db.commit()
+
     return {"message": "Boletín enviado correctamente"}
 
-    users = db.query(User).all()
-    for user in users:
-        if not user.email:
-            continue
-
-        # Calcula actividad semanal
-        one_week_ago = datetime.utcnow() - timedelta(days=7)
-        logs = db.query(AccessLog).filter(
-            AccessLog.tenant_id == user.id,
-            AccessLog.timestamp >= one_week_ago
-        ).all()
-
-        stats = {
-            "total": len(logs),
-            "blocked": sum(1 for l in logs if l.outcome == "block"),
-            "limited": sum(1 for l in logs if l.outcome == "limit"),
-            "approaching_limit": (
-                user.subscription and len(logs) > user.subscription.traffic_limit * 0.8
-            )
-        }
-
-        # Renderizar plantilla
-        template = env.get_template("weekly_summary.html")
-        html = template.render(user=user, stats=stats)
-
-        # Enviar email
-        send_email(
-            to=user.email,
-            subject="📊 Tu resumen semanal de actividad",
-            html=html
-        )
-
-    return {"message": "Boletines enviados"}
+@router.get("/notifications/unseen-count")
+def unseen_notifications_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    count = db.query(Notification).filter_by(user_id=current_user.id, read=False).count()
+    return {"unseen": count}

@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from config import settings
 from db import get_db
-from models.models import Subscription, User, UserRole, LoginHistory
+from models.models import Notification, Subscription, User, UserRole, LoginHistory
 from schemas.schemas import UserLogin, UserRegister
 from utils import generate_tokens, hash_password, set_auth_cookies, verify_password
 
@@ -56,6 +56,14 @@ async def callback(request: Request, db: Session = Depends(get_db)):
             last_login=now,
         )
         db.add(user)
+        
+        notification = Notification(
+            user_id=user.id,
+            title="👋 ¡Bienvenido a la plataforma!",
+            body="Tu cuenta ha sido creada con éxito. Empieza a proteger tus dominios y detectar actividad sospechosa."
+        )
+        db.add(notification)
+        
         db.flush()
     
     ensure_subscription(user, db) 
@@ -212,6 +220,14 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
         renews_at=datetime.utcnow() + timedelta(days=365)
     )
     db.add(subscription)
+
+    notification = Notification(
+        user_id=user.id,
+        title="👋 ¡Bienvenido a la plataforma!",
+        body="Tu cuenta ha sido creada con éxito. Empieza a proteger tus dominios y detectar actividad sospechosa."
+    )
+    db.add(notification)
+
     db.commit()
 
     access_token, refresh_token = generate_tokens(user)

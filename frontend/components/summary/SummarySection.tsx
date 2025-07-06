@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import RiskPanel from "./RiskPanel";
 import OnboardingGuide from "./OnboardingGuide";
+import NotificationsInbox from "../profile/NotificationsInbox";
 
 interface SummarySectionProps {
   user: {
@@ -23,6 +24,8 @@ export default function SummarySection({ user, formatDate }: SummarySectionProps
       <OnboardingGuide />
       
       <RiskPanel />
+
+      <NotificationsInbox />
       
 
 

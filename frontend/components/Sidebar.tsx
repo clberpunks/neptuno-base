@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useSummaryNotifications } from "../hooks/useSummaryNotifications";
 import { useRadarNotifications } from "../hooks/useRadarNotifications";
 
 interface Props {
@@ -32,7 +33,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const unseen = useRadarNotifications();
-
+  const summaryUnseen = useSummaryNotifications();
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,20 +79,32 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "summary",
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
+        <span className="relative">
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          {summaryUnseen > 0 && (
+            <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+              {summaryUnseen}
+            </span>
+          )}
+        </span>
       ),
     },
     {
       section: "firewall",
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -105,7 +118,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       section: "radar",
       icon: (
         <div className="relative">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
           </svg>
           {unseen > 0 && (
@@ -119,7 +137,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "compliance",
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -132,7 +155,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "reports",
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -143,7 +171,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       ),
     },
   ];
-
 
   if (isMobile) {
     return (
@@ -310,19 +337,21 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           )}`}
           aria-current={currentSection === "summary" ? "page" : undefined}
         >
-          <svg
-            className="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
+          <span className="relative">
+            <svg
+              className="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {summaryUnseen > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                {summaryUnseen}
+              </span>
+            )}
+          </span>
           {t("summary")}
         </button>
 

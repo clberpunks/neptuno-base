@@ -48,3 +48,12 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class NotificationOut(BaseModel):
+    id: str
+    title: str
+    body: str | None
+    created_at: datetime
+    read: bool
+
+    class Config:
+        orm_mode = True
