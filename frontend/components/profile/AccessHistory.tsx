@@ -1,29 +1,59 @@
 // components/AccessHistory.tsx
-import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { useFetchHistory } from "../../hooks/userFetchHistory";
 
-export default function AccessHistory() {
-  const { t } = useTranslation();
-  const { user } = useAuth();
-  const { history, error } = useFetchHistory(user);
+interface AccessHistoryProps {
+  accessHistory?: Array<{
+    timestamp: string;
+    login_method: string;
+    ip_address: string;
+  }>;
+  formatDate: (dateString?: string) => string;
+  user: {
+    created_at?: string;
+  };
+}
 
-  if (!user) return null;
+export default function AccessHistory({
+  accessHistory,
+  formatDate,
+  user,
+}: AccessHistoryProps) {
+  const { t } = useTranslation("common");
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-2" aria-label={t("login_history")}>
-        {t("login_history")}
-      </h2>
-      {error ? (
-        <p className="text-red-500" role="alert">{error}</p>
+    <div className="bg-white rounded-xl p-6 shadow-sm">
+      <h2 className="text-xl font-semibold mb-6">{t("login_history")}</h2>
+      {!accessHistory ? (
+        <div className="flex items-center justify-center h-48">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+        </div>
+      ) : accessHistory.length === 0 && !user.created_at ? (
+        <p className="text-gray-500">{t("no_login_history")}</p>
       ) : (
-        <ul className="list-disc list-inside">
-          {history.map((entry) => (
-            <li key={entry.id}>
-              {new Date(entry.timestamp).toLocaleString()} — {entry.ip_address} — {entry.login_method}
+        <ul className="space-y-4">
+          {accessHistory.map((entry, index) => (
+            <li
+              key={index}
+              className="border-l-4 pl-4 py-2 border-indigo-600"
+            >
+              <div className="text-sm font-medium text-gray-900">
+                {formatDate(entry.timestamp)}
+              </div>
+              <div className="text-sm text-gray-500">
+                {entry.login_method} • {entry.ip_address}
+              </div>
             </li>
           ))}
+          {user.created_at && (
+            <li className="border-l-4 pl-4 py-2 border-green-600">
+              <div className="text-sm font-medium text-gray-900">
+                {formatDate(user.created_at)}
+              </div>
+              <div className="text-sm text-gray-500 italic">
+                {t("account_created")}
+              </div>
+            </li>
+          )}
         </ul>
       )}
     </div>

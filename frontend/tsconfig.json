@@ -5,6 +5,10 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "paths": {
+      "@/*": ["./frontend/*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,

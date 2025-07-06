@@ -24,7 +24,7 @@ export default function FirewallManager() {
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
 
   // Estados para paneles desplegables
-  const [firewallExpanded, setFirewallExpanded] = useState(true);
+  const [firewallExpanded, setFirewallExpanded] = useState(false);
   const [robotsExpanded, setRobotsExpanded] = useState(true);
   const [metaExpanded, setMetaExpanded] = useState(true);
 
