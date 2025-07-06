@@ -1,6 +1,8 @@
 .next
 node_modules
 .venv
+.env
+.env.local
 __pycache__
 *.pyc
 *.pyo
@@ -9,6 +11,5 @@ __pycache__
 __init__
 #alembic
 #alembic.ini
-.env.local
-.env
+
 data/*

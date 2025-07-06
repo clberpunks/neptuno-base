@@ -1,0 +1,734 @@
+Excelente, ahora vamos a ampliar los modelos de datos que almacena nuestra aplicación de firewall contra IA bots con pixel de seguimiento.En primer lugar vamos a implantar de la manera mas sencilla y robusta posible, planes de suscripción para los usuarios, que serán: free, pro, bussines, enterprise. Actualiza los modelos de datos, esquemas pydantic, typados, interfaces etc que necesiten actualizarse con la nueva logica de las suscripciones. Asi como su visualización en el perfil de usuario.
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String, nullable=True)
+    picture = Column(String)
+    role = Column(Enum(UserRole), default=UserRole.user)
+    auth_method = Column(String, default="google")  # "google" o "local"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_login = Column(DateTime, default=datetime.utcnow)
+
+    login_history = relationship("LoginHistory", back_populates="user")
+
+# backend/routes/user.py
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from dependencies import get_current_user
+from db import get_db
+from models.models import LoginHistory, User
+
+router = APIRouter(tags=["user"])  #prefix="/user",
+
+# backend/schemas.py
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from enum import Enum
+
+class UserRole(str, Enum):
+    admin = "admin"
+    user = "user"
+
+class UserInJWT(BaseModel):
+    id: str
+    name: str
+    email: str
+    picture: str | None
+    role: UserRole
+    created_at: datetime
+    last_login: datetime
+
+
+class UserRegister(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+// frontend/hooks/useAuth.tsx
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useRouter } from "next/router";
+import { apiFetch } from "../utils/api";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  picture: string;
+  role: "admin" | "user";
+  created_at: string;
+  last_login: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  refresh: () => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+  refresh: async () => {},
+  logout: async () => {},
+});
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const loadUser = async () => {
+    setLoading(true);
+    try {
+      const u = await apiFetch<User>("/rest/auth/user");
+      setUser(u);
+    } catch (err: any) {
+      if (err.status === 401) {
+        setUser(null);
+      } else {
+        console.error(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refresh = async () => {
+    await loadUser();
+  };
+
+  const logout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    setUser(null);
+    router.push('login');
+  };
+
+  useEffect(() => {
+    loadUser();
+    const id = setInterval(loadUser, 5 * 60 * 1000); // opcional: refresco de sesión
+    return () => clearInterval(id);
+  }, []);
+
+    // Intervalo para refrescar token cada 1 minuto solo si user existe
+  useEffect(() => {
+    if (user) {
+      const intervalId = setInterval(() => {
+        refresh();
+      }, 5 * 60 * 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
+
+   return (
+    <AuthContext.Provider value={{ user, loading, refresh, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+// components/ProfileSection.tsx
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+
+interface ProfileSectionProps {
+  user: {
+    [key: string]: any;
+    created_at?: string;
+  };
+  accessHistory?: Array<{
+    timestamp: string;
+    login_method: string;
+    ip_address: string;
+  }>;
+  formatDate: (dateString?: string) => string;
+}
+
+export default function ProfileSection({
+  user,
+  accessHistory,
+  formatDate,
+}: ProfileSectionProps) {
+  const { t } = useTranslation("common");
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row items-center">
+          <Image
+            src={`https://ui-avatars.com/api/?name=${user.name}`}
+            alt={`${user.name} avatar`}
+            width={96}
+            height={96}
+            className="rounded-full w-24 h-24 md:mr-8 mb-6 md:mb-0 border-4 border-indigo-100"
+            priority
+            unoptimized={process.env.NODE_ENV === "development"}
+          />
+          <div className="text-center md:text-left">
+            <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+            <p className="text-gray-600 mb-4">{user.email}</p>
+            <div className="inline-block bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
+              {user.role}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">{t("account_status")}</h3>
+          <div className="flex items-center">
+            <div className="h-3 w-3 rounded-full bg-green-500 mr-2"></div>
+            <span className="text-gray-700">{t("active")}</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">{t("created_at")}</h3>
+          <p className="text-gray-700">{formatDate(user.created_at)}</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">{t("last_login")}</h3>
+          <p className="text-gray-700">{formatDate(user.last_login)}</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold mb-6">{t("profile_info")}</h2>
+        <div className="overflow-hidden bg-gray-50 rounded-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200">
+              {Object.entries(user).map(([key, value]) => (
+                <tr key={key}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">
+                    {key.replace(/_/g, " ")}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {value || t("not_available")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold mb-6">{t("login_history")}</h2>
+        {!accessHistory ? (
+          <div className="flex items-center justify-center h-48">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+          </div>
+        ) : accessHistory.length === 0 && !user.created_at ? (
+          <p className="text-gray-500">{t("no_login_history")}</p>
+        ) : (
+          <ul className="space-y-4">
+            {accessHistory.map((entry, index) => (
+              <li
+                key={index}
+                className="border-l-4 pl-4 py-2 border-indigo-600"
+              >
+                <div className="text-sm font-medium text-gray-900">
+                  {formatDate(entry.timestamp)}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {entry.login_method} • {entry.ip_address}
+                </div>
+              </li>
+            ))}
+            {user.created_at && (
+              <li className="border-l-4 pl-4 py-2 border-green-600">
+                <div className="text-sm font-medium text-gray-900">
+                  {formatDate(user.created_at)}
+                </div>
+                <div className="text-sm text-gray-500 italic">
+                  {t("account_created")}
+                </div>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+la siguiente modificación que harás será en la navegación principal:
+
+- cuando el usuario sea rol administrador:
+
+-- en el menu para desktop aparerá una una opción despues de "help" con el icono de un engranaje que pondrá "opciones" o "settings"
+
+-- en el menu para mobile aparecerá el  icono de engranaje y opciones o settings al lado del icono de help
+
+// components/Sidebar.tsx
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
+import { useAuth } from "../hooks/useAuth";
+import { useEffect, useState } from "react";
+
+interface Props {
+  onSelect: (
+    section:
+      | "summary"
+      | "profile"
+      | "logins"
+      | "radar"
+      | "firewall"
+      | "help"
+      | "compliance"
+      | "reports"
+  ) => void;
+  currentSection: string;
+}
+
+export default function Sidebar({ onSelect, currentSection }: Props) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { user } = useAuth();
+  const [isMobile, setIsMobile] = useState(false);
+  const appName = process.env.NEXT_PUBLIC_APP_NAME;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isActive = (section: string) =>
+    currentSection === section
+      ? "bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600"
+      : "text-gray-700 hover:bg-gray-100";
+
+  // Updated bottom navigation order: summary / firewall / radar / compliance / reports
+  const mobileBottomMenuItems = [
+    {
+      section: "summary",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+    },
+    {
+      section: "firewall",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      ),
+    },
+    {
+      section: "radar",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
+        </svg>
+      ),
+    },
+    {
+      section: "compliance",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+      ),
+    },
+    {
+      section: "reports",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      ),
+    },
+  ];
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile Top Bar */}
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 h-16 flex items-center px-4">
+          {/* Profile Button (Left) */}
+          <button
+            onClick={() => onSelect("profile")}
+            className={`flex items-center ${
+              currentSection === "profile" ? "text-indigo-600" : "text-gray-600"
+            }`}
+          >
+            <svg
+              className="w-6 h-6 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+            <span className="text-sm font-medium">{t("profile")}</span>
+          </button>
+
+          {/* App Name (Center) */}
+          <div className="flex-grow text-center">
+            <span className="text-lg font-semibold text-indigo-600">
+              {process.env.NEXT_PUBLIC_APP_NAME}
+            </span>
+          </div>
+
+          {/* Help Button (Right) */}
+          <button
+            onClick={() => onSelect("help")}
+            className={`flex items-center ${
+              currentSection === "help" ? "text-indigo-600" : "text-gray-600"
+            }`}
+          >
+            <span className="text-sm font-medium mr-1">{t("help")}</span>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+          <div className="flex justify-around py-2">
+            {mobileBottomMenuItems.map((item) => (
+              <button
+                key={item.section}
+                onClick={() => onSelect(item.section as any)}
+                className={`flex flex-col items-center p-2 ${
+                  currentSection === item.section
+                    ? "text-indigo-600"
+                    : "text-gray-600"
+                }`}
+                aria-current={
+                  currentSection === item.section ? "page" : undefined
+                }
+              >
+                {item.icon}
+                <span className="text-xs mt-1">{t(item.section)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div className="p-6 border-b border-gray-200">
+        <Link href={siteUrl || "/"} legacyBehavior>
+          <a className="flex items-center text-lg font-semibold text-indigo-600">
+            {appName}
+          </a>
+        </Link>
+      </div>
+
+      <div className="p-6 border-b border-gray-200 flex items-center">
+        {user?.picture || user?.email ? (
+          <Image
+            src={`https://www.gravatar.com/avatar/${
+              user?.email
+                ? require("crypto")
+                    .createHash("md5")
+                    .update(user.email.trim().toLowerCase())
+                    .digest("hex")
+                : ""
+            }?d=mp&s=40`}
+            alt="User Avatar"
+            width={40}
+            height={40}
+            className="rounded-full w-10 h-10 mr-3"
+            unoptimized={process.env.NODE_ENV === "development"}
+          />
+        ) : (
+          <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center"></div>
+        )}
+        <div>
+          <p className="font-medium text-gray-900 truncate">{user?.name}</p>
+          <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+        </div>
+      </div>
+
+      <nav className="py-4 flex-grow">
+        <button
+          onClick={() => onSelect("summary")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "summary"
+          )}`}
+          aria-current={currentSection === "summary" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          {t("summary")}
+        </button>
+
+        <button
+          onClick={() => onSelect("profile")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "profile"
+          )}`}
+          aria-current={currentSection === "profile" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          {t("profile")}
+        </button>
+
+        <button
+          onClick={() => onSelect("radar")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "radar"
+          )}`}
+          aria-current={currentSection === "radar" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
+          </svg>
+          {t("radar")}
+        </button>
+
+        <button
+          onClick={() => onSelect("firewall")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "firewall"
+          )}`}
+          aria-current={currentSection === "firewall" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+          {t("firewall")}
+        </button>
+
+        {/* Compliance Option */}
+        <button
+          onClick={() => onSelect("compliance")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "compliance"
+          )}`}
+          aria-current={currentSection === "compliance" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+          {t("compliance")}
+        </button>
+
+        {/* Reports Option */}
+        <button
+          onClick={() => onSelect("reports")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "reports"
+          )}`}
+          aria-current={currentSection === "reports" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          {t("reports")}
+        </button>
+
+        <button
+          onClick={() => onSelect("help")}
+          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+            "help"
+          )}`}
+          aria-current={currentSection === "help" ? "page" : undefined}
+        >
+          <svg
+            className="w-5 h-5 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {t("help")}
+        </button>
+      </nav>
+      <div className="p-4 border-t border-gray-200 mt-auto">
+        <Link href="logout" legacyBehavior>
+          <a className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md">
+            Logout
+          </a>
+        </Link>
+      </div>
+    </aside>
+  );
+}
+
+// frontend/utils/withAuth.tsx
+// frontend/utils/withAuth.tsx
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import Spinner from "../components/Spinner";
+
+export function withAuth<P>(
+  Component: React.ComponentType<P>,
+  roles: string[] = []
+) {
+  return function Protected(props: P) {
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+      if (!loading) {
+        if (!user) router.replace("login");
+        else if (roles.length && !roles.includes(user.role))
+          router.replace("/403");
+      }
+    }, [user, loading]);
+
+    if (loading || !user) {
+      return <Spinner />;
+    }
+    return <Component {...props} />;
+  };
+}
+por ultimo vamos a crear un nuevo componente, que se mostrará en el panel de "profile" del dashboard, que se llamará "subscriptions" donde el usuario podrá elegir entre pro, bussines o enterprise de forma sencilla, minima pero robusta y moderna y elegante.
+Tu codigo debe ser lo mas minimo pero eficaz posible, respetando estandares de usabilidad y accesibilidad.

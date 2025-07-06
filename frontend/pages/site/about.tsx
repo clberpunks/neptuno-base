@@ -1,7 +1,7 @@
 // pages/about.tsx
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 import Link from 'next/link';
 
 export default function About() {

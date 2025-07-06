@@ -3,6 +3,15 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { useRouter } from "next/router";
 import { apiFetch } from "../utils/api";
 
+interface SubscriptionData {
+  plan: "free" | "pro" | "business" | "enterprise";
+  created_at: string;
+  renews_at: string;
+  traffic_limit: number;
+  domain_limit: number;
+  user_limit: number;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -11,7 +20,9 @@ export interface User {
   role: "admin" | "user";
   created_at: string;
   last_login: string;
+  subscription: SubscriptionData; // 👈 Asegura que esto no sea string suelto
 }
+
 
 interface AuthContextType {
   user: User | null;

@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from config import settings
 from db import get_db
-from models.models import User, UserRole, LoginHistory
+from models.models import Subscription, User, UserRole, LoginHistory
 from schemas.schemas import UserLogin, UserRegister
 from utils import generate_tokens, hash_password, set_auth_cookies, verify_password
 
@@ -56,6 +56,9 @@ async def callback(request: Request, db: Session = Depends(get_db)):
             last_login=now,
         )
         db.add(user)
+        db.flush()
+    
+    ensure_subscription(user, db) 
     db.commit()
 
     login_record = LoginHistory(user_id=user.id, ip_address=request.client.host, login_method="google")
@@ -101,7 +104,7 @@ async def get_google_userinfo(access_token: str) -> dict:
 
 
 @router.get("/user")
-def get_user_info(request: Request):
+def get_user_info(request: Request, db: Session = Depends(get_db)):
     jwt_token = request.cookies.get("jwt_token")
     if not jwt_token:
         return Response(status_code=401)
@@ -112,7 +115,30 @@ def get_user_info(request: Request):
     except jwt.PyJWTError:
         return Response(status_code=401)
 
-    return payload
+    user = db.query(User).filter_by(id=payload["id"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    ensure_subscription(user, db)
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "picture": user.picture,
+        "role": user.role,
+        "created_at": user.created_at,
+        "last_login": user.last_login,
+        "subscription": {
+            "plan": user.subscription.plan,
+            "created_at": user.subscription.created_at,
+            "renews_at": user.subscription.renews_at,
+            "traffic_limit": user.subscription.traffic_limit,
+            "domain_limit": user.subscription.domain_limit,
+            "user_limit": user.subscription.user_limit,
+        } if user.subscription else None,
+    }
+
 
 
 @router.post("/refresh")
@@ -145,7 +171,7 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
     if db.query(User).filter_by(email=data.email).first():
         raise HTTPException(status_code=400, detail="Email ya registrado")
 
-    new_user = User(
+    user = User(
         id=str(uuid.uuid4()),
         email=data.email,
         name=data.name,
@@ -156,15 +182,35 @@ def register_user(data: UserRegister, request: Request, db: Session = Depends(ge
         last_login=datetime.utcnow(),
         role=UserRole.user
     )
-    db.add(new_user)
+    db.add(user)
+    db.flush()
+
+    # Suscripción básica según plan elegido
+    plan = getattr(data, "plan", "free")
+    limits = {
+        "free":      (10_000, 1, 1),
+        "pro":       (100_000, 5, 5),
+        "business":  (1_000_000, 10, 10),
+        "enterprise": (10_000_000, 9999, 9999),
+    }
+    if plan not in limits:
+        plan = "free"
+    subscription = Subscription(
+        user_id=user.id,
+        plan=plan,
+        traffic_limit=limits[plan][0],
+        domain_limit=limits[plan][1],
+        user_limit=limits[plan][2],
+        renews_at=datetime.utcnow() + timedelta(days=365)
+    )
+    db.add(subscription)
     db.commit()
 
-    access_token, refresh_token = generate_tokens(new_user)
-
-    response = JSONResponse(content={"message": "Registro y login exitosos"})
-    response.set_cookie("jwt_token", access_token, httponly=True, samesite="none", secure=True)
-    response.set_cookie("refresh_token", refresh_token, httponly=True, samesite="none", secure=True)
+    access_token, refresh_token = generate_tokens(user)
+    response = JSONResponse(content={"message": "Registro exitoso"})
+    set_auth_cookies(response, user)
     return response
+
 
 
 @router.post("/login")
@@ -172,6 +218,8 @@ def login_user(data: UserLogin, request: Request, db: Session = Depends(get_db))
     user = db.query(User).filter_by(email=data.email, auth_method="local").first()
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
+
+    ensure_subscription(user, db)
 
     user.last_login = datetime.utcnow()
     db.commit()
@@ -186,3 +234,28 @@ def login_user(data: UserLogin, request: Request, db: Session = Depends(get_db))
     response = JSONResponse(content={"message": "Login exitoso"})
     set_auth_cookies(response, user)
     return response
+
+def ensure_subscription(user: User, db: Session):
+    allowed_plans = {"free", "pro", "business", "enterprise"}
+    if user.subscription and user.subscription.plan in allowed_plans:
+        return
+
+    default_plan = "free"
+    limits = {
+        "free":      (10_000, 1, 1),
+        "pro":       (100_000, 5, 5),
+        "business":  (1_000_000, 10, 10),
+        "enterprise": (10_000_000, 9999, 9999),
+    }
+
+    sub = Subscription(
+        user_id=user.id,
+        plan=default_plan,
+        traffic_limit=limits[default_plan][0],
+        domain_limit=limits[default_plan][1],
+        user_limit=limits[default_plan][2],
+        created_at=datetime.utcnow(),
+        renews_at=datetime.utcnow() + timedelta(days=365),
+    )
+    db.add(sub)
+    db.commit()

@@ -1,6 +1,7 @@
 // components/ProfileSection.tsx
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
+import SubscriptionSelector from "./SuscriptionSelector";
 
 interface ProfileSectionProps {
   user: {
@@ -64,22 +65,57 @@ export default function ProfileSection({
           <p className="text-gray-700">{formatDate(user.last_login)}</p>
         </div>
       </div>
+      {user.subscription && typeof user.subscription === "object" && (
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">Suscripción</h3>
+          <ul className="text-sm text-gray-700 space-y-1">
+            <li>
+              <strong>Plan:</strong> {user.subscription.plan}
+            </li>
+            <li>
+              <strong>Inicio:</strong>{" "}
+              {formatDate(user.subscription.created_at)}
+            </li>
+            <li>
+              <strong>Renovación:</strong>{" "}
+              {formatDate(user.subscription.renews_at)}
+            </li>
+            <li>
+              <strong>Límite tráfico mensual:</strong>{" "}
+              {user.subscription.traffic_limit.toLocaleString()} hits
+            </li>
+            <li>
+              <strong>Dominios permitidos:</strong>{" "}
+              {user.subscription.domain_limit}
+            </li>
+            <li>
+              <strong>Usuarios permitidos:</strong>{" "}
+              {user.subscription.user_limit}
+            </li>
+          </ul>
+        </div>
+      )}
+
+      <SubscriptionSelector />
 
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-6">{t("profile_info")}</h2>
         <div className="overflow-hidden bg-gray-50 rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <tbody className="divide-y divide-gray-200">
-              {Object.entries(user).map(([key, value]) => (
-                <tr key={key}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">
-                    {key.replace(/_/g, " ")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {value || t("not_available")}
-                  </td>
-                </tr>
-              ))}
+              {Object.entries(user).map(([key, value]) => {
+                if (typeof value === "object" && value !== null) return null;
+                return (
+                  <tr key={key}>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 capitalize">
+                      {key.replace(/_/g, " ")}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {String(value) || t("not_available")}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

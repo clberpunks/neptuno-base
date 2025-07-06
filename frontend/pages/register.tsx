@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { useAuth } from '../hooks/useAuth';
-import { apiFetch } from '../utils/api';
+import { useAuth } from "../hooks/useAuth";
+import { apiFetch } from "../utils/api";
 
 export default function RegisterPage() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
@@ -16,6 +16,9 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [plan, setPlan] = useState("free");
+
+  // en el body del fetch:
 
   const validateForm = () => {
     if (!name || !email || !password) {
@@ -46,7 +49,8 @@ export default function RegisterPage() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, password }),
+        //body: JSON.stringify({ email, name, password }),
+        body: JSON.stringify({ email, name, password, plan }),
       });
       setSuccess("¡Registro exitoso! Redirigiendo al panel...");
       setEmail("");
@@ -67,7 +71,7 @@ export default function RegisterPage() {
 
   return (
     <>
-       <Head>
+      <Head>
         <title>Registro | {appName}</title>
         <meta
           name="description"
@@ -110,6 +114,23 @@ export default function RegisterPage() {
                   {success}
                 </div>
               )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Plan de suscripción
+                </label>
+                <select
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  value={plan}
+                  onChange={(e) => setPlan(e.target.value)}
+                >
+                  <option value="free">Free</option>
+                  <option value="pro">Pro</option>
+                  <option value="business">Business</option>
+                  <option value="enterprise" disabled>
+                    Enterprise (contactar ventas)
+                  </option>
+                </select>
+              </div>
 
               <div className="space-y-5">
                 <div>
@@ -187,7 +208,10 @@ export default function RegisterPage() {
             </form>
 
             <div className="mt-8 text-center text-sm text-gray-600">
-              <p>© 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos reservados.</p>
+              <p>
+                © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos
+                reservados.
+              </p>
             </div>
           </div>
         </div>
