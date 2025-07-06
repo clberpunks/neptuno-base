@@ -31,7 +31,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const unseen = useRadarNotifications(); // 👈 nuevo
+  const unseen = useRadarNotifications();
 
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   );
 
   // Menú para mobil
-  
+
   const mobileBottomMenuItems = [
     {
       section: "summary",

@@ -70,3 +70,17 @@ def generate_tokens(user):
     refresh_token = create_refresh_token(user)
     return access_token, refresh_token
 
+# backend/utils/email.py
+import smtplib
+from email.mime.text import MIMEText
+from config import settings
+
+def send_email(to: str, subject: str, html: str):
+    msg = MIMEText(html, "html")
+    msg["Subject"] = subject
+    msg["From"] = settings.MAIL_FROM
+    msg["To"] = to
+
+    with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
+        server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
+        server.send_message(msg)

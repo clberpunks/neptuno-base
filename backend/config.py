@@ -19,8 +19,15 @@ class Settings(BaseSettings):
     # Nuevas variables para Refresh Token
     REFRESH_SECRET: str = "super_refresh_secret"
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+
+    mail_server: str
+    mail_port: int
+    mail_username: str
+    mail_password: str
+    mail_from: str
     
     class Config:
         env_file = ".env"
+        extra = "allow"  
 
 settings = Settings()

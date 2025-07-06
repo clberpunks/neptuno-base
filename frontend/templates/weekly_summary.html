@@ -1,0 +1,21 @@
+<!-- templates/weekly_summary.html -->
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif;">
+  <h2>Resumen semanal de actividad</h2>
+  <p>Hola {{ user.name }},</p>
+  <p>Este es tu resumen de la semana:</p>
+
+  <ul>
+    <li>📈 Accesos: {{ stats.total }}</li>
+    <li>⛔ Bloqueos: {{ stats.blocked }}</li>
+    <li>🚧 Límites: {{ stats.limited }}</li>
+  </ul>
+
+  {% if stats.approaching_limit %}
+    <p style="color: red;">⚠️ Estás cerca del límite de tu plan. Considera actualizar tu suscripción.</p>
+  {% endif %}
+
+  <p style="font-size: small; color: #888;">Este boletín se envía automáticamente cada semana.</p>
+</body>
+</html>
