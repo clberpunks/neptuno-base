@@ -5,7 +5,11 @@ from db import Base
 from datetime import datetime
 import enum, uuid
 from sqlalchemy import Enum as PgEnum
-
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SqlEnum
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from db import Base
+import enum
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as PgEnum
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -18,12 +22,6 @@ class UserRole(str, enum.Enum):
     admin = "admin"
     user = "user"
 
-
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SqlEnum
-from sqlalchemy.orm import relationship
-from datetime import datetime
-from db import Base
-import enum
 
 class PlanLevel(str, enum.Enum):
     free = "free"
@@ -100,6 +98,8 @@ class AccessLog(Base):
     rule = Column(String)
     redirect_url = Column(String, nullable=True)
     js_executed = Column(Boolean, default=False)
+
+    seen = Column(Boolean, default=False) 
 
 
 

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { Pie, Line, Doughnut } from "react-chartjs-2";
 import "chart.js/auto";
+import { useRadarNotifications } from "../../hooks/useRadarNotifications";
+
 import { t } from "i18next";
 import TrackingCodePanel from "./TrackingCode";
 
@@ -49,11 +51,14 @@ export default function Radar() {
   });
   const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
+  const unseen = useRadarNotifications(); // 👈 nuevo
+
 
   useEffect(() => {
     Promise.all([
       apiFetch<Stats>("/api/logs/stats"),
       apiFetch<Log[]>("/api/logs"),
+      apiFetch('/rest/logs/mark-seen', { method: "POST" }) 
       // apiFetch<Rule[]>('/api/firewall'), // ← No necesario para Radar, solo logs y stats
     ])
       .then(([s, l /*, r*/]) => {

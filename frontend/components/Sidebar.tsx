@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useRadarNotifications } from "../hooks/useRadarNotifications";
 
 interface Props {
   onSelect: (
@@ -30,6 +31,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const unseen = useRadarNotifications(); // 👈 nuevo
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -69,17 +72,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     </svg>
   );
 
-  // Menú para mobile
+  // Menú para mobil
+  
   const mobileBottomMenuItems = [
     {
       section: "summary",
       icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -92,12 +91,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "firewall",
       icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -110,25 +104,22 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "radar",
       icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
-        </svg>
+        <div className="relative">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
+          </svg>
+          {unseen > 0 && (
+            <span className="absolute -top-1 -right-2 bg-red-600 text-white text-[10px] leading-tight font-bold rounded-full px-1.5">
+              {unseen > 9 ? "9+" : unseen}
+            </span>
+          )}
+        </div>
       ),
     },
     {
       section: "compliance",
       icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -141,12 +132,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     {
       section: "reports",
       icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -157,6 +143,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       ),
     },
   ];
+
 
   if (isMobile) {
     return (
@@ -200,8 +187,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
               <button
                 onClick={() => router.push("/admin")}
                 className={`p-1 rounded-full ${
-                  currentSection === "admin" 
-                    ? "bg-indigo-100 text-indigo-600" 
+                  currentSection === "admin"
+                    ? "bg-indigo-100 text-indigo-600"
                     : "text-gray-500 hover:bg-gray-100"
                 }`}
                 aria-label="Admin settings"
@@ -209,13 +196,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 <GearIcon className="w-6 h-6" />
               </button>
             )}
-            
+
             {/* Help Button */}
             <button
               onClick={() => onSelect("help")}
               className={`p-1 rounded-full ${
-                currentSection === "help" 
-                  ? "bg-indigo-100 text-indigo-600" 
+                currentSection === "help"
+                  ? "bg-indigo-100 text-indigo-600"
                   : "text-gray-500 hover:bg-gray-100"
               }`}
               aria-label="Help"
@@ -371,14 +358,21 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           )}`}
           aria-current={currentSection === "radar" ? "page" : undefined}
         >
-          <svg
-            className="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
-          </svg>
+          <span className="relative">
+            <svg
+              className="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10h6m-6 0a4 4 0 118 0" />
+            </svg>
+            {unseen > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                {unseen}
+              </span>
+            )}
+          </span>
           {t("radar")}
         </button>
 
