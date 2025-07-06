@@ -28,18 +28,26 @@ export default function UserInfoCard({ user, formatDate }: UserInfoCardProps) {
       >
         <div className="flex flex-col md:flex-row items-start gap-6">
           <Image
-            src={`https://ui-avatars.com/api/?name=${user.name}`}
-            alt={`${user.name} avatar`}
-            width={96}
-            height={96}
-            className="rounded-full w-24 h-24 border-4 border-indigo-100"
-            priority
+            src={`https://www.gravatar.com/avatar/${
+              user?.email
+                ? require("crypto")
+                    .createHash("md5")
+                    .update(user.email.trim().toLowerCase())
+                    .digest("hex")
+                : ""
+            }?d=mp&s=40`}
+            alt="User Avatar"
+            width={40}
+            height={40}
+            className="rounded-full w-10 h-10 mr-3"
             unoptimized={process.env.NODE_ENV === "development"}
           />
           <div className="flex-1">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {user.name}
+                </h1>
                 <p className="text-gray-600">{user.email}</p>
               </div>
               <div className="flex items-center gap-2">
