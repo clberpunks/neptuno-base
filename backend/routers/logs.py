@@ -40,6 +40,19 @@ def list_logs(current_user=Depends(get_current_user), db: Session = Depends(get_
         for r in raw
     ]
 
+
+@router.post("/mark-seen")
+def mark_logs_as_seen(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    db.query(AccessLog).filter_by(tenant_id=user.id, seen=False).update({"seen": True})
+    db.commit()
+    return {"status": "ok"}
+
+
+@router.get("/unseen")
+def unseen_logs_count(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    count = db.query(AccessLog).filter_by(tenant_id=user.id, seen=False).count()
+    return {"unseen": count}
+
 # backend/routers/logs.py (modificado)
 @router.get("/stats")
 def get_firewall_stats(db: Session = Depends(get_db)):
