@@ -403,7 +403,7 @@ export default function AdminDashboard() {
         const dashboard = await apiFetch<DashboardData>('/rest/admin/overview');
         setDashboardData(dashboard);
         
-        // Fetch firewall stats
+        // Fetch GLOBAL firewall stats (sin tenant_id específico)
         const stats = await apiFetch<FirewallStats>('/rest/logs/stats');
         setFirewallStats(stats);
         

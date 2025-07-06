@@ -115,6 +115,7 @@ def detect_png(tenant: str,
                 break
 
 
+    db = SessionLocal()
     user = db.query(User).filter(User.id == tenant).first()
     if user and user.subscription:
         sub = user.subscription

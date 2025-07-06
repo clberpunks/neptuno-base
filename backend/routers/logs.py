@@ -40,8 +40,26 @@ def list_logs(current_user=Depends(get_current_user), db: Session = Depends(get_
         for r in raw
     ]
 
+# backend/routers/logs.py (modificado)
 @router.get("/stats")
-def stats(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+def get_firewall_stats(db: Session = Depends(get_db)):
+    # Obtener estadísticas globales (sin filtrar por tenant_id)
+    total = db.query(AccessLog).count()
+    stats = {}
+    for outcome in ["allow", "block", "limit", "ratelimit", "redirect", "flagged"]:
+        count = (
+            db.query(AccessLog)
+              .filter(AccessLog.outcome == outcome)
+              .count()
+        )
+        stats[outcome] = count
+    stats["other"] = total - sum(stats.values())
+    stats["total"] = total
+    return stats
+
+@router.get("/stats/user")
+def get_user_firewall_stats(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    # Mantenemos el endpoint anterior para estadísticas por usuario
     total = db.query(AccessLog).filter(AccessLog.tenant_id == current_user.id).count()
     stats = {}
     for outcome in ["allow", "block", "limit", "ratelimit", "redirect", "flagged"]:

@@ -20,7 +20,7 @@ router = APIRouter(tags=["admin"])
 
 @router.get("/top-users")
 def get_top_users(db: Session = Depends(get_db)):
-    # Obtener los 10 usuarios con más actividad
+    # Obtener los 10 usuarios con más actividad (global)
     top_users = (
         db.query(
             User.id,
@@ -49,7 +49,7 @@ def get_top_users(db: Session = Depends(get_db)):
 
 @router.get("/bot-activities")
 def get_bot_activities(db: Session = Depends(get_db)):
-    # Obtener los 10 user agents de bots más activos
+    # Obtener los 10 user agents de bots más activos (globales)
     bot_activities = (
         db.query(
             AccessLog.user_agent,
