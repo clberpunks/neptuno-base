@@ -7,13 +7,16 @@ services:
     container_name: backend
     ports:
       - "8001:8001"
+    depends_on:
+      - db 
     environment:
       - BACKEND_URL=http://localhost:8001
     volumes:
-      - ./data:/data  # Volumen persistente en el host local
+      - ./data:/data
     networks:
       app_net:
         ipv4_address: 172.80.0.200
+
 
   frontend:
     build:
