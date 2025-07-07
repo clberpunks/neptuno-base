@@ -8,8 +8,9 @@ interface UsageLimitsProps {
 }
 
 export default function UsageLimits({ logs }: UsageLimitsProps) {
+  const safeLogs = logs ?? [];
   const usageMap: Record<string, { used: number; max: number }> = {};
-  logs.forEach((l) => {
+  safeLogs.forEach((l) => {
     if (l.rule.startsWith("limit:")) {
       const m = l.rule.match(/limit:(.*?)\((\d+)\/(\d+)\)/);
       if (m) usageMap[m[1]] = { used: +m[2], max: +m[3] };

@@ -1,4 +1,5 @@
 // components/Radar.tsx
+// components/radar/Radar.tsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { useRadarNotifications } from "../../hooks/useRadarNotifications";
@@ -7,10 +8,13 @@ import UsageLimits from "./UsageLimits";
 import RecentDetections from "./RecentDetections";
 import TrackingCodePanel from "./TrackingCode";
 import CollapsiblePanel from "../shared/CollapsiblePanel";
-import { Pie, Line, Doughnut } from "react-chartjs-2";
-import "chart.js/auto";
 import { t } from "i18next";
 import { Stats, Log } from "../types/radar";
+
+interface LogsResponse {
+  data: Log[];
+  total: number;
+}
 
 export default function Radar() {
   const [stats, setStats] = useState<Stats>({
@@ -24,18 +28,20 @@ export default function Radar() {
     total: 0,
   });
   const [logs, setLogs] = useState<Log[]>([]);
+  const [totalLogs, setTotalLogs] = useState(0);
   const [loading, setLoading] = useState(true);
   const unseen = useRadarNotifications();
 
   useEffect(() => {
     Promise.all([
-      apiFetch("/api/logs/stats") as Promise<Stats>,
-      apiFetch("/api/logs") as Promise<Log[]>,
+      apiFetch<Stats>("/api/logs/stats"),
+      apiFetch<LogsResponse>("/api/logs?page=1&limit=10"),
       apiFetch('/rest/logs/mark-seen', { method: "POST" })
     ])
       .then(([statsData, logsData]) => {
         setStats(statsData);
-        setLogs(logsData);
+        setLogs(logsData.data);
+        setTotalLogs(logsData.total);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -46,7 +52,7 @@ export default function Radar() {
       
       <UsageLimits logs={logs} />
       
-      <RecentDetections logs={logs} loading={loading} />
+      <RecentDetections initialLogs={logs} totalCount={totalLogs} />
 
       <CollapsiblePanel title={t("tracking_code")}>
         <div className="bg-gray-50 p-4 rounded-lg">

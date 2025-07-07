@@ -1,5 +1,4 @@
 // components/Sidebar.tsx
-// components/Sidebar.tsx
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -50,6 +49,10 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       ? "bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600"
       : "text-gray-700 hover:bg-gray-100";
 
+  const changeLang = (locale: string) => {
+    router.push(router.pathname, router.asPath, { locale });
+  };
+
   // Icono de engranaje reutilizable
   const GearIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
     <svg
@@ -74,7 +77,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   );
 
   // Menú para mobil
-
   const mobileBottomMenuItems = [
     {
       section: "summary",
@@ -176,12 +178,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     return (
       <>
         {/* Mobile Top Bar */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 h-16 flex items-center px-4">
+        <div className="fixed top-0 left-0 right-0 bg-indigo-600 border-b border-indigo-700 z-50 h-16 flex items-center px-4">
           {/* Profile Button (Left) */}
           <button
             onClick={() => onSelect("profile")}
             className={`flex items-center ${
-              currentSection === "profile" ? "text-indigo-600" : "text-gray-600"
+              currentSection === "profile" ? "text-white font-bold" : "text-white"
             }`}
           >
             <svg
@@ -202,7 +204,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
 
           {/* App Name (Center) */}
           <div className="flex-grow text-center">
-            <span className="text-lg font-semibold text-indigo-600">
+            <span className="text-lg font-semibold text-white">
               {appName}
             </span>
           </div>
@@ -215,8 +217,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => router.push("/admin")}
                 className={`p-1 rounded-full ${
                   currentSection === "admin"
-                    ? "bg-indigo-100 text-indigo-600"
-                    : "text-gray-500 hover:bg-gray-100"
+                    ? "bg-indigo-700 text-white"
+                    : "text-white hover:bg-indigo-700"
                 }`}
                 aria-label="Admin settings"
               >
@@ -229,8 +231,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
               onClick={() => onSelect("help")}
               className={`p-1 rounded-full ${
                 currentSection === "help"
-                  ? "bg-indigo-100 text-indigo-600"
-                  : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-indigo-700 text-white"
+                  : "text-white hover:bg-indigo-700"
               }`}
               aria-label="Help"
             >
@@ -252,7 +254,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-indigo-600 border-t border-indigo-700 z-50">
           <div className="flex justify-around py-2">
             {mobileBottomMenuItems.map((item) => (
               <button
@@ -260,8 +262,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => onSelect(item.section as any)}
                 className={`flex flex-col items-center p-2 ${
                   currentSection === item.section
-                    ? "text-indigo-600"
-                    : "text-gray-600"
+                    ? "text-white font-bold"
+                    : "text-white"
                 }`}
                 aria-current={
                   currentSection === item.section ? "page" : undefined
@@ -279,16 +281,79 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
 
   // Desktop Sidebar
   return (
-    <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-6 border-b border-gray-200">
+    <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+      {/* App Name with Icon - Centered */}
+      <div className="p-6 border-b border-gray-200 flex flex-col items-center">
         <Link href={siteUrl || "/"} legacyBehavior>
-          <a className="flex items-center text-lg font-semibold text-indigo-600">
-            {appName}
+          <a className="flex flex-col items-center text-lg font-semibold text-indigo-600">
+            <svg
+              className="w-8 h-8 mb-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+            <span>{appName}</span>
           </a>
         </Link>
       </div>
 
-      <div className="p-6 border-b border-gray-200 flex items-center">
+      {/* Language Selector and Logout */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-center space-x-4">
+        <button
+          onClick={() => changeLang("es")}
+          className={`text-sm px-2 py-1 rounded ${
+            router.locale === "es"
+              ? "font-medium text-indigo-600 bg-indigo-50"
+              : "text-gray-500 hover:bg-gray-100"
+          }`}
+          aria-label="Cambiar a Español"
+        >
+          ES
+        </button>
+        <button
+          onClick={() => changeLang("en")}
+          className={`text-sm px-2 py-1 rounded ${
+            router.locale === "en"
+              ? "font-medium text-indigo-600 bg-indigo-50"
+              : "text-gray-500 hover:bg-gray-100"
+          }`}
+          aria-label="Switch to English"
+        >
+          EN
+        </button>
+        <button
+          onClick={() => router.push("/logout")}
+          className="text-sm px-2 py-1 rounded text-red-600 hover:bg-red-50 flex items-center"
+        >
+          <svg
+            className="w-4 h-4 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          {t("logout")}
+        </button>
+      </div>
+
+      {/* User Profile Block - Clickable */}
+      <button
+        onClick={() => onSelect("profile")}
+        className="p-4 border-b border-gray-200 flex items-center hover:bg-gray-50 transition-colors w-full text-left"
+      >
         {user?.picture || user?.email ? (
           <Image
             src={`https://www.gravatar.com/avatar/${
@@ -324,11 +389,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         )}
         <div>
           <p className="font-medium text-gray-900 truncate">{user?.name}</p>
-          <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+          <p className="text-sm text-gray-500">Mi cuenta</p>
         </div>
-      </div>
+      </button>
 
-      <nav className="py-4 flex-grow">
+      {/* Navigation Menu */}
+      <nav className="py-4 flex-grow overflow-y-auto">
         {/* Summary */}
         <button
           onClick={() => onSelect("summary")}
@@ -353,30 +419,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
             )}
           </span>
           {t("summary")}
-        </button>
-
-        {/* Profile */}
-        <button
-          onClick={() => onSelect("profile")}
-          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
-            "profile"
-          )}`}
-          aria-current={currentSection === "profile" ? "page" : undefined}
-        >
-          <svg
-            className="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-          {t("profile")}
         </button>
 
         {/* Radar */}
@@ -477,7 +519,23 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           {t("reports")}
         </button>
 
-        {/* Help */}
+        {/* Admin Settings (only for admin users) */}
+        {user?.role === "admin" && (
+          <button
+            onClick={() => onSelect("admin")}
+            className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+              "admin"
+            )}`}
+            aria-current={currentSection === "admin" ? "page" : undefined}
+          >
+            <GearIcon className="w-5 h-5 mr-3" />
+            {t("admin")}
+          </button>
+        )}
+      </nav>
+
+      {/* Help - Moved to the bottom */}
+      <div className="p-4 border-t border-gray-200 mt-auto">
         <button
           onClick={() => onSelect("help")}
           className={`w-full text-left px-6 py-3 flex items-center ${isActive(
@@ -500,42 +558,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           </svg>
           {t("help")}
         </button>
-
-        {/* Admin Settings (only for admin users) */}
-        {user?.role === "admin" && (
-          <button
-            onClick={() => onSelect("admin")}
-            className={`w-full text-left px-6 py-3 flex items-center ${isActive(
-              "admin"
-            )}`}
-            aria-current={currentSection === "admin" ? "page" : undefined}
-          >
-            <GearIcon className="w-5 h-5 mr-3" />
-            {t("admin")}
-          </button>
-        )}
-      </nav>
-
-      {/* Logout */}
-      <div className="p-4 border-t border-gray-200 mt-auto">
-        <Link href="logout" legacyBehavior>
-          <a className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md transition-colors">
-            <svg
-              className="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            {t("logout")}
-          </a>
-        </Link>
       </div>
     </aside>
   );

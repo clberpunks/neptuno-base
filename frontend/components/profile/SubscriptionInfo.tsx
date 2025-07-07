@@ -20,7 +20,6 @@ interface SubscriptionInfoProps {
 export default function SubscriptionInfo({ subscription, formatDate }: SubscriptionInfoProps) {
   const { t } = useTranslation("common");
   const [isSending, setIsSending] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleForceSendReport = async () => {
     setIsSending(true);
@@ -50,89 +49,67 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
     : 0;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      <button
-        className="w-full p-6 text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-        aria-controls="subscription-details-section"
-      >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-semibold">Suscripción: {subscription.plan}</h3>
-            <div className="flex items-center gap-2 mt-2">
-              <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">
-                {subscription.price === 0 ? "Gratis" : `€${subscription.price}/mes`}
-              </div>
-              {subscription.traffic_used && (
-                <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  Usado: {trafficPercentage}%
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleForceSendReport();
-              }}
-              disabled={isSending}
-              className={`px-4 py-2 rounded-md text-sm font-medium min-w-[180px] ${
-                isSending 
-                  ? 'bg-gray-300 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-              }`}
-              aria-label={t('force_send_weekly_report')}
-            >
-              {isSending ? t('sending') : t('force_send_weekly_report')}
-            </button>
-            <svg
-              className={`w-5 h-5 text-gray-500 transform transition-transform ${
-                isExpanded ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        {/* Información principal */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold truncate">Suscripción: {subscription.plan}</h3>
+          
+          {/* Badges de información */}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              {subscription.price === 0 ? "Gratis" : `€${subscription.price}/mes`}
+            </span>
+            
+            {subscription.created_at && (
+              <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                Inicio: {formatDate(subscription.created_at)}
+              </span>
+            )}
+            
+            {subscription.renews_at && (
+              <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                Renovación: {formatDate(subscription.renews_at)}
+              </span>
+            )}
+            
+            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Tráfico: {subscription.traffic_limit.toLocaleString()} hits
+            </span>
+            
+            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Dominios: {subscription.domain_limit}
+            </span>
+            
+            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Usuarios: {subscription.user_limit}
+            </span>
+            
+            {subscription.traffic_used && (
+              <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center ${
+                trafficPercentage > 90 ? 'bg-red-100 text-red-800' : 
+                trafficPercentage > 75 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+              }`}>
+                <span className={`h-2 w-2 rounded-full mr-1.5 ${
+                  trafficPercentage > 90 ? 'bg-red-500' : 
+                  trafficPercentage > 75 ? 'bg-yellow-500' : 'bg-green-500'
+                }`}></span>
+                Tráfico usado: {trafficPercentage}%
+              </span>
+            )}
           </div>
         </div>
-      </button>
 
-      <div
-        id="subscription-details-section"
-        className={`px-6 pb-6 transition-all duration-300 ease-in-out ${
-          isExpanded ? "block" : "hidden"
-        }`}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <p><strong>Plan:</strong> {subscription.plan}</p>
-            <p><strong>Inicio:</strong> {formatDate(subscription.created_at)}</p>
-            <p><strong>Renovación:</strong> {formatDate(subscription.renews_at)}</p>
-          </div>
-          <div>
-            <p><strong>Límite tráfico:</strong> {subscription.traffic_limit.toLocaleString()} hits</p>
-            <p><strong>Dominios permitidos:</strong> {subscription.domain_limit}</p>
-            <p><strong>Usuarios permitidos:</strong> {subscription.user_limit}</p>
-          </div>
-        </div>
+        {/* Barra de progreso (solo se muestra si hay tráfico usado) */}
         {subscription.traffic_used && (
-          <div className="mt-4">
-            <div className="flex justify-between text-sm mb-1">
-              <span>Uso de tráfico</span>
-              <span>{subscription.traffic_used.toLocaleString()} / {subscription.traffic_limit.toLocaleString()} hits</span>
+          <div className="w-full md:w-48 flex-shrink-0">
+            <div className="flex justify-between text-xs mb-1">
+              <span>{subscription.traffic_used.toLocaleString()}/{subscription.traffic_limit.toLocaleString()}</span>
+              <span>{trafficPercentage}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className={`h-2.5 rounded-full ${
+                className={`h-2 rounded-full ${
                   trafficPercentage > 90 ? 'bg-red-500' : 
                   trafficPercentage > 75 ? 'bg-yellow-500' : 'bg-green-500'
                 }`}
@@ -145,6 +122,20 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
             </div>
           </div>
         )}
+
+        {/* Botón de acción */}
+        <button
+          onClick={handleForceSendReport}
+          disabled={isSending}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium min-w-[120px] flex-shrink-0 ${
+            isSending 
+              ? 'bg-gray-300 cursor-not-allowed'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+          }`}
+          aria-label={t('force_send_weekly_report')}
+        >
+          {isSending ? t('sending') : t('force_send_weekly_report')}
+        </button>
       </div>
     </div>
   );

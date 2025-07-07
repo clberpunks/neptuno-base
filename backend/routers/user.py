@@ -106,7 +106,7 @@ def mark_as_read(notification_id: str, db: Session = Depends(get_db), current_us
     db.commit()
     return {"message": "Marcada como leída"}
 
-@router.delete("/{notification_id}")
+@router.delete("/notifications/{notification_id}")
 def delete_notification(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
     if not notif:

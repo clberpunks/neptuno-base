@@ -18,6 +18,7 @@ import TermsPanel from "../components/compliance/TermsPanel";
 import ReportsPanel from "../components/reports/ReportsPanel";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import Spinner from "../components/shared/Spinner";
+import MonetizePanel from "../components/monetize/MonetizePanel";
 
 interface LoginEntry {
   timestamp: string;
@@ -86,14 +87,15 @@ function Dashboard() {
       case "compliance":
         return (
           <div className="space-y-6">
-            <CompliancePanel />
-            <TermsPanel />
+            <MonetizePanel />
           </div>
         );
       case "reports":
         return (
           <div className="space-y-6">
             <ReportsPanel />
+            <CompliancePanel />
+            <TermsPanel />
           </div>
         );
       case "admin":
