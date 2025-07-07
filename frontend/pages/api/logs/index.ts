@@ -4,7 +4,7 @@ const BACKEND_URL = process.env.BACKEND_URL;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await fetch(`${BACKEND_URL}/logs`, {
+    const response = await fetch(`${BACKEND_URL}/logs/`, {
       headers: {
         'Content-Type': 'application/json',
         cookie: req.headers.cookie || '', // pasar cookies si hay sesión

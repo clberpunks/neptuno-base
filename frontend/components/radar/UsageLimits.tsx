@@ -2,20 +2,31 @@
 import { Doughnut } from "react-chartjs-2";
 import { Log } from "../types/radar";
 import CollapsiblePanel from "../shared/CollapsiblePanel";
+import "chart.js/auto";
 
 interface UsageLimitsProps {
   logs: Log[];
 }
 
 export default function UsageLimits({ logs }: UsageLimitsProps) {
-  const safeLogs = logs ?? [];
   const usageMap: Record<string, { used: number; max: number }> = {};
-  safeLogs.forEach((l) => {
+  
+  logs.forEach((l) => {
     if (l.rule.startsWith("limit:")) {
       const m = l.rule.match(/limit:(.*?)\((\d+)\/(\d+)\)/);
-      if (m) usageMap[m[1]] = { used: +m[2], max: +m[3] };
+      if (m) {
+        const key = m[1];
+        const used = parseInt(m[2], 10);
+        const max = parseInt(m[3], 10);
+        
+        // Conservar el valor máximo si encontramos uno mayor
+        if (!usageMap[key] || usageMap[key].max < max) {
+          usageMap[key] = { used, max };
+        }
+      }
     }
   });
+  
   const limitPatterns = Object.keys(usageMap);
 
   if (limitPatterns.length === 0) return null;
@@ -30,11 +41,23 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
               data={{
                 labels: ["Usado", "Restante"],
                 datasets: [{
-                  data: [usageMap[p].used, usageMap[p].max - usageMap[p].used],
+                  data: [
+                    usageMap[p].used,
+                    Math.max(0, usageMap[p].max - usageMap[p].used)
+                  ],
+                  backgroundColor: ['#f87171', '#d1d5db'],
                 }],
               }}
+              options={{
+                cutout: '70%',
+                plugins: {
+                  legend: {
+                    position: 'bottom'
+                  }
+                }
+              }}
             />
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-sm font-medium">
               {usageMap[p].used}/{usageMap[p].max} usadas
             </p>
           </div>

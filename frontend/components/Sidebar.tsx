@@ -282,12 +282,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   // Desktop Sidebar
   return (
     <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
-      {/* App Name with Icon - Centered */}
-      <div className="p-6 border-b border-gray-200 flex flex-col items-center">
+      {/* Top Bar - Logo, App Name, and Language Selector */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {/* Logo and App Name */}
         <Link href={siteUrl || "/"} legacyBehavior>
-          <a className="flex flex-col items-center text-lg font-semibold text-indigo-600">
+          <a className="flex items-center text-lg font-semibold text-indigo-600">
             <svg
-              className="w-8 h-8 mb-2"
+              className="w-6 h-6 mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -302,38 +303,87 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
             <span>{appName}</span>
           </a>
         </Link>
+        
+        {/* Language Selector */}
+        <div className="flex space-x-1">
+          <button
+            onClick={() => changeLang("es")}
+            className={`text-xs px-2 py-1 rounded ${
+              router.locale === "es"
+                ? "font-medium text-indigo-600 bg-indigo-50"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            aria-label="Cambiar a Español"
+          >
+            ES
+          </button>
+          <button
+            onClick={() => changeLang("en")}
+            className={`text-xs px-2 py-1 rounded ${
+              router.locale === "en"
+                ? "font-medium text-indigo-600 bg-indigo-50"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            aria-label="Switch to English"
+          >
+            EN
+          </button>
+        </div>
       </div>
 
-      {/* Language Selector and Logout */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-center space-x-4">
+      {/* User Profile Block - Clickable */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <button
-          onClick={() => changeLang("es")}
-          className={`text-sm px-2 py-1 rounded ${
-            router.locale === "es"
-              ? "font-medium text-indigo-600 bg-indigo-50"
-              : "text-gray-500 hover:bg-gray-100"
-          }`}
-          aria-label="Cambiar a Español"
+          onClick={() => onSelect("profile")}
+          className="flex items-center hover:bg-gray-50 transition-colors w-full text-left"
         >
-          ES
+          {user?.picture || user?.email ? (
+            <Image
+              src={`https://www.gravatar.com/avatar/${
+                user?.email
+                  ? require("crypto")
+                      .createHash("md5")
+                      .update(user.email.trim().toLowerCase())
+                      .digest("hex")
+                  : ""
+              }?d=mp&s=40`}
+              alt="User Avatar"
+              width={40}
+              height={40}
+              className="rounded-full w-10 h-10 mr-3"
+              unoptimized={process.env.NODE_ENV === "development"}
+            />
+          ) : (
+            <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+          )}
+          <div>
+            <p className="font-medium text-gray-900 truncate max-w-[100px]">{user?.name}</p>
+            <p className="text-sm text-gray-500">Mi cuenta</p>
+          </div>
         </button>
-        <button
-          onClick={() => changeLang("en")}
-          className={`text-sm px-2 py-1 rounded ${
-            router.locale === "en"
-              ? "font-medium text-indigo-600 bg-indigo-50"
-              : "text-gray-500 hover:bg-gray-100"
-          }`}
-          aria-label="Switch to English"
-        >
-          EN
-        </button>
+        
+        {/* Logout Button */}
         <button
           onClick={() => router.push("/logout")}
-          className="text-sm px-2 py-1 rounded text-red-600 hover:bg-red-50 flex items-center"
+          className="text-sm p-2 rounded text-red-600 hover:bg-red-50 flex items-center"
+          title={t("logout")}
         >
           <svg
-            className="w-4 h-4 mr-1"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -345,53 +395,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          {t("logout")}
         </button>
-      </div>
-
-      {/* User Profile Block - Clickable */}
-      <button
-        onClick={() => onSelect("profile")}
-        className="p-4 border-b border-gray-200 flex items-center hover:bg-gray-50 transition-colors w-full text-left"
-      >
-        {user?.picture || user?.email ? (
-          <Image
-            src={`https://www.gravatar.com/avatar/${
-              user?.email
-                ? require("crypto")
-                    .createHash("md5")
-                    .update(user.email.trim().toLowerCase())
-                    .digest("hex")
-                : ""
-            }?d=mp&s=40`}
-            alt="User Avatar"
-            width={40}
-            height={40}
-            className="rounded-full w-10 h-10 mr-3"
-            unoptimized={process.env.NODE_ENV === "development"}
-          />
-        ) : (
-          <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center">
-            <svg
-              className="w-6 h-6 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </div>
-        )}
-        <div>
-          <p className="font-medium text-gray-900 truncate">{user?.name}</p>
-          <p className="text-sm text-gray-500">Mi cuenta</p>
-        </div>
-      </button>
+    </div>
 
       {/* Navigation Menu */}
       <nav className="py-4 flex-grow overflow-y-auto">

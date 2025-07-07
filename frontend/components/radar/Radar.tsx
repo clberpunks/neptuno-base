@@ -1,5 +1,4 @@
 // components/Radar.tsx
-// components/radar/Radar.tsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { useRadarNotifications } from "../../hooks/useRadarNotifications";
@@ -10,11 +9,6 @@ import TrackingCodePanel from "./TrackingCode";
 import CollapsiblePanel from "../shared/CollapsiblePanel";
 import { t } from "i18next";
 import { Stats, Log } from "../types/radar";
-
-interface LogsResponse {
-  data: Log[];
-  total: number;
-}
 
 export default function Radar() {
   const [stats, setStats] = useState<Stats>({
@@ -27,32 +21,38 @@ export default function Radar() {
     other: 0,
     total: 0,
   });
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [totalLogs, setTotalLogs] = useState(0);
+  const [allLogs, setAllLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
   const unseen = useRadarNotifications();
 
   useEffect(() => {
-    Promise.all([
-      apiFetch<Stats>("/api/logs/stats"),
-      apiFetch<LogsResponse>("/api/logs?page=1&limit=10"),
-      apiFetch('/rest/logs/mark-seen', { method: "POST" })
-    ])
-      .then(([statsData, logsData]) => {
+    const fetchData = async () => {
+      try {
+        const [statsData, logsData] = await Promise.all([
+          apiFetch<Stats>("/api/logs/stats"),
+          apiFetch<Log[]>("/api/logs"),
+        ]);
+        
         setStats(statsData);
-        setLogs(logsData.data);
-        setTotalLogs(logsData.total);
-      })
-      .finally(() => setLoading(false));
+        setAllLogs(logsData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    apiFetch('/rest/logs/mark-seen', { method: "POST" });
   }, []);
 
   return (
     <div className="space-y-6 p-4">
-      <SummaryCharts stats={stats} logs={logs} loading={loading} />
+      <SummaryCharts stats={stats} logs={allLogs} loading={loading} />
       
-      <UsageLimits logs={logs} />
+      <UsageLimits logs={allLogs} />
       
-      <RecentDetections initialLogs={logs} totalCount={totalLogs} />
+      <RecentDetections logs={allLogs} loading={loading} />
 
       <CollapsiblePanel title={t("tracking_code")}>
         <div className="bg-gray-50 p-4 rounded-lg">
