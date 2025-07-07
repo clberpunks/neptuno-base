@@ -58,7 +58,7 @@ export default function TrackingCodePanel() {
         fetchSnippet();
       }
     }
-  }, [user]);
+  }, [user, snippet]);
 
   const copyToClipboard = () => {
     if (!snippet) return;

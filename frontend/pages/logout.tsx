@@ -9,6 +9,6 @@ export default function LogoutPage() {
     fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
       .then(() => r.push('login'))
       .catch(() => r.push('login'));
-  }, []);
+  }, [r]);
   return <p>Cerrando sesión…</p>;
 }

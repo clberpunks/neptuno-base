@@ -32,7 +32,7 @@ export default function FirewallManager() {
     if (!loading && user && rules.length === 0) {
       apiFetch<Rule[]>("/api/firewall").then(setRules).catch(console.error);
     }
-  }, [user, loading]);
+  }, [user, loading, rules.length]);
 
   const updateRule = (idx: number, updated: Partial<Rule>) => {
     setRules(rules.map((r, i) => (i === idx ? { ...r, ...updated } : r)));
