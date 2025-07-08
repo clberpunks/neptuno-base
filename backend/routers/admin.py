@@ -1,13 +1,14 @@
 # backend/routes/admin.py
 # backend/routes/admin.py (actualizado)
 from datetime import datetime, timedelta
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func, distinct, case
 from dependencies import get_current_user
 from db import get_db
-from models.models import User, Subscription, LoginHistory
-from schemas.schemas import UserInJWT
+from models.models import SubscriptionPlan, User, Subscription, LoginHistory
+from schemas.schemas import SubscriptionPlanOut, SubscriptionPlanUpdate, UserInJWT
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
@@ -132,3 +133,47 @@ def admin_overview(current_user: UserInJWT = Depends(get_current_user),
         "churned_users": churn_users,
         "estimated_revenue": estimated_revenue
     }
+    
+
+
+@router.get("/subscription-plans", response_model=List[SubscriptionPlanOut])
+def get_available_plans(db: Session = Depends(get_db)):
+    return db.query(SubscriptionPlan).filter_by(active=True).all()
+
+
+@router.patch("/subscription-plans/{plan_id}/toggle")
+def toggle_plan_status(plan_id: str, db: Session = Depends(get_db)):
+    plan = db.query(SubscriptionPlan).filter_by(id=plan_id).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan no encontrado")
+    plan.active = not plan.active  # Asumiendo que has añadido campo `active`
+    db.commit()
+    return {"message": "Estado actualizado"}
+
+@router.get("/subscription-plans/all", response_model=List[SubscriptionPlanOut])
+def get_all_plans(db: Session = Depends(get_db)):
+    print(">> Cargando todos los planes de suscripción")
+    return db.query(SubscriptionPlan).order_by(SubscriptionPlan.price).all()
+
+
+@router.put("/subscription-plans/{plan_id}")
+def update_plan(plan_id: str, data: SubscriptionPlanUpdate, db: Session = Depends(get_db)):
+    plan = db.query(SubscriptionPlan).filter_by(id=plan_id).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan no encontrado")
+
+    for key, value in data.dict(exclude_unset=True).items():
+        setattr(plan, key, value)
+
+    db.commit()
+    return {"message": "Plan actualizado"}
+
+@router.delete("/subscription-plans/{plan_id}")
+def delete_plan(plan_id: str, db: Session = Depends(get_db)):
+    plan = db.query(SubscriptionPlan).filter_by(id=plan_id).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan no encontrado")
+    db.delete(plan)
+    db.commit()
+    return {"message": "Plan eliminado"}
+
