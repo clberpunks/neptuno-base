@@ -47,18 +47,19 @@ const plans: SubscriptionPlan[] = [
       user_limit: "10 usuarios",
     },
     price: 50,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    description: "Solución personalizada para grandes organizaciones",
-    features: {
-      traffic_limit: "10M+ visitas/mes",
-      domain_limit: "Ilimitado",
-      user_limit: "Ilimitado",
-    },
-    price: 200,
-  },
+  }
+  //,
+  //{
+  //  id: "enterprise",
+  //  name: "Enterprise",
+  //  description: "Solución personalizada para grandes organizaciones",
+  //  features: {
+  //    traffic_limit: "10M+ visitas/mes",
+  //    domain_limit: "Ilimitado",
+  //    user_limit: "Ilimitado",
+  //  },
+  //  price: 200,
+  //},
 ];
 
 export default function SubscriptionSelector() {

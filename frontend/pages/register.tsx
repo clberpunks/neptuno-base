@@ -6,6 +6,58 @@ import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../utils/api";
 
+interface SubscriptionPlan {
+  id: "free" | "pro" | "business";
+  name: string;
+  description: string;
+  features: {
+    traffic_limit: string;
+    domain_limit: string;
+    user_limit: string;
+  };
+  price: number; // precio anual
+  priceText: string;
+}
+
+const plans: SubscriptionPlan[] = [
+  {
+    id: "free",
+    name: "Free",
+    description: "Ideal para comenzar",
+    features: {
+      traffic_limit: "10.000 visitas/mes",
+      domain_limit: "1 dominio",
+      user_limit: "1 usuario",
+    },
+    price: 0,
+    priceText: "Gratis",
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    description: "Para proyectos en crecimiento",
+    features: {
+      traffic_limit: "100.000 visitas/mes",
+      domain_limit: "5 dominios",
+      user_limit: "5 usuarios",
+    },
+    price: 99, // 10€/mes * 12 meses
+    priceText: "120€/año",
+  },
+  {
+    id: "business",
+    name: "Business",
+    description: "Uso avanzado y equipos medianos",
+    features: {
+      traffic_limit: "1 millón de visitas/mes",
+      domain_limit: "10 dominios",
+      user_limit: "10 usuarios",
+    },
+    price: 499, // 50€/mes * 12 meses
+    priceText: "600€/año",
+  }
+];
+
 export default function RegisterPage() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const router = useRouter();
@@ -16,8 +68,10 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false); // Nuevo estado para redirección
-  const [plan, setPlan] = useState("free");
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [plan, setPlan] = useState<SubscriptionPlan["id"]>("free");
+
+  const selectedPlan = plans.find(p => p.id === plan) || plans[0];
 
   const validateForm = () => {
     if (!name || !email || !password) {
@@ -35,7 +89,6 @@ export default function RegisterPage() {
     return true;
   };
 
-  // Nueva función para manejar registro con Google
   const handleGoogleRegister = () => {
     setIsRedirecting(true);
     window.location.href = "/rest/auth/login";
@@ -164,22 +217,34 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              {/* Selector de planes - 3 en fila */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Plan de suscripción
                 </label>
-                <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                  value={plan}
-                  onChange={(e) => setPlan(e.target.value)}
-                >
-                  <option value="free">Free</option>
-                  <option value="pro">Pro</option>
-                  <option value="business">Business</option>
-                  <option value="enterprise" disabled>
-                    Enterprise (contactar ventas)
-                  </option>
-                </select>
+                <div className="flex flex-wrap gap-4">
+                  {plans.map((p) => (
+                    <div
+                      key={p.id}
+                      className={`flex-1 min-w-[120px] rounded-lg border p-4 cursor-pointer transition-all ${
+                        plan === p.id
+                          ? "border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50"
+                          : "border-gray-200 hover:shadow-md"
+                      }`}
+                      onClick={() => setPlan(p.id)}
+                    >
+                      <div className="flex flex-col">
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-bold text-gray-900">{p.name}</h3>
+                          <span className="font-semibold text-sm">
+                            {p.priceText}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">{p.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-5">
@@ -266,17 +331,71 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Panel derecho */}
+        {/* Panel derecho - Detalles del plan seleccionado */}
         <div className="hidden md:block w-1/2 bg-gradient-to-br from-indigo-600 to-indigo-800 relative">
           <div className="absolute inset-0 flex items-center justify-center p-12">
             <div className="text-white max-w-lg">
               <h2 className="text-4xl font-bold mb-4">
-                Únete a la revolución digital
+                Plan {selectedPlan.name}
               </h2>
+              <div className="text-3xl font-bold mb-8">
+                {selectedPlan.priceText}
+              </div>
+              
               <p className="text-xl mb-8">
-                Accede a todas tus herramientas desde una única plataforma
-                eficiente y segura.
+                {selectedPlan.description}
               </p>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-start">
+                  <svg className="h-6 w-6 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>
+                    <strong>Tráfico:</strong> {selectedPlan.features.traffic_limit}
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-6 w-6 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>
+                    <strong>Dominios:</strong> {selectedPlan.features.domain_limit}
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-6 w-6 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>
+                    <strong>Usuarios:</strong> {selectedPlan.features.user_limit}
+                  </span>
+                </li>
+              </ul>
+              
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-3">Beneficios adicionales</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Soporte prioritario
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Actualizaciones continuas
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Garantía de satisfacción
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
