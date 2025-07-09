@@ -11,7 +11,9 @@ interface SubscriptionPlan {
   user_limit: number;
   price: number;
   active: boolean;
+  description: string; // ← NUEVO
 }
+
 
 export default function SubscriptionSelector() {
   const { user, refresh } = useAuth();
@@ -58,6 +60,7 @@ export default function SubscriptionSelector() {
               }`}
             >
               <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.plan}</h3>
+              <p className="text-sm text-gray-600 mb-2">{plan.description}</p>
               <ul className="text-sm text-gray-700 mb-4 space-y-1">
                 <li><strong>Tráfico:</strong> {plan.traffic_limit.toLocaleString()} visitas/mes</li>
                 <li><strong>Dominios:</strong> {plan.domain_limit}</li>

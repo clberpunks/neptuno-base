@@ -92,7 +92,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <BetaBanner />
     </header>
   );
 };

@@ -16,14 +16,28 @@ async function tryRefresh(): Promise<boolean> {
 
 export async function apiFetch<T>(
   url: string,
-  options: RequestInit = {}
+  options: Omit<RequestInit, 'body'> & { body?: BodyInit | object } = {}
 ): Promise<T> {
-  let res = await fetch(url, { credentials: "include", ...options });
+  // Preprocesar el body si es un objeto y no string
+  const finalOptions: RequestInit = {
+    credentials: "include",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    body:
+      options.body && typeof options.body === "object" && !(options.body instanceof FormData) && !(options.body instanceof Blob) && !(options.body instanceof ArrayBuffer)
+        ? JSON.stringify(options.body)
+        : options.body as BodyInit | undefined,
+    };
+
+  let res = await fetch(url, finalOptions);
 
   if (res.status === 401) {
     const refreshed = await tryRefresh();
     if (refreshed) {
-      res = await fetch(url, { credentials: "include", ...options });
+      res = await fetch(url, finalOptions);
     } else {
       throw new Error("Unauthorized");
     }

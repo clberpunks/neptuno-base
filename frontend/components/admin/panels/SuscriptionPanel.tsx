@@ -11,6 +11,7 @@ export interface Plan {
   user_limit: number;
   price: number;
   active: boolean;
+  description: string;
 }
 
 export default function SubscriptionPlansPanel() {
@@ -20,6 +21,8 @@ export default function SubscriptionPlansPanel() {
   const [edited, setEdited] = useState<Partial<Plan>>({});
   const [error, setError] = useState<string | null>(null);
   const backendUrl = process.env.BACKEND_URL;
+   const allowedFields = ["traffic_limit", "domain_limit", "user_limit", "price", "active", "description"];
+
 
 const fetchPlans = async () => {
   try {
@@ -59,12 +62,21 @@ useEffect(() => {
     setEdited(plan);
   };
 
+
   const handleSave = async () => {
     if (!editingId) return;
-    await apiFetch(`/rest/admin/subscription-plans/${editingId}`, {
+
+    const payload = Object.fromEntries(
+      Object.entries(edited).filter(([key]) => allowedFields.includes(key))
+    );
+
+  await apiFetch(`/rest/admin/subscription-plans/${editingId}`, {
       method: 'PUT',
-      body: JSON.stringify(edited),
-    });
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+  });
+
+
     setEditingId(null);
     setEdited({});
     fetchPlans();
@@ -80,6 +92,7 @@ useEffect(() => {
         <thead>
           <tr>
             <th>Plan</th>
+            <th>Descripción</th>
             <th>Tráfico</th>
             <th>Dominios</th>
             <th>Usuarios</th>
@@ -92,6 +105,19 @@ useEffect(() => {
           {plans.map(p => (
             <tr key={p.id} className={`${!p.active ? 'opacity-40' : ''}`}>
               <td>{p.plan}</td>
+              <td>
+                {editingId === p.id ? (
+                  <input
+                    type="text"
+                    value={edited.description ?? p.description}
+                    onChange={(e) => setEdited({ ...edited, description: e.target.value })}
+                    className="border px-2 py-1 w-full rounded"
+                  />
+                ) : (
+                  p.description
+                )}
+              </td>
+
               <td>
                 {editingId === p.id
                   ? <input type="number" value={edited.traffic_limit ?? p.traffic_limit}

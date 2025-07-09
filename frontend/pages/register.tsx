@@ -51,30 +51,15 @@ export default function RegisterPage() {
   const selectedPlan = plans.find(p => p.plan === plan) || plans[0];
 
   // Mapear los planes a un formato más amigable para mostrar
-  const getPlanDisplayInfo = (plan: SubscriptionPlan) => {
-    const planInfo = {
-      id: plan.id,
-      name: plan.plan.charAt(0).toUpperCase() + plan.plan.slice(1),
-      priceText: plan.price === 0 ? "Gratis" : `$${plan.price}/mes`,
-      description: getPlanDescription(plan.plan),
-    };
-    return planInfo;
-  };
+  const getPlanDisplayInfo = (plan: SubscriptionPlan) => ({
+    id: plan.id,
+    name: plan.plan.charAt(0).toUpperCase() + plan.plan.slice(1),
+    priceText: plan.price === 0 ? "Gratis" : `$${plan.price}/mes`,
+    description: plan.description,
+  });
 
-  const getPlanDescription = (planType: string) => {
-    switch (planType) {
-      case "free":
-        return "Ideal para comenzar";
-      case "pro":
-        return "Para proyectos en crecimiento";
-      case "business":
-        return "Uso avanzado y equipos medianos";
-      case "enterprise":
-        return "Solución personalizada para grandes organizaciones";
-      default:
-        return "";
-    }
-  };
+
+
 
   const validateForm = () => {
     if (!name || !email || !password) {
@@ -326,7 +311,7 @@ export default function RegisterPage() {
                   </div>
                   
                   <p className="text-xl mb-8">
-                    {getPlanDescription(selectedPlan.plan)}
+                    {selectedPlan.description === "" ? "" : `$${selectedPlan.description}`}
                   </p>
                   
                   <ul className="space-y-4 mb-8">

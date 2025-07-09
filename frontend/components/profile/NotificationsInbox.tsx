@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
+import { useTranslation } from "next-i18next";
 
 interface Notification {
   id: string;
@@ -11,6 +12,7 @@ interface Notification {
 
 export default function NotificationsInbox() {
   const [messages, setMessages] = useState<Notification[]>([]);
+  const { t } = useTranslation("common");
 
   const fetchMessages = async () => {
     const res = await apiFetch<Notification[]>("/rest/user/notifications");
@@ -33,9 +35,9 @@ export default function NotificationsInbox() {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mt-8">
-      <h2 className="text-xl font-semibold mb-4">Notificaciones del sistema</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">Notificaciones del sistema</h2> */ }
       {messages.length === 0 ? (
-        <p className="text-gray-500">No tienes mensajes</p>
+        <p className="text-gray-500">{t('inbox_empty')}</p>
       ) : (
         <ul className="divide-y divide-gray-200">
           {messages.map((msg) => (

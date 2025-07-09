@@ -56,60 +56,6 @@ export default function ProfileSection({
         </>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <button
-          className="w-full p-6 text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          onClick={() => setIsProfileExpanded(!isProfileExpanded)}
-          aria-expanded={isProfileExpanded}
-          aria-controls="profile-info-section"
-        >
-          <h2 className="text-xl font-semibold flex items-center justify-between">
-            {t("profile_info")}
-            <svg
-              className={`w-5 h-5 text-gray-500 transform transition-transform ${
-                isProfileExpanded ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </h2>
-        </button>
-
-        <div
-          id="profile-info-section"
-          className={`px-6 pb-6 transition-all duration-300 ease-in-out ${
-            isProfileExpanded ? "block" : "hidden"
-          }`}
-        >
-          <div className="overflow-hidden bg-gray-50 rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <tbody className="divide-y divide-gray-200">
-                {Object.entries(user).map(([key, value]) => {
-                  if (typeof value === "object" && value !== null) return null;
-                  return (
-                    <tr key={key}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900 capitalize">
-                        {key.replace(/_/g, " ")}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {String(value) || t("not_available")}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <button
@@ -179,6 +125,63 @@ export default function ProfileSection({
           )}
         </div>
       </div>
+
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <button
+          className="w-full p-6 text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => setIsProfileExpanded(!isProfileExpanded)}
+          aria-expanded={isProfileExpanded}
+          aria-controls="profile-info-section"
+        >
+          <h2 className="text-xl font-semibold flex items-center justify-between">
+            {t("profile_info")}
+            <svg
+              className={`w-5 h-5 text-gray-500 transform transition-transform ${
+                isProfileExpanded ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </h2>
+        </button>
+
+        <div
+          id="profile-info-section"
+          className={`px-6 pb-6 transition-all duration-300 ease-in-out ${
+            isProfileExpanded ? "block" : "hidden"
+          }`}
+        >
+          <div className="overflow-hidden bg-gray-50 rounded-lg">
+            <table className="min-w-full divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200">
+                {Object.entries(user).map(([key, value]) => {
+                  if (typeof value === "object" && value !== null) return null;
+                  return (
+                    <tr key={key}>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 capitalize">
+                        {key.replace(/_/g, " ")}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {String(value) || t("not_available")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   );
 }
