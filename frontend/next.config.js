@@ -35,9 +35,9 @@ module.exports = {
     return [
       {
         source: "/rest/:path*",
-        destination: `/rest/:path*`, // proxy a backend
+        destination: `${backendUrl}/:path*`, // proxy a backend
       },
-   ];
+    ];
   },
   //async redirects() {
   //  return [

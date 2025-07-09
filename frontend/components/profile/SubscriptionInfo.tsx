@@ -25,7 +25,7 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
   const handleForceSendReport = async () => {
     setIsSending(true);
     try {
-      const response = await fetch(`/rest/rest/user/send-weekly-report`, {
+      const response = await fetch(`/rest/user/send-weekly-report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
