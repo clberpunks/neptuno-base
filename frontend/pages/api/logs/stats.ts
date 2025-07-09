@@ -1,5 +1,4 @@
 // pages/api/logs/stats.ts
-// pages/api/logs/stats.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

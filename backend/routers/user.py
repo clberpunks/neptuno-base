@@ -1,13 +1,14 @@
 # backend/routes/user.py
 from datetime import datetime, timedelta
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_current_user
 from db import get_db
 from pydantic import BaseModel
-from models.models import LoginHistory, User
+from models.models import LoginHistory, Notification, User
 from fastapi import Body
-from schemas.schemas import PlanUpdate
+from schemas.schemas import NotificationOut, PlanUpdate, SubscriptionOut
 from models.models import Subscription
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from models.models import User, AccessLog
 from datetime import datetime, timedelta
 from utils import send_email
 from jinja2 import Environment, FileSystemLoader
+from models.models import User, AccessLog, Subscription
 
 
 # Initialize Jinja2 environment for email templates
@@ -70,6 +72,10 @@ def update_subscription(data: PlanUpdate,
     db.commit()
     return {"message": "Plan actualizado correctamente"}
 
+@router.get("/subscription/plans", response_model=List[SubscriptionOut])
+def get_available_plans(db: Session = Depends(get_db)):
+    return db.query(Subscription).filter_by(active=True).all()
+
 
 @router.get("/access-history")
 def get_access_history(current_user: User = Depends(get_current_user),
@@ -85,12 +91,6 @@ def get_access_history(current_user: User = Depends(get_current_user),
         "login_method": entry.login_method,
     } for entry in history]
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from db import get_db
-from dependencies import get_current_user
-from models.models import Notification, User
-from schemas.schemas import NotificationOut
 
 
 @router.get("/notifications", response_model=list[NotificationOut])

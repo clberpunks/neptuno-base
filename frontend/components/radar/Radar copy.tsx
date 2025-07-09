@@ -53,13 +53,12 @@ export default function Radar() {
   const [loading, setLoading] = useState(true);
   const unseen = useRadarNotifications(); // 👈 nuevo
 
-  const backendUrl = process.env.BACKEND_URL;
 
   useEffect(() => {
     Promise.all([
       apiFetch<Stats>("/api/logs/stats"),
       apiFetch<Log[]>("/api/logs"),
-      apiFetch(`/rest/logs/mark-seen`, { method: "POST" }) 
+      apiFetch('/rest/logs/mark-seen', { method: "POST" }) 
       // apiFetch<Rule[]>('/api/firewall'), // ← No necesario para Radar, solo logs y stats
     ])
       .then(([s, l /*, r*/]) => {
