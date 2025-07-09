@@ -3,6 +3,7 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useRouter } from "next/router";
+import BetaBanner from "./BetaBanner";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -17,13 +18,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     "/register",
     "/forgot-password",
     "/reset-password",
+    "/logout"
   ];
   const shouldUseLayout = !noLayoutRoutes.includes(router.pathname);
 
   return shouldUseLayout ? (
     <div className="flex flex-col min-h-screen bg-gray-50">
+
       <Navbar />
+      
+
       <main className="flex-grow pt-16 pb-8">{children}</main>
+
       <Footer />
     </div>
   ) : (

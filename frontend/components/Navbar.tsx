@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useAuth } from "../hooks/useAuth";
+import BetaBanner from "./BetaBanner";
 
 const Navbar = () => {
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
@@ -91,6 +92,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      <BetaBanner />
     </header>
   );
 };

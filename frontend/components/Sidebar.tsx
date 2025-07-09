@@ -7,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useSummaryNotifications } from "../hooks/useSummaryNotifications";
 import { useRadarNotifications } from "../hooks/useRadarNotifications";
+import BetaBanner from "./BetaBanner";
 
 interface Props {
   onSelect: (
@@ -177,6 +178,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
   if (isMobile) {
     return (
       <>
+        <BetaBanner />
         {/* Mobile Top Bar */}
         <div className="fixed top-0 left-0 right-0 bg-indigo-600 border-b border-indigo-700 z-50 h-16 flex items-center px-4">
           {/* Profile Button (Left) */}
@@ -281,6 +283,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
 
   // Desktop Sidebar
   return (
+    <>
     <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
       {/* Top Bar - Logo, App Name, and Language Selector */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -565,5 +568,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         </button>
       </div>
     </aside>
+    </>
   );
 }

@@ -37,16 +37,19 @@ class SubscriptionPlanOut(BaseModel):
     user_limit: int
     price: int
     active: bool
+    description: Optional[str]  # nuevo campo
 
     class Config:
         orm_mode = True
-
 
 class SubscriptionPlanUpdate(BaseModel):
     traffic_limit: Optional[int]
     domain_limit: Optional[int]
     user_limit: Optional[int]
     price: Optional[int]
+    active: Optional[bool]
+    description: Optional[str]  # nuevo campo
+
     active: Optional[bool]
 
 

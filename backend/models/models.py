@@ -72,6 +72,8 @@ class SubscriptionPlan(Base):
     user_limit = Column(Integer, nullable=False)
     price = Column(Integer, default=0)
     active = Column(Boolean, default=True)
+    description = Column(String, nullable=True)  # nuevo campo
+
 
 
 class Subscription(Base):

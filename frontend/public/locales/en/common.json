@@ -7,8 +7,8 @@
   "dashboard": "Dashboard",
   "summary": "Summary",
   "profile": "Profile",
-  "firewall": "Guard",
-  "radar": "Search",
+  "firewall": "Protect",
+  "radar": "Detect",
   "reports" : "Reports",
   "compliance": "Monetize",
   "help" : "Help",
@@ -284,5 +284,17 @@
   "total": "Total",
   "financial_insights": "Financial Insights",
   "finance_insight_1": "AI traffic monetization increased by 24%",
-  "finance_insight_2": "Infrastructure costs decreased by 8%"
+  "finance_insight_2": "Infrastructure costs decreased by 8%",
+  
+  "beta_banner": {
+    "message": "Test version, some features are disabled.",
+    "learn_more": "Learn more..."
+  },
+  
+  "beta_modal": {
+    "title": "Site in beta version",
+    "description_1": "We are working on improving our platform. Currently some features may be disabled or not working properly.",
+    "description_2": "We appreciate your patience and understanding during this testing phase. If you encounter any problems, please contact us.",
+    "understand": "Understood"
+  }
 }

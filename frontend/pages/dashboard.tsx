@@ -19,6 +19,7 @@ import ReportsPanel from "../components/reports/ReportsPanel";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import Spinner from "../components/shared/Spinner";
 import MonetizePanel from "../components/monetize/MonetizePanel";
+import BetaBanner from "../components/BetaBanner";
 
 interface LoginEntry {
   timestamp: string;
@@ -94,8 +95,6 @@ function Dashboard() {
         return (
           <div className="space-y-6">
             <ReportsPanel />
-            <CompliancePanel />
-            <TermsPanel />
           </div>
         );
       case "admin":
@@ -106,6 +105,8 @@ function Dashboard() {
   };
 
   return (
+    <>
+    <BetaBanner />
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <Sidebar onSelect={setSection} currentSection={section} />
       <main className={`flex-1 ${isMobile ? "pt-16 pb-16" : "p-4 md:p-8"}`}>
@@ -147,6 +148,7 @@ function Dashboard() {
         </div>
       </main>
     </div>
+    </>
   );
 }
 

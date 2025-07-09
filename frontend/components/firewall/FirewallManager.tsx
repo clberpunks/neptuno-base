@@ -6,6 +6,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import RobotsGenerator from "./RobotsGenerator";
 import MetaSEO from "./MetaSEO";
+import CompliancePanel from "../compliance/CompliancePanel";
+import TermsPanel from "../compliance/TermsPanel";
 
 export interface Rule {
   id?: string;
@@ -609,6 +611,9 @@ export default function FirewallManager() {
         isExpanded={metaExpanded}
         toggleExpand={() => setMetaExpanded(!metaExpanded)}
       />
+
+      <CompliancePanel />
+      <TermsPanel />
     </div>
   );
 }
