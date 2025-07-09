@@ -1,5 +1,4 @@
 # backend/schemas.py
-from typing import Optional
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from enum import Enum
@@ -28,27 +27,6 @@ class SubscriptionOut(BaseModel):
 
     class Config:
         orm_mode = True
-        
-class SubscriptionPlanOut(BaseModel):
-    id: str
-    plan: PlanLevel
-    traffic_limit: int
-    domain_limit: int
-    user_limit: int
-    price: int
-    active: bool
-
-    class Config:
-        orm_mode = True
-
-
-class SubscriptionPlanUpdate(BaseModel):
-    traffic_limit: Optional[int]
-    domain_limit: Optional[int]
-    user_limit: Optional[int]
-    price: Optional[int]
-    active: Optional[bool]
-
 
 class UserInJWT(BaseModel):
     id: str

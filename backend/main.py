@@ -47,7 +47,6 @@ def startup_event():
     """Crea las tablas y usuarios iniciales al iniciar la aplicación."""
     Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
-    seed_default_plans(db)
     try:
         if not db.query(User).filter_by(email="user@example.com").first():
             db.add(
@@ -78,18 +77,3 @@ def startup_event():
         db.rollback()
     finally:
         db.close()
-
-
-def seed_default_plans(db: Session):
-    from models.models import SubscriptionPlan, PlanLevel
-    defaults = [
-        {"plan": PlanLevel.free, "traffic_limit": 10_000, "domain_limit": 1, "user_limit": 1, "price": 0},
-        {"plan": PlanLevel.pro, "traffic_limit": 100_000, "domain_limit": 5, "user_limit": 5, "price": 10},
-        {"plan": PlanLevel.business, "traffic_limit": 1_000_000, "domain_limit": 10, "user_limit": 10, "price": 50},
-        {"plan": PlanLevel.enterprise, "traffic_limit": 10_000_000, "domain_limit": 9999, "user_limit": 9999, "price": 200},
-    ]
-    existing = db.query(SubscriptionPlan).count()
-    if existing == 0:
-        for p in defaults:
-            db.add(SubscriptionPlan(**p, active=True))
-        db.commit()

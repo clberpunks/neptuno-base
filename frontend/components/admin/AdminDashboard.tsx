@@ -6,7 +6,6 @@ import { SummaryPanel } from './panels/SummaryPanel';
 import { FirewallPanel } from './panels/FirewallPanel';
 import { UserActivityPanel } from './panels/UserActivityPanel';
 import { BotActivityPanel } from './panels/BotActivityPanel';
-import SubscriptionPlansPanel from './panels/SuscriptionPanel';
 
 interface DashboardData {
   new_users: number;
@@ -102,11 +101,6 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <CollapsiblePanel title="Resumen General" defaultOpen={true}>
         <SummaryPanel data={dashboardData} />
-      </CollapsiblePanel>
-
-
-      <CollapsiblePanel title="Planes de Suscripción">
-        <SubscriptionPlansPanel />
       </CollapsiblePanel>
 
       <CollapsiblePanel title="Análisis de Firewall">

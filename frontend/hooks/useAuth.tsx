@@ -11,7 +11,6 @@ interface SubscriptionData {
   domain_limit: number;
   user_limit: number;
   price: number; // Nuevo campo
-  active: boolean;
 }
 
 export interface User {
@@ -23,7 +22,6 @@ export interface User {
   created_at: string;
   last_login: string;
   subscription: SubscriptionData; // 👈 Asegura que esto no sea string suelto
-  //subscription: SubscriptionOut
 }
 
 
