@@ -6,9 +6,10 @@ import SummaryCharts from "./SummaryCharts";
 import UsageLimits from "./UsageLimits";
 import RecentDetections from "./RecentDetections";
 import TrackingCodePanel from "./TrackingCode";
-import CollapsiblePanel from "../shared/CollapsiblePanel";
+import ExpandablePanel from "../shared/ExpandablePanel";
 import { t } from "i18next";
 import { Stats, Log } from "../types/radar";
+import { CodeBracketIcon } from "@heroicons/react/24/outline";
 
 export default function Radar() {
   const [stats, setStats] = useState<Stats>({
@@ -49,21 +50,23 @@ export default function Radar() {
   return (
     <div className="space-y-6 p-4">
       <SummaryCharts stats={stats} logs={allLogs} loading={loading} />
-      
       <UsageLimits logs={allLogs} />
-      
       <RecentDetections logs={allLogs} loading={loading} />
 
-      <CollapsiblePanel title={t("tracking_code")}>
+      <ExpandablePanel
+        title={t("tracking_code")}
+        icon={<CodeBracketIcon className="h-6 w-6" />}
+        statusLabel={t("generate_code")}
+        statusColor="bg-indigo-100 text-indigo-800"
+        defaultExpanded={false}
+      >
         <div className="bg-gray-50 p-4 rounded-lg">
-          <code className="text-sm text-gray-800">
-            <TrackingCodePanel />
-          </code>
+          <TrackingCodePanel />
         </div>
         <p className="mt-3 text-sm text-gray-600">
           {t("tracking_code_instructions")}
         </p>
-      </CollapsiblePanel>
+      </ExpandablePanel>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 // components/radar/UsageLimits.tsx
 import { Doughnut } from "react-chartjs-2";
 import { Log } from "../types/radar";
-import CollapsiblePanel from "../shared/CollapsiblePanel";
+import ExpandablePanel from "../shared/ExpandablePanel";
 import "chart.js/auto";
+import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 
 interface UsageLimitsProps {
   logs: Log[];
@@ -18,8 +19,6 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
         const key = m[1];
         const used = parseInt(m[2], 10);
         const max = parseInt(m[3], 10);
-        
-        // Conservar el valor máximo si encontramos uno mayor
         if (!usageMap[key] || usageMap[key].max < max) {
           usageMap[key] = { used, max };
         }
@@ -32,7 +31,13 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
   if (limitPatterns.length === 0) return null;
 
   return (
-    <CollapsiblePanel title="Consumo de Límites">
+    <ExpandablePanel
+      title="Consumo de Límites"
+      icon={<ShieldCheckIcon className="h-6 w-6" />}
+      statusLabel={`${limitPatterns.length} límites`}
+      statusColor="bg-purple-100 text-purple-800"
+      defaultExpanded={false}
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {limitPatterns.map((p) => (
           <div key={p} className="text-center">
@@ -63,6 +68,6 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
           </div>
         ))}
       </div>
-    </CollapsiblePanel>
+    </ExpandablePanel>
   );
 }

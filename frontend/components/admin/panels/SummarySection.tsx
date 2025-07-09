@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/SummarySection.tsx
 interface SummarySectionProps {
   totalUsers: number;
   churnedUsers: number;

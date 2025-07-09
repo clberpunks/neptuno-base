@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/PlanDistributionPanel.tsx
 interface PlanDistribution {
   free: number;
   pro: number;

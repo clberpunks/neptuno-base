@@ -1,4 +1,3 @@
-// components/CollapsiblePanel.tsx
 // components/shared/CollapsiblePanel.tsx
 import { useState } from "react";
 

@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/FirewallPanel.tsx
 import { MetricCard } from './MetricCard';
 
 interface FirewallStats {

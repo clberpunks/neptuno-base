@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../../../utils/api';
 import Spinner from '../../shared/Spinner';
-
+ 
 export interface Plan {
   id: string;
   plan: 'free' | 'pro' | 'business' | 'enterprise';
@@ -11,7 +11,7 @@ export interface Plan {
   user_limit: number;
   price: number;
   active: boolean;
-  description: string;
+  description: string; // desc
 }
 
 export default function SubscriptionPlansPanel() {

@@ -38,8 +38,6 @@ export default function TrackingCodePanel() {
       }
       
       const code = await response.text();
-      
-      // CORRECCIÓN: Eliminé el formateo innecesario que causaba el problema
       setSnippet(code.trim());
       toast.success("Código generado correctamente");
     } catch (error) {
@@ -50,13 +48,9 @@ export default function TrackingCodePanel() {
     }
   };
 
-  // CORRECCIÓN: Usé un efecto más confiable para cargar inicialmente el snippet
   useEffect(() => {
-    if (user) {
-      // Solo cargar si aún no tenemos snippet
-      if (!snippet) {
-        fetchSnippet();
-      }
+    if (user && !snippet) {
+      fetchSnippet();
     }
   }, [user, snippet]);
 
@@ -87,7 +81,6 @@ export default function TrackingCodePanel() {
           {isGenerating ? 'Generando...' : 'Generar Código'}
         </button>
       </div>
-
       <div className="relative border rounded bg-gray-50 overflow-hidden">
         <textarea
           ref={textAreaRef}

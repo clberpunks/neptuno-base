@@ -51,40 +51,31 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
       <div className="flex flex-col md:flex-row items-center gap-4">
-        {/* Información principal */}
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold truncate">Suscripción: {subscription.plan}</h3>
-          
-          {/* Badges de información */}
           <div className="flex flex-wrap items-center gap-2 mt-2">
             <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               {subscription.price === 0 ? "Gratis" : `€${subscription.price}/mes`}
             </span>
-            
             {subscription.created_at && (
               <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                 Inicio: {formatDate(subscription.created_at)}
               </span>
             )}
-            
             {subscription.renews_at && (
               <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                 Renovación: {formatDate(subscription.renews_at)}
               </span>
             )}
-            
             <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               Tráfico: {subscription.traffic_limit.toLocaleString()} hits
             </span>
-            
             <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               Dominios: {subscription.domain_limit}
             </span>
-            
             <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               Usuarios: {subscription.user_limit}
             </span>
-            
             {subscription.traffic_used && (
               <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center ${
                 trafficPercentage > 90 ? 'bg-red-100 text-red-800' : 
@@ -99,8 +90,6 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
             )}
           </div>
         </div>
-
-        {/* Barra de progreso (solo se muestra si hay tráfico usado) */}
         {subscription.traffic_used && (
           <div className="w-full md:w-48 flex-shrink-0">
             <div className="flex justify-between text-xs mb-1">
@@ -122,8 +111,6 @@ export default function SubscriptionInfo({ subscription, formatDate }: Subscript
             </div>
           </div>
         )}
-
-        {/* Botón de acción */}
         <button
           onClick={handleForceSendReport}
           disabled={isSending}

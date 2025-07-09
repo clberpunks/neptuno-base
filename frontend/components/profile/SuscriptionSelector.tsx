@@ -11,9 +11,8 @@ interface SubscriptionPlan {
   user_limit: number;
   price: number;
   active: boolean;
-  description: string; // ← NUEVO
+  description: string;
 }
-
 
 export default function SubscriptionSelector() {
   const { user, refresh } = useAuth();
@@ -67,7 +66,6 @@ export default function SubscriptionSelector() {
                 <li><strong>Usuarios:</strong> {plan.user_limit}</li>
                 <li><strong>Precio:</strong> {plan.price === 0 ? "Gratis" : `€${plan.price}/mes`}</li>
               </ul>
-
               {isEnterprise ? (
                 <a href="/contact" className="block text-center text-indigo-700 font-medium text-sm underline">
                   Contactar ventas
