@@ -25,11 +25,12 @@ export default function ProfileSection({
 }: ProfileSectionProps) {
   const { t } = useTranslation("common");
   const [isSending, setIsSending] = useState(false);
-
+  const backendUrl = process.env.BACKEND_URL;
+  
   const handleForceSendReport = async () => {
     setIsSending(true);
     try {
-      const response = await fetch('/rest/user/send-weekly-report', {
+      const response = await fetch(`/rest/rest/user/send-weekly-report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

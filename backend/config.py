@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     
     NODE_ENV: str = "development"
     
-    BACKEND_URL: str ="http://localhost:8001/rest/"
+    BACKEND_URL: str ="http://localhost:8001"
     FRONTEND_URL: str ="https://ialert.ciberpunk.es"
     
     # Nuevas variables para Refresh Token

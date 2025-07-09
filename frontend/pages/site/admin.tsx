@@ -109,10 +109,11 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await apiFetch<DashboardData>('/rest/admin/overview');
+        const data = await apiFetch<DashboardData>(`/rest/admin/overview`);
         setDashboardData(data);
       } catch (err) {
         setError('Error al cargar los datos del dashboard');

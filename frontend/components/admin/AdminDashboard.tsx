@@ -55,22 +55,23 @@ export default function AdminDashboard() {
   const [botActivities, setBotActivities] = useState<BotActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const backendUrl = process.env.BACKEND_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        const dashboard = await apiFetch<DashboardData>('/rest/admin/overview');
+        const dashboard = await apiFetch<DashboardData>(`/rest/rest/admin/overview`);
         setDashboardData(dashboard);
         
-        const stats = await apiFetch<FirewallStats>('/rest/logs/stats');
+        const stats = await apiFetch<FirewallStats>(`/rest/rest/logs/stats`);
         setFirewallStats(stats);
         
-        const users = await apiFetch<TopUser[]>('/rest/admin/top-users');
+        const users = await apiFetch<TopUser[]>(`/rest/rest/admin/top-users`);
         setTopUsers(users);
         
-        const bots = await apiFetch<BotActivity[]>('/rest/admin/bot-activities');
+        const bots = await apiFetch<BotActivity[]>(`/rest/rest/admin/bot-activities`);
         setBotActivities(bots);
         
       } catch (err) {

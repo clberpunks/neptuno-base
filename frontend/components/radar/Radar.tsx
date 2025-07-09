@@ -24,6 +24,7 @@ export default function Radar() {
   const [allLogs, setAllLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
   const unseen = useRadarNotifications();
+  const backendUrl = process.env.BACKEND_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +44,7 @@ export default function Radar() {
     };
 
     fetchData();
-    apiFetch('/rest/logs/mark-seen', { method: "POST" });
+    apiFetch(`/rest/logs/mark-seen`, { method: "POST" });
   }, []);
 
   return (
