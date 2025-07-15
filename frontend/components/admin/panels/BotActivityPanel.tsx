@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/BotActivityPanel.tsx
 import { MetricCard } from './MetricCard';
 
 interface BotActivity {

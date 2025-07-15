@@ -1,3 +1,392 @@
+aqui tienes los archivos del frontend a revisar:
+
+// frontend/components/admin/SubscriptionPlansPanel.tsx
+import { useEffect, useState } from 'react';
+import { apiFetch } from '../../../utils/api';
+import Spinner from '../../shared/Spinner';
+
+export interface Plan {
+  id: string;
+  plan: 'free' | 'pro' | 'business' | 'enterprise';
+  traffic_limit: number;
+  domain_limit: number;
+  user_limit: number;
+  price: number;
+  active: boolean;
+}
+
+export default function SubscriptionPlansPanel() {
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [edited, setEdited] = useState<Partial<Plan>>({});
+  const [error, setError] = useState<string | null>(null);
+  const backendUrl = process.env.BACKEND_URL;
+
+const fetchPlans = async () => {
+  try {
+    console.log("Solicitando planes...");
+    const data = await apiFetch<Plan[]>(`/rest/admin/subscription-plans/all`);
+    console.log("Respuesta recibida:", data);
+    setPlans(data);
+  } catch (err) {
+    console.error("Error:", err);
+    setError('No se pudieron cargar los planes');
+  } finally {
+    setLoading(false);
+  }
+};
+useEffect(() => {
+  const load = async () => {
+    await fetchPlans();
+  };
+  load();
+}, []);
+
+
+
+  const toggleStatus = async (id: string) => {
+    await apiFetch(`/rest/admin/subscription-plans/${id}/toggle`, { method: 'PATCH' });
+    fetchPlans();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("¿Seguro que deseas eliminar este plan?")) return;
+    await apiFetch(`/rest/admin/subscription-plans/${id}`, { method: 'DELETE' });
+    fetchPlans();
+  };
+
+  const handleEdit = (plan: Plan) => {
+    setEditingId(plan.id);
+    setEdited(plan);
+  };
+
+  const handleSave = async () => {
+    if (!editingId) return;
+    await apiFetch(`/rest/admin/subscription-plans/${editingId}`, {
+      method: 'PUT',
+      body: JSON.stringify(edited),
+    });
+    setEditingId(null);
+    setEdited({});
+    fetchPlans();
+  };
+
+  if (loading) return <Spinner />;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm">
+      <h2 className="text-xl font-bold mb-4">Gestión de Planes de Suscripción</h2>
+      <table className="min-w-full text-sm text-left">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Tráfico</th>
+            <th>Dominios</th>
+            <th>Usuarios</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {plans.map(p => (
+            <tr key={p.id} className={`${!p.active ? 'opacity-40' : ''}`}>
+              <td>{p.plan}</td>
+              <td>
+                {editingId === p.id
+                  ? <input type="number" value={edited.traffic_limit ?? p.traffic_limit}
+                           onChange={e => setEdited({ ...edited, traffic_limit: +e.target.value })}
+                           className="border px-2 py-1 w-24 rounded" />
+                  : p.traffic_limit.toLocaleString()}
+              </td>
+              <td>
+                {editingId === p.id
+                  ? <input type="number" value={edited.domain_limit ?? p.domain_limit}
+                           onChange={e => setEdited({ ...edited, domain_limit: +e.target.value })}
+                           className="border px-2 py-1 w-16 rounded" />
+                  : p.domain_limit}
+              </td>
+              <td>
+                {editingId === p.id
+                  ? <input type="number" value={edited.user_limit ?? p.user_limit}
+                           onChange={e => setEdited({ ...edited, user_limit: +e.target.value })}
+                           className="border px-2 py-1 w-16 rounded" />
+                  : p.user_limit}
+              </td>
+              <td>
+                {editingId === p.id
+                  ? <input type="number" value={edited.price ?? p.price}
+                           onChange={e => setEdited({ ...edited, price: +e.target.value })}
+                           className="border px-2 py-1 w-16 rounded" />
+                  : `$${p.price}`}
+              </td>
+              <td>
+                <span className={`font-medium ${p.active ? 'text-green-600' : 'text-gray-500'}`}>
+                  {p.active ? 'Activo' : 'Inactivo'}
+                </span>
+              </td>
+              <td className="space-x-2">
+                {editingId === p.id ? (
+                  <>
+                    <button onClick={handleSave} className="text-blue-600 hover:underline">Guardar</button>
+                    <button onClick={() => setEditingId(null)} className="text-gray-500 hover:underline">Cancelar</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => handleEdit(p)} className="text-indigo-600 hover:underline">Editar</button>
+                    <button onClick={() => toggleStatus(p.id)} className="text-sm">
+                      {p.active ? 'Desactivar' : 'Activar'}
+                    </button>
+                    <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:underline">Eliminar</button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// components/SubscriptionInfo.tsx
+import { useTranslation } from "next-i18next";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+interface SubscriptionInfoProps {
+  subscription: {
+    plan: string;
+    created_at?: string;
+    renews_at?: string;
+    traffic_limit: number;
+    domain_limit: number;
+    user_limit: number;
+    price: number;
+    traffic_used?: number;
+  };
+  formatDate: (dateString?: string) => string;
+}
+
+export default function SubscriptionInfo({ subscription, formatDate }: SubscriptionInfoProps) {
+  const { t } = useTranslation("common");
+  const [isSending, setIsSending] = useState(false);
+
+  const handleForceSendReport = async () => {
+    setIsSending(true);
+    try {
+      const response = await fetch('/rest/user/send-weekly-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        toast.success(t('report_sent_successfully'));
+      } else {
+        throw new Error(await response.text());
+      }
+    } catch (error) {
+      console.error('Error sending report:', error);
+      toast.error(t('failed_to_send_report'));
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const trafficPercentage = subscription.traffic_used 
+    ? Math.min(100, Math.round((subscription.traffic_used / subscription.traffic_limit) * 100))
+    : 0;
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        {/* Información principal */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold truncate">Suscripción: {subscription.plan}</h3>
+          
+          {/* Badges de información */}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              {subscription.price === 0 ? "Gratis" : `€${subscription.price}/mes`}
+            </span>
+            
+            {subscription.created_at && (
+              <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                Inicio: {formatDate(subscription.created_at)}
+              </span>
+            )}
+            
+            {subscription.renews_at && (
+              <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                Renovación: {formatDate(subscription.renews_at)}
+              </span>
+            )}
+            
+            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Tráfico: {subscription.traffic_limit.toLocaleString()} hits
+            </span>
+            
+            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Dominios: {subscription.domain_limit}
+            </span>
+            
+            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Usuarios: {subscription.user_limit}
+            </span>
+            
+            {subscription.traffic_used && (
+              <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center ${
+                trafficPercentage > 90 ? 'bg-red-100 text-red-800' : 
+                trafficPercentage > 75 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+              }`}>
+                <span className={`h-2 w-2 rounded-full mr-1.5 ${
+                  trafficPercentage > 90 ? 'bg-red-500' : 
+                  trafficPercentage > 75 ? 'bg-yellow-500' : 'bg-green-500'
+                }`}></span>
+                Tráfico usado: {trafficPercentage}%
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Barra de progreso (solo se muestra si hay tráfico usado) */}
+        {subscription.traffic_used && (
+          <div className="w-full md:w-48 flex-shrink-0">
+            <div className="flex justify-between text-xs mb-1">
+              <span>{subscription.traffic_used.toLocaleString()}/{subscription.traffic_limit.toLocaleString()}</span>
+              <span>{trafficPercentage}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full ${
+                  trafficPercentage > 90 ? 'bg-red-500' : 
+                  trafficPercentage > 75 ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+                style={{ width: `${trafficPercentage}%` }}
+                role="progressbar"
+                aria-valuenow={trafficPercentage}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {/* Botón de acción */}
+        <button
+          onClick={handleForceSendReport}
+          disabled={isSending}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium min-w-[120px] flex-shrink-0 ${
+            isSending 
+              ? 'bg-gray-300 cursor-not-allowed'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+          }`}
+          aria-label={t('force_send_weekly_report')}
+        >
+          {isSending ? t('sending') : t('force_send_weekly_report')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+// frontend/components/profile/SubscriptionSelector.tsx
+import { useState, useEffect } from "react";
+import { apiFetch } from "../../utils/api";
+import { useAuth } from "../../hooks/useAuth";
+
+interface SubscriptionPlan {
+  id: string;
+  plan: "free" | "pro" | "business" | "enterprise";
+  traffic_limit: number;
+  domain_limit: number;
+  user_limit: number;
+  price: number;
+  active: boolean;
+}
+
+export default function SubscriptionSelector() {
+  const { user, refresh } = useAuth();
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const currentPlanId = user?.subscription?.plan ?? "free";
+
+  useEffect(() => {
+    apiFetch<SubscriptionPlan[]>("/rest/admin/subscription-plans")
+      .then(setPlans)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleChange = async (plan: string) => {
+    if (plan === currentPlanId || updating) return;
+    setUpdating(true);
+    await apiFetch("/rest/user/subscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan }),
+    });
+    await refresh();
+    setUpdating(false);
+  };
+
+  if (loading) return <p className="text-sm">Cargando planes...</p>;
+
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm mt-6">
+      <h2 className="text-xl font-semibold mb-6">Planes de suscripción</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {plans.map((plan) => {
+          const isCurrent = plan.plan === currentPlanId;
+          const isEnterprise = plan.plan === "enterprise";
+
+          return (
+            <div
+              key={plan.id}
+              className={`rounded-lg border p-5 shadow-sm transition-all ${
+                isCurrent
+                  ? "border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50"
+                  : "border-gray-200 hover:shadow-md"
+              }`}
+            >
+              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.plan}</h3>
+              <ul className="text-sm text-gray-700 mb-4 space-y-1">
+                <li><strong>Tráfico:</strong> {plan.traffic_limit.toLocaleString()} visitas/mes</li>
+                <li><strong>Dominios:</strong> {plan.domain_limit}</li>
+                <li><strong>Usuarios:</strong> {plan.user_limit}</li>
+                <li><strong>Precio:</strong> {plan.price === 0 ? "Gratis" : `€${plan.price}/mes`}</li>
+              </ul>
+
+              {isEnterprise ? (
+                <a href="/contact" className="block text-center text-indigo-700 font-medium text-sm underline">
+                  Contactar ventas
+                </a>
+              ) : (
+                <button
+                  disabled={updating || isCurrent}
+                  onClick={() => handleChange(plan.plan)}
+                  className={`w-full py-2 px-4 rounded-lg font-medium text-sm ${
+                    isCurrent
+                      ? "bg-indigo-600 text-white cursor-not-allowed"
+                      : "bg-white border border-gray-300 hover:bg-gray-100"
+                  }`}
+                >
+                  {isCurrent ? "Plan actual" : "Seleccionar"}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // pages/auth/register.tsx
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -51,15 +440,30 @@ export default function RegisterPage() {
   const selectedPlan = plans.find(p => p.plan === plan) || plans[0];
 
   // Mapear los planes a un formato más amigable para mostrar
-  const getPlanDisplayInfo = (plan: SubscriptionPlan) => ({
-    id: plan.id,
-    name: plan.plan.charAt(0).toUpperCase() + plan.plan.slice(1),
-    priceText: plan.price === 0 ? "Gratis" : `$${plan.price}/mes`,
-    description: plan.description,
-  });
+  const getPlanDisplayInfo = (plan: SubscriptionPlan) => {
+    const planInfo = {
+      id: plan.id,
+      name: plan.plan.charAt(0).toUpperCase() + plan.plan.slice(1),
+      priceText: plan.price === 0 ? "Gratis" : `$${plan.price}/mes`,
+      description: getPlanDescription(plan.plan),
+    };
+    return planInfo;
+  };
 
-
-
+  const getPlanDescription = (planType: string) => {
+    switch (planType) {
+      case "free":
+        return "Ideal para comenzar";
+      case "pro":
+        return "Para proyectos en crecimiento";
+      case "business":
+        return "Uso avanzado y equipos medianos";
+      case "enterprise":
+        return "Solución personalizada para grandes organizaciones";
+      default:
+        return "";
+    }
+  };
 
   const validateForm = () => {
     if (!name || !email || !password) {
@@ -311,7 +715,7 @@ export default function RegisterPage() {
                   </div>
                   
                   <p className="text-xl mb-8">
-                    {selectedPlan.description === "" ? "" : `$${selectedPlan.description}`}
+                    {getPlanDescription(selectedPlan.plan)}
                   </p>
                   
                   <ul className="space-y-4 mb-8">

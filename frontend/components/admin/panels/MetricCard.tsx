@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/MetricCard.tsx
 interface MetricCardProps {
   title: string;
   value: number | string;

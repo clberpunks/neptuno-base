@@ -23,13 +23,6 @@ class UserRole(str, enum.Enum):
     user = "user"
 
 
-class PlanLevel(str, enum.Enum):
-    free = "free"
-    pro = "pro"
-    business = "business"
-    enterprise = "enterprise"
-
-
 class Notification(Base):
     __tablename__ = "notifications"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -41,22 +34,6 @@ class Notification(Base):
 
     user = relationship("User", back_populates="notifications")
 
-
-
-class Subscription(Base):
-    __tablename__ = "subscriptions"
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, ForeignKey("users.id"), nullable=False, unique=True)
-    plan = Column(SqlEnum(PlanLevel), default=PlanLevel.free)
-    traffic_limit = Column(Integer)
-    domain_limit = Column(Integer)
-    user_limit = Column(Integer)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    renews_at = Column(DateTime)
-    remaining_tokens = Column(Integer)
-    price = Column(Integer, default=0)  # Nuevo campo para el precio
-    
-    user = relationship("User", back_populates="subscription")
 
 # User
 class User(Base):
@@ -79,6 +56,40 @@ class User(Base):
 
 
 
+class PlanLevel(str, enum.Enum):
+    free = "free"
+    pro = "pro"
+    business = "business"
+    enterprise = "enterprise"
+
+# models/models.py
+class SubscriptionPlan(Base):
+    __tablename__ = "subscription_plans"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    plan = Column(SqlEnum(PlanLevel), unique=True, nullable=False)
+    traffic_limit = Column(Integer, nullable=False)
+    domain_limit = Column(Integer, nullable=False)
+    user_limit = Column(Integer, nullable=False)
+    price = Column(Integer, default=0)
+    active = Column(Boolean, default=True)
+    description = Column(String, nullable=True)  # nuevo campo
+
+
+
+class Subscription(Base):
+    __tablename__ = "subscriptions"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False, unique=True)
+    plan = Column(SqlEnum(PlanLevel), default=PlanLevel.free)
+    traffic_limit = Column(Integer)
+    domain_limit = Column(Integer)
+    user_limit = Column(Integer)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    renews_at = Column(DateTime)
+    remaining_tokens = Column(Integer)
+    price = Column(Integer, default=0)
+    
+    user = relationship("User", back_populates="subscription")
 
 class FirewallRule(Base):
     __tablename__ = "firewall_rules"

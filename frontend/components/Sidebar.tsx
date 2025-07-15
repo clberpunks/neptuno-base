@@ -1,5 +1,4 @@
 // components/Sidebar.tsx
-// components/Sidebar.tsx
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -8,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useSummaryNotifications } from "../hooks/useSummaryNotifications";
 import { useRadarNotifications } from "../hooks/useRadarNotifications";
+import BetaBanner from "./BetaBanner";
 
 interface Props {
   onSelect: (
@@ -50,6 +50,10 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       ? "bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600"
       : "text-gray-700 hover:bg-gray-100";
 
+  const changeLang = (locale: string) => {
+    router.push(router.pathname, router.asPath, { locale });
+  };
+
   // Icono de engranaje reutilizable
   const GearIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
     <svg
@@ -57,12 +61,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
     >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37a1.724 1.724 0 002.572-1.065c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c.94-1.543-.826-3.31-2.37-2.37a1.724 1.724 0 00-2.572 1.065z"
       />
       <path
         strokeLinecap="round"
@@ -71,10 +76,10 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
       />
     </svg>
-  );
+  )
+  
 
   // Menú para mobil
-
   const mobileBottomMenuItems = [
     {
       section: "summary",
@@ -176,12 +181,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     return (
       <>
         {/* Mobile Top Bar */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 h-16 flex items-center px-4">
+        <div className="fixed top-0 left-0 right-0 bg-indigo-600 border-b border-indigo-700 z-50 h-16 flex items-center px-4">
+          
           {/* Profile Button (Left) */}
           <button
             onClick={() => onSelect("profile")}
             className={`flex items-center ${
-              currentSection === "profile" ? "text-indigo-600" : "text-gray-600"
+              currentSection === "profile" ? "text-white font-bold" : "text-white"
             }`}
           >
             <svg
@@ -202,10 +208,16 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
 
           {/* App Name (Center) */}
           <div className="flex-grow text-center">
-            <span className="text-lg font-semibold text-indigo-600">
-              {appName}
+            <span className="text-lg font-semibold text-white">
+            <Link href={siteUrl || "/"} legacyBehavior className="font-bold text-xl text-indigo-600">
+              <a className="">
+                {appName}
+              </a>
+            </Link>
             </span>
           </div>
+
+      
 
           {/* Right Side Icons */}
           <div className="flex items-center space-x-3">
@@ -215,8 +227,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => router.push("/admin")}
                 className={`p-1 rounded-full ${
                   currentSection === "admin"
-                    ? "bg-indigo-100 text-indigo-600"
-                    : "text-gray-500 hover:bg-gray-100"
+                    ? "bg-indigo-700 text-white"
+                    : "text-white hover:bg-indigo-700"
                 }`}
                 aria-label="Admin settings"
               >
@@ -229,8 +241,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
               onClick={() => onSelect("help")}
               className={`p-1 rounded-full ${
                 currentSection === "help"
-                  ? "bg-indigo-100 text-indigo-600"
-                  : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-indigo-700 text-white"
+                  : "text-white hover:bg-indigo-700"
               }`}
               aria-label="Help"
             >
@@ -252,7 +264,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-indigo-600 border-t border-indigo-700 z-50">
           <div className="flex justify-around py-2">
             {mobileBottomMenuItems.map((item) => (
               <button
@@ -260,8 +272,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => onSelect(item.section as any)}
                 className={`flex flex-col items-center p-2 ${
                   currentSection === item.section
-                    ? "text-indigo-600"
-                    : "text-gray-600"
+                    ? "text-white font-bold"
+                    : "text-white"
                 }`}
                 aria-current={
                   currentSection === item.section ? "page" : undefined
@@ -279,36 +291,15 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
 
   // Desktop Sidebar
   return (
-    <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-6 border-b border-gray-200">
+    <>
+    <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+      {/* Top Bar - Logo, App Name, and Language Selector */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {/* Logo and App Name */}
         <Link href={siteUrl || "/"} legacyBehavior>
           <a className="flex items-center text-lg font-semibold text-indigo-600">
-            {appName}
-          </a>
-        </Link>
-      </div>
-
-      <div className="p-6 border-b border-gray-200 flex items-center">
-        {user?.picture || user?.email ? (
-          <Image
-            src={`https://www.gravatar.com/avatar/${
-              user?.email
-                ? require("crypto")
-                    .createHash("md5")
-                    .update(user.email.trim().toLowerCase())
-                    .digest("hex")
-                : ""
-            }?d=mp&s=40`}
-            alt="User Avatar"
-            width={40}
-            height={40}
-            className="rounded-full w-10 h-10 mr-3"
-            unoptimized={process.env.NODE_ENV === "development"}
-          />
-        ) : (
-          <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center">
             <svg
-              className="w-6 h-6 text-gray-400"
+              className="w-6 h-6 mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -317,18 +308,109 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
               />
             </svg>
-          </div>
-        )}
-        <div>
-          <p className="font-medium text-gray-900 truncate">{user?.name}</p>
-          <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+            <span>{appName}</span>
+          </a>
+        </Link>
+        
+        {/* Language Selector */}
+        <div className="flex space-x-1">
+          <button
+            onClick={() => changeLang("es")}
+            className={`text-xs px-2 py-1 rounded ${
+              router.locale === "es"
+                ? "font-medium text-indigo-600 bg-indigo-50"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            aria-label="Cambiar a Español"
+          >
+            ES
+          </button>
+          <button
+            onClick={() => changeLang("en")}
+            className={`text-xs px-2 py-1 rounded ${
+              router.locale === "en"
+                ? "font-medium text-indigo-600 bg-indigo-50"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            aria-label="Switch to English"
+          >
+            EN
+          </button>
         </div>
       </div>
 
-      <nav className="py-4 flex-grow">
+      {/* User Profile Block - Clickable */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <button
+          onClick={() => onSelect("profile")}
+          className="flex items-center hover:bg-gray-50 transition-colors w-full text-left"
+        >
+          {user?.picture || user?.email ? (
+            <Image
+              src={`https://www.gravatar.com/avatar/${
+                user?.email
+                  ? require("crypto")
+                      .createHash("md5")
+                      .update(user.email.trim().toLowerCase())
+                      .digest("hex")
+                  : ""
+              }?d=mp&s=40`}
+              alt="User Avatar"
+              width={40}
+              height={40}
+              className="rounded-full w-10 h-10 mr-3"
+              unoptimized={process.env.NODE_ENV === "development"}
+            />
+          ) : (
+            <div className="w-10 h-10 mr-3 rounded-full bg-gray-200 flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+          )}
+          <div>
+            <p className="font-medium text-gray-900 truncate max-w-[100px]">{user?.name}</p>
+            <p className="text-sm text-gray-500">Mi cuenta</p>
+          </div>
+        </button>
+        
+        {/* Logout Button */}
+        <button
+          onClick={() => router.push("/logout")}
+          className="text-sm p-2 rounded text-red-600 hover:bg-red-50 flex items-center"
+          title={t("logout")}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+        </button>
+    </div>
+
+      {/* Navigation Menu */}
+      <nav className="py-4 flex-grow overflow-y-auto">
         {/* Summary */}
         <button
           onClick={() => onSelect("summary")}
@@ -353,30 +435,6 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
             )}
           </span>
           {t("summary")}
-        </button>
-
-        {/* Profile */}
-        <button
-          onClick={() => onSelect("profile")}
-          className={`w-full text-left px-6 py-3 flex items-center ${isActive(
-            "profile"
-          )}`}
-          aria-current={currentSection === "profile" ? "page" : undefined}
-        >
-          <svg
-            className="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-          {t("profile")}
         </button>
 
         {/* Radar */}
@@ -477,7 +535,23 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           {t("reports")}
         </button>
 
-        {/* Help */}
+        {/* Admin Settings (only for admin users) */}
+        {user?.role === "admin" && (
+          <button
+            onClick={() => onSelect("admin")}
+            className={`w-full text-left px-6 py-3 flex items-center ${isActive(
+              "admin"
+            )}`}
+            aria-current={currentSection === "admin" ? "page" : undefined}
+          >
+            <GearIcon className="w-5 h-5 mr-3" />
+            {t("admin")}
+          </button>
+        )}
+      </nav>
+
+      {/* Help - Moved to the bottom */}
+      <div className="p-4 border-t border-gray-200 mt-auto">
         <button
           onClick={() => onSelect("help")}
           className={`w-full text-left px-6 py-3 flex items-center ${isActive(
@@ -500,43 +574,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           </svg>
           {t("help")}
         </button>
-
-        {/* Admin Settings (only for admin users) */}
-        {user?.role === "admin" && (
-          <button
-            onClick={() => onSelect("admin")}
-            className={`w-full text-left px-6 py-3 flex items-center ${isActive(
-              "admin"
-            )}`}
-            aria-current={currentSection === "admin" ? "page" : undefined}
-          >
-            <GearIcon className="w-5 h-5 mr-3" />
-            {t("admin")}
-          </button>
-        )}
-      </nav>
-
-      {/* Logout */}
-      <div className="p-4 border-t border-gray-200 mt-auto">
-        <Link href="logout" legacyBehavior>
-          <a className="w-full text-left px-6 py-3 flex items-center text-red-600 hover:bg-red-50 rounded-md transition-colors">
-            <svg
-              className="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            {t("logout")}
-          </a>
-        </Link>
       </div>
     </aside>
+    </>
   );
 }

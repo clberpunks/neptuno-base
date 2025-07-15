@@ -1,13 +1,14 @@
 # backend/routes/user.py
 from datetime import datetime, timedelta
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_current_user
 from db import get_db
 from pydantic import BaseModel
-from models.models import LoginHistory, User
+from models.models import LoginHistory, Notification, SubscriptionPlan, User
 from fastapi import Body
-from schemas.schemas import PlanUpdate
+from schemas.schemas import NotificationOut, PlanUpdate, SubscriptionOut
 from models.models import Subscription
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from models.models import User, AccessLog
 from datetime import datetime, timedelta
 from utils import send_email
 from jinja2 import Environment, FileSystemLoader
+from models.models import User, AccessLog, Subscription
 
 
 # Initialize Jinja2 environment for email templates
@@ -48,27 +50,57 @@ def update_subscription(data: PlanUpdate,
         "enterprise": 200
     }
     price = plan_prices[plan]
-    # Buscar suscripción existente en la base de datos
+    
+    plan_obj = db.query(SubscriptionPlan).filter_by(plan=plan, active=True).first()
+    if not plan_obj:
+        raise HTTPException(status_code=404, detail="Plan no disponible")
+
     sub = db.query(Subscription).filter_by(user_id=current_user.id).first()
+    # ahora usamos sus valores
     if sub is None:
-        sub = Subscription(user_id=current_user.id,
-                        plan=plan,
-                        traffic_limit=t,
-                        domain_limit=d,
-                        user_limit=u,
-                        created_at=datetime.utcnow(),
-                        renews_at=datetime.utcnow() + timedelta(days=365),
-                        price=price)
+        sub = Subscription(
+            user_id=current_user.id,
+            plan=plan,
+            traffic_limit=plan_obj.traffic_limit,
+            domain_limit=plan_obj.domain_limit,
+            user_limit=plan_obj.user_limit,
+            created_at=datetime.utcnow(),
+            renews_at=datetime.utcnow() + timedelta(days=365),
+            price=plan_obj.price
+        )
         db.add(sub)
     else:
         sub.plan = plan
-        sub.traffic_limit = t
-        sub.domain_limit = d
-        sub.user_limit = u
-        sub.price = price
+        sub.traffic_limit = plan_obj.traffic_limit
+        sub.domain_limit = plan_obj.domain_limit
+        sub.user_limit = plan_obj.user_limit
+        sub.price = plan_obj.price
+    
+    # Buscar suscripción existente en la base de datos
+    # sub = db.query(Subscription).filter_by(user_id=current_user.id).first()
+    # if sub is None:
+    #     sub = Subscription(user_id=current_user.id,
+    #                     plan=plan,
+    #                     traffic_limit=t,
+    #                     domain_limit=d,
+    #                     user_limit=u,
+    #                     created_at=datetime.utcnow(),
+    #                     renews_at=datetime.utcnow() + timedelta(days=365),
+    #                     price=price)
+    #     db.add(sub)
+    # else:
+    #     sub.plan = plan
+    #     sub.traffic_limit = t
+    #     sub.domain_limit = d
+    #     sub.user_limit = u
+    #     sub.price = price
 
     db.commit()
     return {"message": "Plan actualizado correctamente"}
+
+@router.get("/subscription/plans", response_model=List[SubscriptionOut])
+def get_available_plans(db: Session = Depends(get_db)):
+    return db.query(Subscription).filter_by(active=True).all()
 
 
 @router.get("/access-history")
@@ -85,12 +117,6 @@ def get_access_history(current_user: User = Depends(get_current_user),
         "login_method": entry.login_method,
     } for entry in history]
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from db import get_db
-from dependencies import get_current_user
-from models.models import Notification, User
-from schemas.schemas import NotificationOut
 
 
 @router.get("/notifications", response_model=list[NotificationOut])
@@ -106,7 +132,7 @@ def mark_as_read(notification_id: str, db: Session = Depends(get_db), current_us
     db.commit()
     return {"message": "Marcada como leída"}
 
-@router.delete("/{notification_id}")
+@router.delete("/notifications/{notification_id}")
 def delete_notification(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
     if not notif:

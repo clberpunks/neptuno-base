@@ -6,11 +6,10 @@ import SummaryCharts from "./SummaryCharts";
 import UsageLimits from "./UsageLimits";
 import RecentDetections from "./RecentDetections";
 import TrackingCodePanel from "./TrackingCode";
-import CollapsiblePanel from "../shared/CollapsiblePanel";
-import { Pie, Line, Doughnut } from "react-chartjs-2";
-import "chart.js/auto";
+import ExpandablePanel from "../shared/ExpandablePanel";
 import { t } from "i18next";
 import { Stats, Log } from "../types/radar";
+import { CodeBracketIcon } from "@heroicons/react/24/outline";
 
 export default function Radar() {
   const [stats, setStats] = useState<Stats>({
@@ -23,41 +22,51 @@ export default function Radar() {
     other: 0,
     total: 0,
   });
-  const [logs, setLogs] = useState<Log[]>([]);
+  const [allLogs, setAllLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
   const unseen = useRadarNotifications();
 
   useEffect(() => {
-    Promise.all([
-      apiFetch("/api/logs/stats") as Promise<Stats>,
-      apiFetch("/api/logs") as Promise<Log[]>,
-      apiFetch('/rest/logs/mark-seen', { method: "POST" })
-    ])
-      .then(([statsData, logsData]) => {
+    const fetchData = async () => {
+      try {
+        const [statsData, logsData] = await Promise.all([
+          apiFetch<Stats>("/api/logs/stats"),
+          apiFetch<Log[]>("/api/logs"),
+        ]);
+        
         setStats(statsData);
-        setLogs(logsData);
-      })
-      .finally(() => setLoading(false));
+        setAllLogs(logsData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    apiFetch('/rest/logs/mark-seen', { method: "POST" });
   }, []);
 
   return (
     <div className="space-y-6 p-4">
-      <SummaryCharts stats={stats} logs={logs} loading={loading} />
-      
-      <UsageLimits logs={logs} />
-      
-      <RecentDetections logs={logs} loading={loading} />
+      <SummaryCharts stats={stats} logs={allLogs} loading={loading} />
+      <UsageLimits logs={allLogs} />
+      <RecentDetections logs={allLogs} loading={loading} />
 
-      <CollapsiblePanel title={t("tracking_code")}>
+      <ExpandablePanel
+        title={t("tracking_code")}
+        icon={<CodeBracketIcon className="h-6 w-6" />}
+        statusLabel={t("generate_code")}
+        statusColor="bg-indigo-100 text-indigo-800"
+        defaultExpanded={false}
+      >
         <div className="bg-gray-50 p-4 rounded-lg">
-          <code className="text-sm text-gray-800">
-            <TrackingCodePanel />
-          </code>
+          <TrackingCodePanel />
         </div>
         <p className="mt-3 text-sm text-gray-600">
           {t("tracking_code_instructions")}
         </p>
-      </CollapsiblePanel>
+      </ExpandablePanel>
     </div>
   );
 }

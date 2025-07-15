@@ -7,10 +7,10 @@
   "dashboard": "Dashboard",
   "summary": "Summary",
   "profile": "Profile",
-  "firewall": "Guard",
-  "radar": "Search",
+  "firewall": "Protect",
+  "radar": "Detect",
   "reports" : "Reports",
-  "compliance": "Rules",
+  "compliance": "Monetize",
   "help" : "Help",
   "settings": "settings",
   "logins" : "Logins",
@@ -27,7 +27,7 @@
   "no_login_history": "No login history available.",
   "current_session": "Current session",
   "initial_login": "Initial login",
-  "dashboard_welcome": "Welcome to your dashboard",
+  "dashboard_welcome": "Welcome!",
   "manage_profile": "Manage your profile information",
   "view_access_history": "View your access history",
   "access_denied": "Access Denied",
@@ -136,8 +136,8 @@
   "error_loading_data": "Error loading risk data",
   "no_data_available": "No data available",
 
-  "firewall_management": "LLM Firewall - Management",
-  "manage_access_rules": "Manage access rules for your language models",
+  "firewall_management": "Tracking pixel",
+  "manage_access_rules": "Active protection against malicious AI",
   "allowed": "Allowed",
   "blocked": "Blocked",
   "allowed_tokens": "Allowed tokens",
@@ -284,5 +284,22 @@
   "total": "Total",
   "financial_insights": "Financial Insights",
   "finance_insight_1": "AI traffic monetization increased by 24%",
-  "finance_insight_2": "Infrastructure costs decreased by 8%"
+  "finance_insight_2": "Infrastructure costs decreased by 8%",
+  
+  "beta_banner": {
+    "message": "Test version, some features are disabled.",
+    "learn_more": "Learn more..."
+  },
+  
+  "beta_modal": {
+    "title": "Site in beta version",
+    "description_1": "We are working on improving our platform. Currently some features may be disabled or not working properly.",
+    "description_2": "We appreciate your patience and understanding during this testing phase. If you encounter any problems, please contact us.",
+    "understand": "Understood"
+  },
+
+  "inbox_empty": "Congratulations! You have no messages.",
+  "monitor_ai_activity": "AI activity on your site",
+  "risk_status_monitoring" : "Risky activity detected",
+  "monetize" : "Monetize AI visits" 
 }

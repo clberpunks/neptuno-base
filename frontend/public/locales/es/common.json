@@ -8,9 +8,9 @@
   "summary": "Resumen",
   "profile": "Cuenta",
   "firewall": "Proteger",
-  "radar": "Analizar",
+  "radar": "Detectar",
   "reports" : "Informes",
-  "compliance": "Normas",
+  "compliance": "Monetizar",
   "help" : "Ayuda",
   "settings": "Configuración",
   "logins" : "accesos",
@@ -27,7 +27,7 @@
   "no_login_history": "No hay historial de accesos disponible.",
   "current_session": "Sesión actual",
   "initial_login": "Primer acceso",
-  "dashboard_welcome": "Bienvenido a tu panel de control",
+  "dashboard_welcome": "Bienvenido!",
   "manage_profile": "Gestiona la información de tu perfil",
   "view_access_history": "Consulta tu historial de accesos",
   "access_denied": "Acceso denegado",
@@ -135,8 +135,8 @@
 
   "error_loading_data": "Error cargando datos de riesgo",
 
-  "firewall_management": "Firewall LLM - Administración",
-  "manage_access_rules": "Gestiona las reglas de acceso para tus modelos de lenguaje",
+  "firewall_management": "Pixel de seguimiento",
+  "manage_access_rules": "Protección activa contra IA maliciosas",
   "allowed": "Permitidos",
   "blocked": "Bloqueados",
   "restricted": "Restringidos",
@@ -283,5 +283,21 @@
   "total": "Total",
   "financial_insights": "Conclusiones Financieras",
   "finance_insight_1": "La monetización de tráfico de IA aumentó un 24%",
-  "finance_insight_2": "Los costes de infraestructura disminuyeron un 8%"
+  "finance_insight_2": "Los costes de infraestructura disminuyeron un 8%",
+
+  "beta_banner": {
+    "message": "Versión en pruebas, algunas funciones están desactivadas.",
+    "learn_more": "Saber más..."
+  },
+  "beta_modal": {
+    "title": "Sitio en versión beta",
+    "description_1": "Estamos trabajando en mejorar nuestra plataforma. Actualmente algunas funciones pueden estar desactivadas o no funcionar correctamente.",
+    "description_2": "Agradecemos tu paciencia y comprensión durante esta fase de pruebas. Si encuentras algún problema, por favor contáctanos.",
+    "understand": "Entendido"
+  },
+
+  "inbox_empty": "Enhorabuena! No tienes mensajes",
+  "monitor_ai_activity": "Actividad de la IA en tu sitio",
+  "risk_status_monitoring" : "Actividad de riesgo detectada",
+  "monetize" : "Monetiza las visitas de la IA"  
 }

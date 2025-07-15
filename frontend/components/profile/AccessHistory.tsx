@@ -1,5 +1,7 @@
 // components/AccessHistory.tsx
 import { useTranslation } from "next-i18next";
+import ExpandablePanel from "../shared/ExpandablePanel";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 interface AccessHistoryProps {
   accessHistory?: Array<{
@@ -20,9 +22,16 @@ export default function AccessHistory({
 }: AccessHistoryProps) {
   const { t } = useTranslation("common");
 
+  const historyCount = accessHistory?.length || 0;
+
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h2 className="text-xl font-semibold mb-6">{t("login_history")}</h2>
+    <ExpandablePanel
+      title={t("login_history")}
+      icon={<ClockIcon className="h-6 w-6" />}
+      statusLabel={`${historyCount} ${t("entries")}`}
+      statusColor="bg-gray-100 text-gray-800"
+      defaultExpanded={false}
+    >
       {!accessHistory ? (
         <div className="flex items-center justify-center h-48">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
@@ -56,6 +65,6 @@ export default function AccessHistory({
           )}
         </ul>
       )}
-    </div>
+    </ExpandablePanel>
   );
 }

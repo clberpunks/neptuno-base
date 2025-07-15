@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/SummaryPanel.tsx
 import { MetricCard } from './MetricCard';
 import { PlanDistribution } from './PlanDistributionPanel';
 import { SummarySection } from './SummarySection';

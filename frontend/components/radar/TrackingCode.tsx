@@ -1,16 +1,14 @@
-// frontend/components/radar/TrackingCode.tsx
+// components/radar/TrackingCode.tsx
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
-// Hook para ajustar automáticamente la altura del textarea
 function useAutoResizeTextArea(value: string) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (textAreaRef.current) {
-      // Resetear altura para obtener el cálculo correcto
       textAreaRef.current.style.height = "auto";
-      // Ajustar altura al contenido (scrollHeight)
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   }, [value]);
@@ -19,41 +17,70 @@ function useAutoResizeTextArea(value: string) {
 }
 
 export default function TrackingCodePanel() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [snippet, setSnippet] = useState("");
   const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const textAreaRef = useAutoResizeTextArea(snippet);
 
-  useEffect(() => {
-    if (!loading && user) {
-      fetch("/rest/embed/snippet.js", {
+  const fetchSnippet = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch("/rest/embed/snippet.js", {
         credentials: "include",
-      })
-        .then((res) => res.text())
-        .then((code) => {
-          const fullScript = `\n${code.trim()}\n`;
-          setSnippet(fullScript);
-        });
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch snippet: ' + response.status);
+      }
+      
+      const code = await response.text();
+      setSnippet(code.trim());
+      toast.success("Código generado correctamente");
+    } catch (error) {
+      console.error("Error generating code:", error);
+      toast.error("Error al generar el código");
+    } finally {
+      setIsGenerating(false);
     }
-  }, [user, loading]);
+  };
+
+  useEffect(() => {
+    if (user && !snippet) {
+      fetchSnippet();
+    }
+  }, [user, snippet]);
 
   const copyToClipboard = () => {
+    if (!snippet) return;
+    
     navigator.clipboard.writeText(snippet);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+    toast.info("Código copiado al portapapeles");
   };
 
-  if (loading || !user || !snippet) return null;
+  if (!user) return null;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-semibold mb-2">Código de Seguimiento</h3>
-      <p className="text-gray-600 mb-3">
-        Copia y pega este{" "}
-        <code className="bg-gray-100 px-1 py-0.5 rounded">&lt;script&gt;</code>{" "}
-        completo en tu sitio web.
-      </p>
-
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Código de Seguimiento</h3>
+        <button
+          onClick={fetchSnippet}
+          disabled={isGenerating}
+          className={`px-4 py-2 rounded-md text-sm font-medium ${
+            isGenerating
+              ? 'bg-gray-300 cursor-not-allowed'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+          }`}
+        >
+          {isGenerating ? 'Generando...' : 'Generar Código'}
+        </button>
+      </div>
       <div className="relative border rounded bg-gray-50 overflow-hidden">
         <textarea
           ref={textAreaRef}
@@ -62,33 +89,20 @@ export default function TrackingCodePanel() {
           value={snippet}
           style={{ overflow: "hidden" }}
           rows={1}
+          aria-label="Código de seguimiento"
         />
         <button
           onClick={copyToClipboard}
+          disabled={!snippet || isGenerating}
           className={`absolute top-3 right-3 px-3 py-1 rounded text-sm transition ${
             copied
               ? "bg-green-500 text-white"
               : "bg-indigo-500 hover:bg-indigo-600 text-white"
           }`}
+          aria-label="Copiar código al portapapeles"
         >
           {copied ? "✓ Copiado" : "Copiar"}
         </button>
-      </div>
-
-      <div className="mt-3 text-xs text-gray-500 flex items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className="w-4 h-4 mr-1"
-        >
-          <path
-            fillRule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-            clipRule="evenodd"
-          />
-        </svg>
-        El código se ajusta automáticamente y no muestra barras de scroll
       </div>
     </div>
   );

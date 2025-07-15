@@ -18,6 +18,8 @@ import TermsPanel from "../components/compliance/TermsPanel";
 import ReportsPanel from "../components/reports/ReportsPanel";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import Spinner from "../components/shared/Spinner";
+import MonetizePanel from "../components/monetize/MonetizePanel";
+import BetaBanner from "../components/BetaBanner";
 
 interface LoginEntry {
   timestamp: string;
@@ -86,8 +88,7 @@ function Dashboard() {
       case "compliance":
         return (
           <div className="space-y-6">
-            <CompliancePanel />
-            <TermsPanel />
+            <MonetizePanel />
           </div>
         );
       case "reports":
@@ -104,25 +105,28 @@ function Dashboard() {
   };
 
   return (
+    <>
+    {!isMobile && <BetaBanner />}
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <Sidebar onSelect={setSection} currentSection={section} />
-      <main className={`flex-1 ${isMobile ? "pt-16 pb-16" : "p-4 md:p-8"}`}>
+      <main className={`flex-1 ${isMobile ? "pt-20 pb-0" : "p-2 md:p-6"}`}>
         <div className="max-w-6xl mx-auto">
           <div className={`${isMobile ? "pt-4 px-4" : "mb-6"}`}>
-            <h1 className="text-2xl font-bold text-gray-900 capitalize">
+
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {section === "summary" 
                 ? t("dashboard") 
                 : section === "admin"
                 ? "Administración"
                 : t(section)}
-            </h1>
-            <p className="text-gray-600">
+            </h1> */}
+            <h2 className="font-bold text-gray-900">
               {(() => {
                 switch (section) {
                   case "summary":
                     return t("dashboard_welcome");
-                  case "profile":
-                    return t("manage_profile_and_access");
+                  // case "profile":
+                  //   return t("manage_profile_and_access");
                   case "radar":
                     return t("monitor_ai_activity");
                   case "firewall":
@@ -130,7 +134,7 @@ function Dashboard() {
                   case "help":
                     return t("find_answers_and_support");
                   case "compliance":
-                    return "Compliance management";
+                    return t("monetize");
                   case "reports":
                     return "View detailed reports";
                   case "admin":
@@ -139,12 +143,13 @@ function Dashboard() {
                     return "";
                 }
               })()}
-            </p>
+            </h2>
           </div>
           <div className={isMobile ? "px-4" : ""}>{renderSection()}</div>
         </div>
       </main>
     </div>
+    </>
   );
 }
 

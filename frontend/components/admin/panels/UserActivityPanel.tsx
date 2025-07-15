@@ -1,3 +1,4 @@
+// frontend/components/admin/panels/UserActivityPanel.tsx
 import { MetricCard } from './MetricCard';
 
 interface TopUser {

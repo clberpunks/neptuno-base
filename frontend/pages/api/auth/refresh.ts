@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  const backendRes = await fetch(`${backendUrl}/auth/refresh`, {
+  const backendRes = await fetch(`${process.env.BACKEND_URL}/auth/refresh`, {
     method: "POST",
     credentials: "include",
     // reenvía la cookie que trae el cliente

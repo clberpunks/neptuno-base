@@ -10,12 +10,21 @@ from models.models import AccessLog
 router = APIRouter(tags=["logs"])
 
 @router.get("/")
-def list_logs(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+def list_logs(
+    page: int = 1,
+    limit: int = 10,
+    current_user=Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    offset = (page - 1) * limit
+    total = db.query(AccessLog).filter(AccessLog.tenant_id == current_user.id).count()
+    
     raw = (
         db.query(AccessLog)
           .filter(AccessLog.tenant_id == current_user.id)
           .order_by(AccessLog.timestamp.desc())
-          .limit(100)
+          .offset(offset)
+          .limit(limit)
           .all()
     )
     return [

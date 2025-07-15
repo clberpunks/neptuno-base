@@ -20,13 +20,14 @@ router = APIRouter( tags=["auth"]) # prefix="/auth",
 
 
 @router.get("/login")
-def login():
+def login(plan: str = "free"):
     url = (
         "https://accounts.google.com/o/oauth2/v2/auth"
         f"?client_id={settings.GOOGLE_CLIENT_ID}"
         f"&redirect_uri={settings.GOOGLE_REDIRECT_URI}"
         "&response_type=code"
         "&scope=openid%20email%20profile"
+        f"&state={plan}"  # Pasamos el plan como state
     )
     return RedirectResponse(url)
 
@@ -34,6 +35,8 @@ def login():
 @router.get("/callback")
 async def callback(request: Request, db: Session = Depends(get_db)):
     code = request.query_params.get("code")
+    plan = request.query_params.get("state", "free")  # Obtenemos el plan del state
+    
     if not code:
         raise HTTPException(status_code=400, detail="Missing code")
 
@@ -66,7 +69,8 @@ async def callback(request: Request, db: Session = Depends(get_db)):
         
         db.flush()
     
-    ensure_subscription(user, db) 
+    # Usar el plan recibido en lugar del default "free"
+    ensure_subscription_with_plan(user, db, plan)
     db.commit()
 
     login_record = LoginHistory(user_id=user.id, ip_address=request.client.host, login_method="google")
@@ -75,7 +79,7 @@ async def callback(request: Request, db: Session = Depends(get_db)):
 
     access_token, refresh_token = generate_tokens(user)
 
-    response = RedirectResponse(url=f"{settings.FRONTEND_URL}/dashboard") # ialert
+    response = RedirectResponse(url=f"{settings.FRONTEND_URL}/dashboard")
     set_auth_cookies(response, user)
     return response
 
@@ -285,6 +289,41 @@ def ensure_subscription(user: User, db: Session):
         domain_limit=limits[default_plan][1],
         user_limit=limits[default_plan][2],
         price=plan_prices[default_plan],
+        created_at=datetime.utcnow(),
+        renews_at=datetime.utcnow() + timedelta(days=365),
+    )
+    db.add(sub)
+    db.commit()
+    
+def ensure_subscription_with_plan(user: User, db: Session, plan: str):
+    allowed_plans = {"free", "pro", "business", "enterprise"}
+    if user.subscription and user.subscription.plan in allowed_plans:
+        return
+
+    # Validar que el plan recibido sea válido
+    if plan not in allowed_plans:
+        plan = "free"
+
+    limits = {
+        "free":      (10_000, 1, 1),
+        "pro":       (100_000, 5, 5),
+        "business":  (1_000_000, 10, 10),
+        "enterprise": (10_000_000, 9999, 9999),
+    }
+    plan_prices = {
+        "free": 0,
+        "pro": 10,
+        "business": 50,
+        "enterprise": 200
+    }
+
+    sub = Subscription(
+        user_id=user.id,
+        plan=plan,  # Usar el plan recibido
+        traffic_limit=limits[plan][0],
+        domain_limit=limits[plan][1],
+        user_limit=limits[plan][2],
+        price=plan_prices[plan],
         created_at=datetime.utcnow(),
         renews_at=datetime.utcnow() + timedelta(days=365),
     )

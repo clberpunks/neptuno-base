@@ -1,11 +1,20 @@
+// frontend/components/admin/AdminDashboard.tsx
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
 import Spinner from '../shared/Spinner';
-import { CollapsiblePanel } from './panels/CollapsiblePanel';
+import ExpandablePanel from '../shared/ExpandablePanel';
 import { SummaryPanel } from './panels/SummaryPanel';
 import { FirewallPanel } from './panels/FirewallPanel';
 import { UserActivityPanel } from './panels/UserActivityPanel';
 import { BotActivityPanel } from './panels/BotActivityPanel';
+import SubscriptionPlansPanel from './panels/SuscriptionPanel';
+import { 
+  ChartBarIcon, 
+  CreditCardIcon, 
+  ShieldCheckIcon, 
+  UsersIcon, 
+  ExclamationTriangleIcon 
+} from '@heroicons/react/24/outline';
 
 interface DashboardData {
   new_users: number;
@@ -59,19 +68,19 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         const dashboard = await apiFetch<DashboardData>('/rest/admin/overview');
         setDashboardData(dashboard);
-        
+
         const stats = await apiFetch<FirewallStats>('/rest/logs/stats');
         setFirewallStats(stats);
-        
+
         const users = await apiFetch<TopUser[]>('/rest/admin/top-users');
         setTopUsers(users);
-        
+
         const bots = await apiFetch<BotActivity[]>('/rest/admin/bot-activities');
         setBotActivities(bots);
-        
+
       } catch (err) {
         setError('Error al cargar los datos del dashboard');
         console.error(err);
@@ -96,23 +105,60 @@ export default function AdminDashboard() {
 
   if (!dashboardData || !firewallStats) return null;
 
+  // Calcular valores para los badges
+  const totalUsers = Object.values(dashboardData.plan_distribution).reduce((sum, count) => sum + count, 0);
+  const activePlans = Object.keys(dashboardData.plan_distribution).length; // Número de planes con usuarios
+  const activeRules = firewallStats.total;
+  const activeUsers = topUsers.length;
+  const detectedBots = botActivities.length;
+
   return (
     <div className="space-y-6">
-      <CollapsiblePanel title="Resumen General" defaultOpen={true}>
+      <ExpandablePanel
+        title="Resumen General"
+        icon={<ChartBarIcon className="h-6 w-6" />}
+        statusLabel={`${totalUsers} usuarios`}
+        statusColor="bg-blue-100 text-blue-800"
+        defaultExpanded={true}
+      >
         <SummaryPanel data={dashboardData} />
-      </CollapsiblePanel>
+      </ExpandablePanel>
 
-      <CollapsiblePanel title="Análisis de Firewall">
+      <ExpandablePanel
+        title="Planes de Suscripción"
+        icon={<CreditCardIcon className="h-6 w-6" />}
+        statusLabel={`${activePlans} planes activos`}
+        statusColor="bg-green-100 text-green-800"
+      >
+        <SubscriptionPlansPanel />
+      </ExpandablePanel>
+
+      <ExpandablePanel
+        title="Análisis de Firewall"
+        icon={<ShieldCheckIcon className="h-6 w-6" />}
+        statusLabel={`${activeRules} reglas`}
+        statusColor="bg-red-100 text-red-800"
+      >
         <FirewallPanel stats={firewallStats} />
-      </CollapsiblePanel>
+      </ExpandablePanel>
 
-      <CollapsiblePanel title="Actividad de Usuarios">
+      <ExpandablePanel
+        title="Actividad de Usuarios"
+        icon={<UsersIcon className="h-6 w-6" />}
+        statusLabel={`${activeUsers} usuarios activos`}
+        statusColor="bg-purple-100 text-purple-800"
+      >
         <UserActivityPanel topUsers={topUsers} />
-      </CollapsiblePanel>
+      </ExpandablePanel>
 
-      <CollapsiblePanel title="Actividad de Bots">
+      <ExpandablePanel
+        title="Actividad de Bots"
+        icon={<ExclamationTriangleIcon className="h-6 w-6" />}
+        statusLabel={`${detectedBots} bots detectados`}
+        statusColor="bg-yellow-100 text-yellow-800"
+      >
         <BotActivityPanel botActivities={botActivities} />
-      </CollapsiblePanel>
+      </ExpandablePanel>
     </div>
   );
 }
