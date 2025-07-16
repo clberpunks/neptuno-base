@@ -43,13 +43,15 @@ export default function FirewallManager() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const cleanRules = rules.map(({ llm_name, pattern, policy, limit, fee }) => ({
-        llm_name,
-        pattern,
-        policy,
-        limit: limit === undefined ? null : limit,
-        fee: fee === undefined ? null : fee,
-      }));
+      const cleanRules = rules.map(
+        ({ llm_name, pattern, policy, limit, fee }) => ({
+          llm_name,
+          pattern,
+          policy,
+          limit: limit === undefined ? null : limit,
+          fee: fee === undefined ? null : fee,
+        })
+      );
 
       const response = await fetch("/api/firewall", {
         method: "PUT",
@@ -103,8 +105,14 @@ export default function FirewallManager() {
         title={t("firewall_management")}
         description={t("manage_access_rules")}
         icon={<ShieldCheckIcon className="h-6 w-6" />} // Icono representativo
-        statusLabel={rules.length > 0 ? `${rules.length} ${t("rules")}` : t("no_rules")}
-        statusColor={rules.length > 0 ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800"}
+        statusLabel={
+          rules.length > 0 ? `${rules.length} ${t("rules")}` : t("no_rules")
+        }
+        statusColor={
+          rules.length > 0
+            ? "bg-red-100 text-red-800"
+            : "bg-gray-100 text-gray-800"
+        }
         defaultExpanded={false}
       >
         <div className="space-y-6">
@@ -130,8 +138,12 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text-green-800">{allowedCount}</div>
-                  <div className="text-sm font-medium text-green-600">{t("allowed")}</div>
+                  <div className="text-2xl font-bold text-green-800">
+                    {allowedCount}
+                  </div>
+                  <div className="text-sm font-medium text-green-600">
+                    {t("allowed")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,8 +168,12 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text-red-800">{blockedCount}</div>
-                  <div className="text-sm font-medium text-red-600">{t("blocked")}</div>
+                  <div className="text-2xl font-bold text-red-800">
+                    {blockedCount}
+                  </div>
+                  <div className="text-sm font-medium text-red-600">
+                    {t("blocked")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -182,8 +198,12 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text-orange-800">{restrictedCount}</div>
-                  <div className="text-sm font-medium text-orange-600">{t("restricted")}</div>
+                  <div className="text-2xl font-bold text-orange-800">
+                    {restrictedCount}
+                  </div>
+                  <div className="text-sm font-medium text-orange-600">
+                    {t("restricted")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -208,8 +228,12 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text \text-blue-800">{tariffCount}</div>
-                  <div className="text-sm font-medium text-blue-600">{t("tariff")}</div>
+                  <div className="text-2xl font-bold text \text-blue-800">
+                    {tariffCount}
+                  </div>
+                  <div className="text-sm font-medium text-blue-600">
+                    {t("tariff")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -234,8 +258,12 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text-purple-800">{totalTokens.toLocaleString()}</div>
-                  <div className="text-sm font-medium text-purple-600">{t("allowed_tokens")}</div>
+                  <div className="text-2xl font-bold text-purple-800">
+                    {totalTokens.toLocaleString()}
+                  </div>
+                  <div className="text-sm font-medium text-purple-600">
+                    {t("allowed_tokens")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -276,13 +304,25 @@ export default function FirewallManager() {
                   const ruleId = r.id ?? r.llm_name + "-" + idx;
                   return (
                     <>
-                      <tr key={ruleId} className="hover:bg-gray-50 transition-colors">
+                      <tr
+                        key={ruleId}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{r.llm_name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {r.llm_name}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-wrap gap-2">
-                            {(["allow", "block", "restricted", "tariff"] as const).map((policy) => (
+                            {(
+                              [
+                                "allow",
+                                "block",
+                                "restricted",
+                                "tariff",
+                              ] as const
+                            ).map((policy) => (
                               <button
                                 key={policy}
                                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -318,7 +358,9 @@ export default function FirewallManager() {
                                 step="100"
                                 value={r.limit ?? 0}
                                 onChange={(e) =>
-                                  updateRule(idx, { limit: parseInt(e.target.value) })
+                                  updateRule(idx, {
+                                    limit: parseInt(e.target.value),
+                                  })
                                 }
                                 className="w-48 accent-orange-500"
                               />
@@ -329,7 +371,9 @@ export default function FirewallManager() {
                                 step="100"
                                 value={r.limit ?? 0}
                                 onChange={(e) =>
-                                  updateRule(idx, { limit: parseInt(e.target.value) || 0 })
+                                  updateRule(idx, {
+                                    limit: parseInt(e.target.value) || 0,
+                                  })
                                 }
                                 className="w-24 border border-gray-300 rounded-lg px-2 py-1 text-center focus:ring-orange-500 focus:border-orange-500"
                               />
@@ -348,13 +392,17 @@ export default function FirewallManager() {
                                   step="0.01"
                                   value={r.fee ?? 0}
                                   onChange={(e) =>
-                                    updateRule(idx, { fee: parseFloat(e.target.value) || 0 })
+                                    updateRule(idx, {
+                                      fee: parseFloat(e.target.value) || 0,
+                                    })
                                   }
                                   className="pl-8 w-32 border border-gray-300 rounded-lg px-3 py-1 text-center focus:ring-blue-500 focus:border-blue-500"
                                   placeholder="0.00"
                                 />
                               </div>
-                              <span className="text-sm text-gray-600">{t("per_request")}</span>
+                              <span className="text-sm text-gray-600">
+                                {t("per_request")}
+                              </span>
                             </div>
                           )}
                         </td>
@@ -363,7 +411,9 @@ export default function FirewallManager() {
                             onClick={() => toggleExpandRule(ruleId)}
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                             aria-label={
-                              expandedRule === ruleId ? t("hide_details") : t("show_details")
+                              expandedRule === ruleId
+                                ? t("hide_details")
+                                : t("show_details")
                             }
                           >
                             <svg
@@ -393,19 +443,32 @@ export default function FirewallManager() {
                                 </h4>
                                 <div className="space-y-1">
                                   <p>
-                                    <span className="font-medium">{t("pattern")}:</span> {r.pattern}
+                                    <span className="font-medium">
+                                      {t("pattern")}:
+                                    </span>{" "}
+                                    {r.pattern}
                                   </p>
                                   <p>
-                                    <span className="font-medium">{t("policy")}:</span> {t(r.policy)}
+                                    <span className="font-medium">
+                                      {t("policy")}:
+                                    </span>{" "}
+                                    {t(r.policy)}
                                   </p>
                                   {r.policy === "restricted" && (
                                     <p>
-                                      <span className="font-medium">{t("token_limit")}:</span> {r.limit ?? 0}
+                                      <span className="font-medium">
+                                        {t("token_limit")}:
+                                      </span>{" "}
+                                      {r.limit ?? 0}
                                     </p>
                                   )}
                                   {r.policy === "tariff" && (
                                     <p>
-                                      <span className="font-medium">{t("fee")}:</span> ${r.fee?.toFixed(2) ?? "0.00"} {t("per_request")}
+                                      <span className="font-medium">
+                                        {t("fee")}:
+                                      </span>{" "}
+                                      ${r.fee?.toFixed(2) ?? "0.00"}{" "}
+                                      {t("per_request")}
                                     </p>
                                   )}
                                 </div>
@@ -415,7 +478,8 @@ export default function FirewallManager() {
                                   {t("additional_info")}
                                 </h4>
                                 <p className="text-gray-600">
-                                  {t("rule_created")}: {new Date().toLocaleDateString()}
+                                  {t("rule_created")}:{" "}
+                                  {new Date().toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
@@ -493,14 +557,19 @@ export default function FirewallManager() {
         </div>
       </ExpandablePanel>
 
+      <h2>AVISOS LEGALES</h2>
+
+
+      <TermsPanel />
+
+      <h3>SEO</h3>
       {/* Robots Generator Panel */}
       <RobotsGenerator rules={rules} />
 
       {/* Meta SEO Panel */}
       <MetaSEO rules={rules} />
 
-      <CompliancePanel />
-      <TermsPanel />
+      <h3>Server</h3>
     </div>
   );
 }

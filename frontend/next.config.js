@@ -4,7 +4,7 @@ const backendUrl = process.env.BACKEND_URL;
 module.exports = {
   reactStrictMode: true,
   i18n: {
-    locales: ['en', 'es'],
+    locales: ['en', 'es', 'pt'],
     defaultLocale: 'es',
     localeDetection: true,
   },
@@ -35,6 +35,11 @@ module.exports = {
       {
         source: '/', // Redirige la raíz
         destination: '/public', // Al dashboard en español por defecto
+        permanent: false,
+      },
+      {
+        source: '/:locale/public/',
+        destination: '/public/:locale',
         permanent: false,
       }
     ];

@@ -339,6 +339,17 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
           >
             EN
           </button>
+          <button
+            onClick={() => changeLang("pt")}
+            className={`text-xs px-2 py-1 rounded ${
+              router.locale === "pt"
+                ? "font-medium text-indigo-600 bg-indigo-50"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            aria-label="Switch to Portuguese"
+          >
+            PT
+          </button>
         </div>
       </div>
 

@@ -1,11 +1,11 @@
 // components/ProfileSection.tsx
 import { useTranslation } from "next-i18next";
-import UserInfoCard from "./UserInfoCard";
-import SubscriptionInfo from "./SubscriptionInfo";
+
 import SubscriptionSelector from "./SuscriptionSelector";
 import AccessHistory from "./AccessHistory";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import { UserIcon, ClockIcon } from "@heroicons/react/24/outline";
+import UserInfo from "./UserInfo";
 
 interface ProfileSectionProps {
   user: {
@@ -43,14 +43,15 @@ export default function ProfileSection({
 
   return (
     <div className="space-y-6">
-      <UserInfoCard user={user} formatDate={formatDate} />
+     {/* <UserInfoCard user={user} formatDate={formatDate} /> */}
+     <UserInfo user={user} formatDate={formatDate}  subscription={user.subscription}   />
 
       {user.subscription && typeof user.subscription === "object" && (
         <>
-          <SubscriptionInfo 
+          {/* <SubscriptionInfo 
             subscription={user.subscription} 
             formatDate={formatDate} 
-          />
+          /> */}
           <SubscriptionSelector />
         </>
       )}
