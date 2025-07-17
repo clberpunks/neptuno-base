@@ -1,5 +1,4 @@
 // components/Sidebar.tsx
-// components/Sidebar.tsx
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -77,7 +76,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
       />
     </svg>
-  );
+  )
   
 
   // Menú para mobil
@@ -87,7 +86,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
       icon: (
         <span className="relative">
           <svg
-            className="w-5 h-5"
+            className="w-5 h-5 mr-3"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -182,59 +181,43 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     return (
       <>
         {/* Mobile Top Bar */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 h-16 flex items-center px-4 shadow-sm">
+        <div className="fixed top-0 left-0 right-0 bg-indigo-600 border-b border-indigo-700 z-50 h-16 flex items-center px-4">
           
           {/* Profile Button (Left) */}
           <button
             onClick={() => onSelect("profile")}
             className={`flex items-center ${
-              currentSection === "profile" ? "text-indigo-600 font-medium" : "text-gray-700"
+              currentSection === "profile" ? "text-white font-bold" : "text-white"
             }`}
           >
-            {user?.picture || user?.email ? (
-              <Image
-                src={`https://www.gravatar.com/avatar/${
-                  user?.email
-                    ? require("crypto")
-                        .createHash("md5")
-                        .update(user.email.trim().toLowerCase())
-                        .digest("hex")
-                    : ""
-                }?d=mp&s=40`}
-                alt="User Avatar"
-                width={32}
-                height={32}
-                className="rounded-full w-8 h-8 mr-2"
-                unoptimized={process.env.NODE_ENV === "development"}
+            <svg
+              className="w-6 h-6 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
-            ) : (
-              <div className="w-8 h-8 mr-2 rounded-full bg-gray-200 flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </div>
-            )}
-            <span className="text-sm">{t("profile")}</span>
+            </svg>
+            <span className="text-sm font-medium">{t("profile")}</span>
           </button>
 
           {/* App Name (Center) */}
           <div className="flex-grow text-center">
-            <Link href={siteUrl || "/"} legacyBehavior>
-              <a className="text-lg font-semibold text-indigo-600">
+            <span className="text-lg font-semibold text-white">
+            <Link href={siteUrl || "/"} legacyBehavior className="font-bold text-xl text-indigo-600">
+              <a className="">
                 {appName}
               </a>
             </Link>
+            </span>
           </div>
+
+      
 
           {/* Right Side Icons */}
           <div className="flex items-center space-x-3">
@@ -244,12 +227,12 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => router.push("/admin")}
                 className={`p-1 rounded-full ${
                   currentSection === "admin"
-                    ? "bg-indigo-100 text-indigo-600"
-                    : "text-gray-500 hover:bg-gray-100"
+                    ? "bg-indigo-700 text-white"
+                    : "text-white hover:bg-indigo-700"
                 }`}
                 aria-label="Admin settings"
               >
-                <GearIcon className="w-5 h-5" />
+                <GearIcon className="w-6 h-6" />
               </button>
             )}
 
@@ -258,13 +241,13 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
               onClick={() => onSelect("help")}
               className={`p-1 rounded-full ${
                 currentSection === "help"
-                  ? "bg-indigo-100 text-indigo-600"
-                  : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-indigo-700 text-white"
+                  : "text-white hover:bg-indigo-700"
               }`}
               aria-label="Help"
             >
               <svg
-                className="w-5 h-5"
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -281,7 +264,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-sm">
+        <div className="fixed bottom-0 left-0 right-0 bg-indigo-600 border-t border-indigo-700 z-50">
           <div className="flex justify-around py-2">
             {mobileBottomMenuItems.map((item) => (
               <button
@@ -289,8 +272,8 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
                 onClick={() => onSelect(item.section as any)}
                 className={`flex flex-col items-center p-2 ${
                   currentSection === item.section
-                    ? "text-indigo-600"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "text-white font-bold"
+                    : "text-white"
                 }`}
                 aria-current={
                   currentSection === item.section ? "page" : undefined
@@ -306,7 +289,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
     );
   }
 
-  // Desktop Sidebar (unchanged)
+  // Desktop Sidebar
   return (
     <>
     <aside className="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
