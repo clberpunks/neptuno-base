@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, user, admin, embed, detect, logs, firewall
+from routers import auth, user, admin, embed, detect, logs, firewall, payments
 from db import engine, Base, SessionLocal
 from models.models import User, UserRole
 from utils import hash_password
@@ -41,6 +41,7 @@ app.include_router(logs.router, prefix="/rest/logs")
 
 app.include_router(firewall.router, prefix="/rest/firewall")
 
+app.include_router(payments.router, prefix="/rest/payments")
 
 
 @app.on_event("startup")

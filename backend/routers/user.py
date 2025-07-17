@@ -19,7 +19,6 @@ from utils import send_email
 from jinja2 import Environment, FileSystemLoader
 from models.models import User, AccessLog, Subscription
 
-
 # Initialize Jinja2 environment for email templates
 env = Environment(loader=FileSystemLoader("templates"))
 
@@ -43,31 +42,25 @@ def update_subscription(data: PlanUpdate,
     }
 
     t, d, u = limits[plan]
-    plan_prices = {
-        "free": 0,
-        "pro": 10,
-        "business": 50,
-        "enterprise": 200
-    }
+    plan_prices = {"free": 0, "pro": 10, "business": 50, "enterprise": 200}
     price = plan_prices[plan]
-    
-    plan_obj = db.query(SubscriptionPlan).filter_by(plan=plan, active=True).first()
+
+    plan_obj = db.query(SubscriptionPlan).filter_by(plan=plan,
+                                                    active=True).first()
     if not plan_obj:
         raise HTTPException(status_code=404, detail="Plan no disponible")
 
     sub = db.query(Subscription).filter_by(user_id=current_user.id).first()
     # ahora usamos sus valores
     if sub is None:
-        sub = Subscription(
-            user_id=current_user.id,
-            plan=plan,
-            traffic_limit=plan_obj.traffic_limit,
-            domain_limit=plan_obj.domain_limit,
-            user_limit=plan_obj.user_limit,
-            created_at=datetime.utcnow(),
-            renews_at=datetime.utcnow() + timedelta(days=365),
-            price=plan_obj.price
-        )
+        sub = Subscription(user_id=current_user.id,
+                           plan=plan,
+                           traffic_limit=plan_obj.traffic_limit,
+                           domain_limit=plan_obj.domain_limit,
+                           user_limit=plan_obj.user_limit,
+                           created_at=datetime.utcnow(),
+                           renews_at=datetime.utcnow() + timedelta(days=365),
+                           price=plan_obj.price)
         db.add(sub)
     else:
         sub.plan = plan
@@ -75,7 +68,7 @@ def update_subscription(data: PlanUpdate,
         sub.domain_limit = plan_obj.domain_limit
         sub.user_limit = plan_obj.user_limit
         sub.price = plan_obj.price
-    
+
     # Buscar suscripción existente en la base de datos
     # sub = db.query(Subscription).filter_by(user_id=current_user.id).first()
     # if sub is None:
@@ -98,6 +91,7 @@ def update_subscription(data: PlanUpdate,
     db.commit()
     return {"message": "Plan actualizado correctamente"}
 
+
 @router.get("/subscription/plans", response_model=List[SubscriptionOut])
 def get_available_plans(db: Session = Depends(get_db)):
     return db.query(Subscription).filter_by(active=True).all()
@@ -118,23 +112,33 @@ def get_access_history(current_user: User = Depends(get_current_user),
     } for entry in history]
 
 
-
 @router.get("/notifications", response_model=list[NotificationOut])
-def get_notifications(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return db.query(Notification).filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).all()
+def get_notifications(db: Session = Depends(get_db),
+                      current_user: User = Depends(get_current_user)):
+    return db.query(Notification).filter_by(user_id=current_user.id).order_by(
+        Notification.created_at.desc()).all()
+
 
 @router.post("/notifications/{notification_id}/read")
-def mark_as_read(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
+def mark_as_read(notification_id: str,
+                 db: Session = Depends(get_db),
+                 current_user: User = Depends(get_current_user)):
+    notif = db.query(Notification).filter_by(id=notification_id,
+                                             user_id=current_user.id).first()
     if not notif:
-        raise HTTPException(status_code=404, detail="Notificación no encontrada")
+        raise HTTPException(status_code=404,
+                            detail="Notificación no encontrada")
     notif.read = True
     db.commit()
     return {"message": "Marcada como leída"}
 
+
 @router.delete("/notifications/{notification_id}")
-def delete_notification(notification_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    notif = db.query(Notification).filter_by(id=notification_id, user_id=current_user.id).first()
+def delete_notification(notification_id: str,
+                        db: Session = Depends(get_db),
+                        current_user: User = Depends(get_current_user)):
+    notif = db.query(Notification).filter_by(id=notification_id,
+                                             user_id=current_user.id).first()
     if not notif:
         raise HTTPException(status_code=404, detail="No existe")
     db.delete(notif)
@@ -143,49 +147,52 @@ def delete_notification(notification_id: str, db: Session = Depends(get_db), cur
 
 
 @router.post("/send-weekly-report")
-def send_weekly_report(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
+def send_weekly_report(db: Session = Depends(get_db),
+                       current_user: User = Depends(get_current_user)):
     if not current_user.email or "@example.com" in current_user.email:
-        raise HTTPException(status_code=400, detail="Email no válido para envío")
+        raise HTTPException(status_code=400,
+                            detail="Email no válido para envío")
 
     # Calcula actividad semanal
     one_week_ago = datetime.utcnow() - timedelta(days=7)
-    logs = db.query(AccessLog).filter(
-        AccessLog.tenant_id == current_user.id,
-        AccessLog.timestamp >= one_week_ago
-    ).all()
+    logs = db.query(AccessLog).filter(AccessLog.tenant_id == current_user.id,
+                                      AccessLog.timestamp
+                                      >= one_week_ago).all()
 
     stats = {
-        "total": len(logs),
-        "blocked": sum(1 for l in logs if l.outcome == "block"),
-        "limited": sum(1 for l in logs if l.outcome == "limit"),
-        "approaching_limit": (
-            current_user.subscription and len(logs) > current_user.subscription.traffic_limit * 0.8
-        )
+        "total":
+        len(logs),
+        "blocked":
+        sum(1 for l in logs if l.outcome == "block"),
+        "limited":
+        sum(1 for l in logs if l.outcome == "limit"),
+        "approaching_limit":
+        (current_user.subscription
+         and len(logs) > current_user.subscription.traffic_limit * 0.8)
     }
 
     template = env.get_template("weekly_summary.html")
     html = template.render(user=current_user, stats=stats)
 
-    send_email(
-        to=current_user.email,
-        subject="📊 Tu resumen semanal de actividad",
-        html=html
-    )
+    send_email(to=current_user.email,
+               subject="📊 Tu resumen semanal de actividad",
+               html=html)
 
     notification = Notification(
-    user_id=current_user.id,
-    title="📊 Resumen semanal enviado",
-    body=f"Tu informe semanal incluye {stats['total']} eventos, con {stats['blocked']} bloqueos y {stats['limited']} limitaciones detectadas."
-)
+        user_id=current_user.id,
+        title="📊 Resumen semanal enviado",
+        body=
+        f"Tu informe semanal incluye {stats['total']} eventos, con {stats['blocked']} bloqueos y {stats['limited']} limitaciones detectadas."
+    )
     db.add(notification)
     db.commit()
 
     return {"message": "Boletín enviado correctamente"}
 
+
 @router.get("/notifications/unseen-count")
-def unseen_notifications_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    count = db.query(Notification).filter_by(user_id=current_user.id, read=False).count()
+def unseen_notifications_count(db: Session = Depends(get_db),
+                               current_user: User = Depends(get_current_user)):
+    count = db.query(Notification).filter_by(user_id=current_user.id,
+                                             read=False).count()
     return {"unseen": count}

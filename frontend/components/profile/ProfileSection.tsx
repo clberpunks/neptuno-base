@@ -6,6 +6,7 @@ import AccessHistory from "./AccessHistory";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import { UserIcon, ClockIcon } from "@heroicons/react/24/outline";
 import UserInfo from "./UserInfo";
+import PaymentHistory from "./PaymentHistory";
 
 interface ProfileSectionProps {
   user: {
@@ -43,8 +44,12 @@ export default function ProfileSection({
 
   return (
     <div className="space-y-6">
-     {/* <UserInfoCard user={user} formatDate={formatDate} /> */}
-     <UserInfo user={user} formatDate={formatDate}  subscription={user.subscription}   />
+      {/* <UserInfoCard user={user} formatDate={formatDate} /> */}
+      <UserInfo
+        user={user}
+        formatDate={formatDate}
+        subscription={user.subscription}
+      />
 
       {user.subscription && typeof user.subscription === "object" && (
         <>
@@ -56,10 +61,12 @@ export default function ProfileSection({
         </>
       )}
 
-      <AccessHistory 
-        accessHistory={accessHistory} 
-        formatDate={formatDate} 
-        user={user} 
+      <PaymentHistory />
+
+      <AccessHistory
+        accessHistory={accessHistory}
+        formatDate={formatDate}
+        user={user}
       />
 
       <ExpandablePanel

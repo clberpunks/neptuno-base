@@ -22,6 +22,7 @@ import MonetizePanel from "../components/monetize/MonetizePanel";
 import BetaBanner from "../components/BetaBanner";
 import RobotsGenerator from "../components/firewall/RobotsGenerator";
 import MetaSEO from "../components/firewall/MetaSEO";
+import PaymentHistory from "../components/profile/PaymentHistory";
 
 interface LoginEntry {
   timestamp: string;
@@ -75,11 +76,16 @@ function Dashboard() {
         return <SummarySection user={user} formatDate={formatDate} />;
       case "profile":
         return (
-          <ProfileSection
-            user={user}
-            accessHistory={accessHistory}
-            formatDate={formatDate}
-          />
+          <>
+            <div className="space-y-6">
+              <ProfileSection
+                user={user}
+                accessHistory={accessHistory}
+                formatDate={formatDate}
+              />
+
+            </div>
+          </>
         );
       case "radar":
         return <Radar />;

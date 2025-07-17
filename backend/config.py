@@ -10,24 +10,32 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = "http://localhost:8001/rest/auth/callback"
     DATABASE_URL: str = "sqlite:///../data/app.db"
     CLIENT_SECRET: str = "your_client_secret_here"
-    
+
     NODE_ENV: str = "development"
-    
-    BACKEND_URL: str ="http://localhost:8001"
-    FRONTEND_URL: str ="https://ialert.ciberpunk.es"
-    
+
+    BACKEND_URL: str = "http://localhost:8001"
+    FRONTEND_URL: str = "https://ialert.ciberpunk.es"
+
     # Nuevas variables para Refresh Token
     REFRESH_SECRET: str = "super_refresh_secret"
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
-    MAIL_SERVER: str
-    MAIL_PORT: int
+    # Stripe
+    STRIPE_SECRET_KEY: str = "your_stripe_secret_key"
+    STRIPE_WEBHOOK_SECRET: str = "your_stripe_webhook_secret"
+    # PayPal
+    PAYPAL_CLIENT_ID: str = "your_paypal_client_id"
+    PAYPAL_SECRET: str = "your_paypal_secret"
+
+    MAIL_SERVER: str = "smtp.example.com"
+    MAIL_PORT: int = 587
     MAIL_USERNAME: str
     MAIL_PASSWORD: str
     MAIL_FROM: str
-    
+
     class Config:
         env_file = ".env"
-        extra = "allow"  
+        extra = "allow"
+
 
 settings = Settings()

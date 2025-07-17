@@ -48,12 +48,17 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime, default=datetime.utcnow)
 
-    subscription = relationship("Subscription", uselist=False, back_populates="user")
+    payment_records = relationship("PaymentRecord", back_populates="user")
+
+    subscription = relationship("Subscription",
+                                uselist=False,
+                                back_populates="user")
 
     login_history = relationship("LoginHistory", back_populates="user")
 
-    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
-
+    notifications = relationship("Notification",
+                                 back_populates="user",
+                                 cascade="all, delete-orphan")
 
 
 class PlanLevel(str, enum.Enum):
@@ -61,6 +66,7 @@ class PlanLevel(str, enum.Enum):
     pro = "pro"
     business = "business"
     enterprise = "enterprise"
+
 
 # models/models.py
 class SubscriptionPlan(Base):
@@ -75,11 +81,13 @@ class SubscriptionPlan(Base):
     description = Column(String, nullable=True)  # nuevo campo
 
 
-
 class Subscription(Base):
     __tablename__ = "subscriptions"
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, ForeignKey("users.id"), nullable=False, unique=True)
+    user_id = Column(String,
+                     ForeignKey("users.id"),
+                     nullable=False,
+                     unique=True)
     plan = Column(SqlEnum(PlanLevel), default=PlanLevel.free)
     traffic_limit = Column(Integer)
     domain_limit = Column(Integer)
@@ -88,8 +96,37 @@ class Subscription(Base):
     renews_at = Column(DateTime)
     remaining_tokens = Column(Integer)
     price = Column(Integer, default=0)
-    
+
     user = relationship("User", back_populates="subscription")
+
+    payment_records = relationship("PaymentRecord",
+                                   back_populates="subscription")
+
+
+class PaymentProvider(str, enum.Enum):
+    stripe = "stripe"
+    paypal = "paypal"
+
+
+class PaymentRecord(Base):
+    __tablename__ = "payment_records"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    subscription_id = Column(String,
+                             ForeignKey("subscriptions.id"),
+                             nullable=False)
+    provider = Column(SqlEnum(PaymentProvider), nullable=False)
+    provider_charge_id = Column(String,
+                                nullable=False)  # session_id u order_id
+    amount = Column(Integer, nullable=False)  # en céntimos o entero euros
+    currency = Column(String, default="EUR", nullable=False)
+    status = Column(String, nullable=False)  # e.g. "completed"
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="payment_records")
+    subscription = relationship("Subscription",
+                                back_populates="payment_records")
+
 
 class FirewallRule(Base):
     __tablename__ = "firewall_rules"
@@ -127,8 +164,7 @@ class AccessLog(Base):
     redirect_url = Column(String, nullable=True)
     js_executed = Column(Boolean, default=False)
 
-    seen = Column(Boolean, default=False) 
-
+    seen = Column(Boolean, default=False)
 
 
 class LoginHistory(Base):

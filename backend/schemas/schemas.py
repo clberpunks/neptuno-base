@@ -1,12 +1,15 @@
 # backend/schemas.py
 from typing import Optional
+from models.models import PaymentProvider
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from enum import Enum
 
+
 class UserRole(str, Enum):
     admin = "admin"
     user = "user"
+
 
 class PlanLevel(str, Enum):
     free = "free"
@@ -14,8 +17,10 @@ class PlanLevel(str, Enum):
     business = "business"
     enterprise = "enterprise"
 
+
 class PlanUpdate(BaseModel):
     plan: str
+
 
 class SubscriptionOut(BaseModel):
     plan: PlanLevel
@@ -28,7 +33,8 @@ class SubscriptionOut(BaseModel):
 
     class Config:
         orm_mode = True
-        
+
+
 class SubscriptionPlanOut(BaseModel):
     id: str
     plan: PlanLevel
@@ -41,6 +47,7 @@ class SubscriptionPlanOut(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class SubscriptionPlanUpdate(BaseModel):
     traffic_limit: Optional[int]
@@ -63,15 +70,18 @@ class UserInJWT(BaseModel):
     last_login: datetime
     subscription: SubscriptionOut | None = None  # ← OPCIONAL
 
+
 class UserRegister(BaseModel):
     name: str
     email: EmailStr
     password: str
     plan: str = "free"  # ← plan opcional
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class NotificationOut(BaseModel):
     id: str
@@ -79,6 +89,20 @@ class NotificationOut(BaseModel):
     body: str | None
     created_at: datetime
     read: bool
+
+    class Config:
+        orm_mode = True
+
+
+class PaymentRecordOut(BaseModel):
+    id: str
+    provider: PaymentProvider
+    provider_charge_id: str
+    amount: int
+    currency: str
+    status: str
+    created_at: datetime
+    subscription_plan: str  # nombre del plan al que pertenece este pago
 
     class Config:
         orm_mode = True
