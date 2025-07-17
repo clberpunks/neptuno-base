@@ -10,11 +10,22 @@ import ExpandablePanel from "../shared/ExpandablePanel";
 import { t } from "i18next";
 import { Stats, Log } from "../types/radar";
 import { CodeBracketIcon } from "@heroicons/react/24/outline";
+import AdvancedCharts from "./AdvancedChart";
+import AdvancedInsights from "./AdvancesInsights";
 
 type Range = "24h" | "7d" | "1m" | "1y";
 
 export default function Radar() {
-  const [stats, setStats] = useState<Stats>({ allow:0,block:0,limit:0,ratelimit:0,redirect:0,flagged:0,other:0,total:0 });
+  const [stats, setStats] = useState<Stats>({
+    allow: 0,
+    block: 0,
+    limit: 0,
+    ratelimit: 0,
+    redirect: 0,
+    flagged: 0,
+    other: 0,
+    total: 0,
+  });
   const [allLogs, setAllLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState<Range>("24h");
@@ -26,7 +37,7 @@ export default function Radar() {
         setLoading(true);
         const [statsData, logsData] = await Promise.all([
           apiFetch<Stats>("/api/logs/stats"),
-          apiFetch<Log[]>("/api/logs?limit=1000"),  // traemos hasta 1000 registros
+          apiFetch<Log[]>("/api/logs?limit=1000"), // traemos hasta 1000 registros
         ]);
         setStats(statsData);
         setAllLogs(logsData);
@@ -47,7 +58,7 @@ export default function Radar() {
         <select
           className="border rounded px-2 py-1 text-sm"
           value={range}
-          onChange={e => setRange(e.target.value as Range)}
+          onChange={(e) => setRange(e.target.value as Range)}
         >
           <option value="24h">Últimas 24 h</option>
           <option value="7d">Últimos 7 d</option>
@@ -56,7 +67,14 @@ export default function Radar() {
         </select>
       </div>
 
-      <SummaryCharts stats={stats} logs={allLogs} loading={loading} range={range} />
+      <SummaryCharts
+        stats={stats}
+        logs={allLogs}
+        loading={loading}
+        range={range}
+      />
+      <AdvancedCharts />
+      <AdvancedInsights />
       <UsageLimits logs={allLogs} />
       <RecentDetections logs={allLogs} loading={loading} range={range} />
 

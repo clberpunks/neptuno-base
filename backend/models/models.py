@@ -150,6 +150,8 @@ class AccessLog(Base):
     ip_address = Column(String)
     user_agent = Column(String)
     referrer = Column(String, nullable=True)
+    country_code = Column(String(2), nullable=True, index=True)
+    referral = Column(Boolean, default=False)  # para CTR
     accept_language = Column(String, nullable=True)
     sec_ch_ua = Column(String, nullable=True)
     sec_ch_ua_mobile = Column(String, nullable=True)
@@ -163,6 +165,12 @@ class AccessLog(Base):
     rule = Column(String)
     redirect_url = Column(String, nullable=True)
     js_executed = Column(Boolean, default=False)
+    page: str = Column(
+        String, nullable=True)  # Nueva columna: la página a la que llegó
+    session_id: str = Column(String,
+                             nullable=True)  # Para vincular entrada/salida
+    exit_timestamp: DateTime = Column(
+        DateTime, nullable=True)  # Para cálculo de time-on-page
 
     seen = Column(Boolean, default=False)
 

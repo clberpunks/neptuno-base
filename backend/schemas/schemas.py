@@ -106,3 +106,33 @@ class PaymentRecordOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+from pydantic import BaseModel
+from typing import List
+
+
+class BucketItem(BaseModel):
+    key: str
+    count: int
+
+
+class CTRItem(BaseModel):
+    clicks: int
+    impressions: int
+    rate: float  # clicks/impressions*100
+
+
+class AdvancedInsightsOut(BaseModel):
+    trafficByAgentType: List[BucketItem]
+    mostActiveAgents: List[BucketItem]
+    topOriginatingCountries: List[BucketItem]
+    referralClickRate: CTRItem
+    topReferredPages: List[BucketItem]
+    trafficByLLMReferrer: List[BucketItem]
+    timeSpentByAgent: List[BucketItem]
+
+
+class BucketItem(BaseModel):
+    key: str
+    count: int
