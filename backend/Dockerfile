@@ -22,6 +22,6 @@ EXPOSE 8001
 
 # No necesitamos CMD aquí porque lo definimos en docker-compose
 # Comando de arranque
-# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
 
 

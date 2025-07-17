@@ -20,9 +20,9 @@ services:
     networks:
       app_net:
         ipv4_address: 172.80.0.200
-    command: >
-      sh -c "alembic -c /app/alembic.ini upgrade head
-      && uvicorn main:app --host 0.0.0.0 --port 8001"
+    #command: >
+    #  sh -c "alembic -c /app/alembic.ini upgrade head
+    #  && uvicorn main:app --host 0.0.0.0 --port 8001"
   frontend:
     build:
       context: ./frontend
