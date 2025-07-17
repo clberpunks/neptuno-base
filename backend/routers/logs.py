@@ -185,15 +185,14 @@ def advanced_insights(current_user=Depends(get_current_user),
         if patterns:
             count = db.query(func.count(AccessLog.id)).filter(
                 AccessLog.tenant_id == tenant,
-                *[AccessLog.user_agent.ilike(f"%{pat}%") for pat in patterns]
-            ).scalar()
+                *[AccessLog.user_agent.ilike(f"%{pat}%")
+                  for pat in patterns]).scalar()
         else:
             count = 0
         traffic_by_agent.append({"key": label, "count": count})
 
-    total_hits = db.query(func.count(AccessLog.id)).filter(
-        AccessLog.tenant_id == tenant
-    ).scalar()
+    total_hits = db.query(func.count(
+        AccessLog.id)).filter(AccessLog.tenant_id == tenant).scalar()
     known = sum(item["count"] for item in traffic_by_agent)
     traffic_by_agent.append({
         "key": "Uncategorized",
@@ -203,85 +202,86 @@ def advanced_insights(current_user=Depends(get_current_user),
     # 2. Top referred pages
     top_referrals = db.query(
         AccessLog.referrer.label("key"),
-        func.count(AccessLog.id).label("count")
-    ).filter(
-        AccessLog.tenant_id == tenant,
-        AccessLog.referrer != None
-    ).group_by(
-        AccessLog.referrer
-    ).order_by(
-        func.count(AccessLog.id).desc()
-    ).limit(10).all()
+        func.count(AccessLog.id).label("count")).filter(
+            AccessLog.tenant_id == tenant, AccessLog.referrer
+            != None).group_by(AccessLog.referrer).order_by(
+                func.count(AccessLog.id).desc()).limit(10).all()
     top_referrals = [{"key": r.key, "count": r.count} for r in top_referrals]
 
     # 3. Traffic by LLM referrer
     traffic_by_llm = db.query(
         AccessLog.referrer.label("key"),
-        func.count(AccessLog.id).label("count")
-    ).filter(
-        AccessLog.tenant_id == tenant,
-        AccessLog.referrer.ilike("%llm=%")
-    ).group_by(
-        AccessLog.referrer
-    ).order_by(
-        func.count(AccessLog.id).desc()
-    ).limit(10).all()
+        func.count(AccessLog.id).label("count")).filter(
+            AccessLog.tenant_id == tenant,
+            AccessLog.referrer.ilike("%llm=%")).group_by(
+                AccessLog.referrer).order_by(func.count(
+                    AccessLog.id).desc()).limit(10).all()
     traffic_by_llm = [{"key": r.key, "count": r.count} for r in traffic_by_llm]
 
     # 4. Time spent browsing por agente
     times = db.query(
         AccessLog.user_agent.label("key"),
-        func.avg(func.extract("epoch", AccessLog.exit_timestamp - AccessLog.timestamp)).label("count")
-    ).filter(
-        AccessLog.tenant_id == tenant,
-        AccessLog.exit_timestamp != None
-    ).group_by(
-        AccessLog.user_agent
-    ).order_by(
-        func.avg(func.extract("epoch", AccessLog.exit_timestamp - AccessLog.timestamp)).desc()
-    ).limit(10).all()
+        func.avg(
+            func.extract(
+                "epoch", AccessLog.exit_timestamp -
+                AccessLog.timestamp)).label("count")).filter(
+                    AccessLog.tenant_id == tenant, AccessLog.exit_timestamp
+                    != None).group_by(AccessLog.user_agent).order_by(
+                        func.avg(
+                            func.extract(
+                                "epoch", AccessLog.exit_timestamp -
+                                AccessLog.timestamp)).desc()).limit(10).all()
     by_time = [{"key": t.key, "count": round(t.count or 0)} for t in times]
 
-    # 5. Most Active Agents
-    ua_coalesce = func.coalesce(AccessLog.user_agent, '')
-    ua_with_slash = ua_coalesce + '/'
-    pos = func.instr(ua_with_slash, '/')
-    agent_expr = func.substr(ua_coalesce, 1, pos - 1).label("agent")
+    # 5. Most Active Agents (compatibilidad con varios dialectos)
+    ua_coalesce = func.coalesce(AccessLog.user_agent, "")
+    ua_with_slash = ua_coalesce + "/"
 
-    most_active = db.query(
+    # Detectamos el dialecto
+    dialect_name = db.bind.dialect.name  # 'postgresql', 'sqlite', 'mysql', etc.
+
+    if dialect_name == "postgresql":
+        # en Postgres: strpos(column, substr) devuelve la posición (1-based)
+        pos_fn = func.strpos(ua_with_slash, "/")
+    else:
+        # SQLite y MySQL disponen de instr()
+        pos_fn = func.instr(ua_with_slash, "/")
+
+    # substr(col, start, length)
+    agent_expr = func.substr(ua_coalesce, 1, pos_fn - 1).label("agent")
+
+    most_active = (db.query(
         agent_expr,
-        func.count(AccessLog.id).label("count")
-    ).filter(
-        AccessLog.tenant_id == tenant
-    ).group_by(
-        "agent"
-    ).order_by(
-        func.count(AccessLog.id).desc()
-    ).limit(10).all()
-    most_active_agents = [{"key": a.agent or "Unknown", "count": a.count} for a in most_active]
+        func.count(AccessLog.id).label("count")).filter(
+            AccessLog.tenant_id == tenant).group_by("agent").order_by(
+                func.count(AccessLog.id).desc()).limit(10).all())
+
+    most_active_agents = [{
+        "key": row.agent or "Unknown",
+        "count": row.count
+    } for row in most_active]
     if not most_active_agents:
         most_active_agents = [{"key": "Unknown", "count": 0}]
 
     # 6. Top Originating Countries
     top_countries = db.query(
         AccessLog.country_code,
-        func.count(AccessLog.id).label("count")
-    ).filter(
-        AccessLog.tenant_id == tenant
-    ).group_by(
-        AccessLog.country_code
-    ).order_by(
-        func.count(AccessLog.id).desc()
-    ).limit(10).all()
-    top_countries_list = [{"key": c.country_code or "??", "count": c.count} for c in top_countries]
+        func.count(AccessLog.id).label("count")).filter(
+            AccessLog.tenant_id == tenant).group_by(
+                AccessLog.country_code).order_by(
+                    func.count(AccessLog.id).desc()).limit(10).all()
+    top_countries_list = [{
+        "key": c.country_code or "??",
+        "count": c.count
+    } for c in top_countries]
 
     # 7. Referral Click Rate
     total_impressions = total_hits or 0
     total_clicks = db.query(func.count(AccessLog.id)).filter(
-        AccessLog.tenant_id == tenant,
-        AccessLog.referral == True
-    ).scalar() or 0
-    ctr = (total_clicks / total_impressions * 100) if total_impressions else 0.0
+        AccessLog.tenant_id == tenant, AccessLog.referral
+        == True).scalar() or 0
+    ctr = (total_clicks / total_impressions *
+           100) if total_impressions else 0.0
 
     return {
         "trafficByAgentType": traffic_by_agent,
