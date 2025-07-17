@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
+import Spinner from "../shared/Spinner";
 
 interface SubscriptionPlan {
   id: string;
@@ -39,8 +40,13 @@ export default function SubscriptionSelector() {
     setUpdating(false);
   };
 
-  if (loading) return <p className="text-sm">Cargando planes...</p>;
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm mt-6">
       <h2 className="text-xl font-semibold mb-6">Planes de suscripción</h2>
@@ -58,16 +64,31 @@ export default function SubscriptionSelector() {
                   : "border-gray-200 hover:shadow-md"
               }`}
             >
-              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.plan}</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">
+                {plan.plan}
+              </h3>
               <p className="text-sm text-gray-600 mb-2">{plan.description}</p>
               <ul className="text-sm text-gray-700 mb-4 space-y-1">
-                <li><strong>Tráfico:</strong> {plan.traffic_limit.toLocaleString()} visitas/mes</li>
-                <li><strong>Dominios:</strong> {plan.domain_limit}</li>
-                <li><strong>Usuarios:</strong> {plan.user_limit}</li>
-                <li><strong>Precio:</strong> {plan.price === 0 ? "Gratis" : `€${plan.price}/mes`}</li>
+                <li>
+                  <strong>Tráfico:</strong>{" "}
+                  {plan.traffic_limit.toLocaleString()} visitas/mes
+                </li>
+                <li>
+                  <strong>Dominios:</strong> {plan.domain_limit}
+                </li>
+                <li>
+                  <strong>Usuarios:</strong> {plan.user_limit}
+                </li>
+                <li>
+                  <strong>Precio:</strong>{" "}
+                  {plan.price === 0 ? "Gratis" : `€${plan.price}/mes`}
+                </li>
               </ul>
               {isEnterprise ? (
-                <a href="/contact" className="block text-center text-indigo-700 font-medium text-sm underline">
+                <a
+                  href="/contact"
+                  className="block text-center text-indigo-700 font-medium text-sm underline"
+                >
                   Contactar ventas
                 </a>
               ) : (

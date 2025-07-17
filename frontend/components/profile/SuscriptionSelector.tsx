@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
 import Modal from "../Modal";
+import Spinner from "../shared/Spinner";
 
 interface SubscriptionPlan {
   id: string;
@@ -82,8 +83,13 @@ export default function SubscriptionSelector() {
     );
   };
 
-  if (loading) return <p className="text-sm">Cargando planes…</p>;
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <>
       <div className="bg-white rounded-xl p-6 shadow-sm mt-6">

@@ -13,6 +13,7 @@ import {
   FiZap,
   FiBookOpen,
 } from "react-icons/fi";
+import Spinner from "../shared/Spinner";
 
 interface DashboardData {
   unreadNotifications: number;
@@ -90,10 +91,8 @@ export default function SummaryDashboard() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
-        <div className="flex justify-center items-center h-48">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-        </div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
       </div>
     );
   }

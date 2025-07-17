@@ -11,6 +11,7 @@ import {
   ChartBarIcon
 } from "@heroicons/react/24/outline";
 import ExpandablePanel from "../shared/ExpandablePanel";
+import Spinner from "../shared/Spinner";
 
 interface RiskData {
   last24h: {
@@ -55,15 +56,9 @@ export default function RiskPanel() {
 
   if (loading) {
     return (
-      <ExpandablePanel
-        title={t("risk_panel_title")}
-        icon={<ExclamationTriangleIcon className="h-6 w-6" />}
-        loading={true}
-      >
-        <div className="flex justify-center items-center h-48">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-        </div>
-      </ExpandablePanel>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
   }
 

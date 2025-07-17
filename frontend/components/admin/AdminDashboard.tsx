@@ -1,20 +1,20 @@
 // frontend/components/admin/AdminDashboard.tsx
-import { useState, useEffect } from 'react';
-import { apiFetch } from '../../utils/api';
-import Spinner from '../shared/Spinner';
-import ExpandablePanel from '../shared/ExpandablePanel';
-import { SummaryPanel } from './panels/SummaryPanel';
-import { FirewallPanel } from './panels/FirewallPanel';
-import { UserActivityPanel } from './panels/UserActivityPanel';
-import { BotActivityPanel } from './panels/BotActivityPanel';
-import SubscriptionPlansPanel from './panels/SuscriptionPanel';
-import { 
-  ChartBarIcon, 
-  CreditCardIcon, 
-  ShieldCheckIcon, 
-  UsersIcon, 
-  ExclamationTriangleIcon 
-} from '@heroicons/react/24/outline';
+import { useState, useEffect } from "react";
+import { apiFetch } from "../../utils/api";
+import Spinner from "../shared/Spinner";
+import ExpandablePanel from "../shared/ExpandablePanel";
+import { SummaryPanel } from "./panels/SummaryPanel";
+import { FirewallPanel } from "./panels/FirewallPanel";
+import { UserActivityPanel } from "./panels/UserActivityPanel";
+import { BotActivityPanel } from "./panels/BotActivityPanel";
+import SubscriptionPlansPanel from "./panels/SuscriptionPanel";
+import {
+  ChartBarIcon,
+  CreditCardIcon,
+  ShieldCheckIcon,
+  UsersIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 
 interface DashboardData {
   new_users: number;
@@ -57,8 +57,12 @@ interface BotActivity {
 }
 
 export default function AdminDashboard() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
+  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(
+    null
+  );
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
   const [botActivities, setBotActivities] = useState<BotActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,20 +73,21 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
 
-        const dashboard = await apiFetch<DashboardData>('/rest/admin/overview');
+        const dashboard = await apiFetch<DashboardData>("/rest/admin/overview");
         setDashboardData(dashboard);
 
-        const stats = await apiFetch<FirewallStats>('/rest/logs/stats');
+        const stats = await apiFetch<FirewallStats>("/rest/logs/stats");
         setFirewallStats(stats);
 
-        const users = await apiFetch<TopUser[]>('/rest/admin/top-users');
+        const users = await apiFetch<TopUser[]>("/rest/admin/top-users");
         setTopUsers(users);
 
-        const bots = await apiFetch<BotActivity[]>('/rest/admin/bot-activities');
+        const bots = await apiFetch<BotActivity[]>(
+          "/rest/admin/bot-activities"
+        );
         setBotActivities(bots);
-
       } catch (err) {
-        setError('Error al cargar los datos del dashboard');
+        setError("Error al cargar los datos del dashboard");
         console.error(err);
       } finally {
         setLoading(false);
@@ -92,21 +97,33 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="flex justify-center items-center h-64"><Spinner /></div>;
-
-  if (error) return (
-    <div className="p-4">
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <strong className="font-bold">Error: </strong>
-        <span className="block sm:inline">{error}</span>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
       </div>
-    </div>
-  );
+    );
+  }
+  if (error)
+    return (
+      <div className="p-4">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      </div>
+    );
 
   if (!dashboardData || !firewallStats) return null;
 
   // Calcular valores para los badges
-  const totalUsers = Object.values(dashboardData.plan_distribution).reduce((sum, count) => sum + count, 0);
+  const totalUsers = Object.values(dashboardData.plan_distribution).reduce(
+    (sum, count) => sum + count,
+    0
+  );
   const activePlans = Object.keys(dashboardData.plan_distribution).length; // Número de planes con usuarios
   const activeRules = firewallStats.total;
   const activeUsers = topUsers.length;

@@ -5,6 +5,7 @@ import ExpandablePanel from "../shared/ExpandablePanel";
 import "chart.js/auto";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
+import Spinner from "../shared/Spinner";
 
 interface SummaryChartsProps {
   stats: Stats;
@@ -96,15 +97,9 @@ export default function SummaryCharts({
 
   if (loading) {
     return (
-      <ExpandablePanel
-        title="Estadísticas de Radar"
-        icon={<ChartBarIcon className="h-6 w-6" />}
-        statusLabel="Cargando..."
-        statusColor="bg-gray-100 text-gray-800"
-        loading
-      >
-        <div className="h-64 animate-pulse grid grid-cols-3 gap-6" />
-      </ExpandablePanel>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
   }
 

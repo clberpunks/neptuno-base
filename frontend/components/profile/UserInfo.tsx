@@ -72,7 +72,7 @@ export default function UserInfo({ user, subscription, formatDate }: UserInfoPro
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start gap-4 pb-4 border-b border-gray-100">
           <div className="flex items-start gap-4 w-full md:w-auto">
-            <Image
+            {/* <Image
               src={`https://www.gravatar.com/avatar/${
                 user?.email
                   ? require("crypto")
@@ -86,7 +86,7 @@ export default function UserInfo({ user, subscription, formatDate }: UserInfoPro
               height={40}
               className="rounded-full w-10 h-10 flex-shrink-0 mt-1"
               unoptimized={process.env.NODE_ENV === "development"}
-            />
+            /> */}
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-gray-900 truncate">{user.name}</h1>
