@@ -9,7 +9,5 @@ __pycache__
 *.pyd
 *.pdb
 __init__
-#alembic
-#alembic.ini
 pgdata/*
 data/*

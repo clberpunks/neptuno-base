@@ -8,23 +8,21 @@ services:
     ports:
       - "8001:8001"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      - ALEMBIC_CONFIG=/app/alembic.ini
       - BACKEND_URL=http://localhost:8001
       - DATABASE_URL=postgresql://ciberpunk:ciberpunk123@db:5432/ciberpunkdb
-
+      - PYTHONPATH=/app  # Importante para que Python encuentre los módulos
     volumes:
       - ./data:/data
-      - ./backend:/app  # Cambio crucial
-      - ./backend/alembic:/app/alembic  # Monta el directorio de migraciones
-      - ./backend/alembic.ini:/app/alembic.ini  # Monta el archivo de configuración
+      - ./backend:/app  # Monta todo el backend en /app
     networks:
       app_net:
         ipv4_address: 172.80.0.200
-    # Comando para ejecutar migraciones al iniciar (opcional)
-    # command: sh -c "alembic upgrade head && python main.py"  # Ajusta según tu estructura
-
+    command: >
+      sh -c "alembic -c /app/alembic.ini upgrade head
+      && uvicorn main:app --host 0.0.0.0 --port 8001"
   frontend:
     build:
       context: ./frontend
