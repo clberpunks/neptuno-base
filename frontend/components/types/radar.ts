@@ -1,4 +1,4 @@
-// frontend/types/radar.d.ts
+// frontend/types/radar.ts
 export interface Stats {
   allow: number;
   block: number;
