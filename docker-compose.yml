@@ -10,11 +10,13 @@ services:
     depends_on:
       - db
     environment:
+      - ALEMBIC_CONFIG=/app/alembic.ini
       - BACKEND_URL=http://localhost:8001
       - DATABASE_URL=postgresql://ciberpunk:ciberpunk123@db:5432/ciberpunkdb
-      - ALEMBIC_CONFIG=/app/alembic.ini  # Ruta al archivo de configuración de Alembic
+
     volumes:
       - ./data:/data
+      - ./backend:/app  # Cambio crucial
       - ./backend/alembic:/app/alembic  # Monta el directorio de migraciones
       - ./backend/alembic.ini:/app/alembic.ini  # Monta el archivo de configuración
     networks:
