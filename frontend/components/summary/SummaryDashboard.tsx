@@ -35,6 +35,14 @@ interface DashboardData {
   };
 }
 
+interface UserNotification {
+  id: string;
+  title: string;
+  body?: string;
+  created_at: string;
+  read: boolean;
+}
+
 export default function SummaryDashboard() {
   const { t } = useTranslation("common");
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
@@ -50,7 +58,7 @@ export default function SummaryDashboard() {
         setError(null);
 
         // Obtener datos de notificaciones
-        const notifications = await apiFetch<Notification[]>(
+        const notifications = await apiFetch<UserNotification[]>(
           "/rest/user/notifications"
         );
         const unreadNotifications = notifications.filter((n) => !n.read).length;
