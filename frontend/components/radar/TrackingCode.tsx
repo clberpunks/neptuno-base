@@ -79,7 +79,7 @@ export default function TrackingCodePanel() {
           }`}
         >
           {isGenerating ? 'Generando...' : 'Generar Código'}
-        </button>
+        </button> 
       </div>
       <div className="relative border rounded bg-gray-50 overflow-hidden">
         <textarea
