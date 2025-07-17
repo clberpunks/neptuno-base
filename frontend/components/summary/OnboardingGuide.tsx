@@ -18,7 +18,7 @@ interface OnboardingStep {
   color: string;
 }
 
-export default function OnboardingGuide() {
+export default function OnboardingGuide({ id }: { id?: string }) {
   const { t } = useTranslation('common');
   const [steps, setSteps] = useState<OnboardingStep[]>([
     {
@@ -66,6 +66,7 @@ export default function OnboardingGuide() {
 
   return (
     <ExpandablePanel
+      id={id}
       title={t("onboarding_title")}
       description={t("onboarding_subtitle")}
       icon={<LightBulbIcon className="h-6 w-6" />}

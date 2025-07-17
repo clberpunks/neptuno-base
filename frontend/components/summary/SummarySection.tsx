@@ -23,9 +23,9 @@ export default function SummarySection({ user, formatDate }: SummarySectionProps
   return (
     <div className="space-y-8">
       <SummaryDashboard />
-      <NotificationsInbox />
-      <RiskPanel />
-      <OnboardingGuide />
+      <NotificationsInbox id="notifications" />
+      <RiskPanel id="risk-panel" />
+      <OnboardingGuide id="onboarding" />
     </div>
   );
 }

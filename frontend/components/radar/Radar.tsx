@@ -55,7 +55,6 @@ export default function Radar() {
   return (
     <div className="space-y-6 p-4">
       <RadarDashboard /> {/* Añadimos el nuevo dashboard aquí */}
-      
       {/* selector de rango */}
       <div className="flex justify-end">
         <select
@@ -69,7 +68,6 @@ export default function Radar() {
           <option value="1y">Último año</option>
         </select>
       </div>
-
       <SummaryCharts
         stats={stats}
         logs={allLogs}
@@ -80,7 +78,6 @@ export default function Radar() {
       <AdvancedInsights />
       <UsageLimits logs={allLogs} />
       <RecentDetections logs={allLogs} loading={loading} range={range} />
-
       <ExpandablePanel
         title={t("tracking_code")}
         icon={<CodeBracketIcon className="h-6 w-6" />}

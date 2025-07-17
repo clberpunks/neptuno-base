@@ -3,6 +3,7 @@ import { useState, ReactNode } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 interface ExpandablePanelProps {
+  id?: string;
   title: string;
   description?: string;
   icon?: ReactNode;
@@ -15,6 +16,7 @@ interface ExpandablePanelProps {
 }
 
 export default function ExpandablePanel({
+  id,
   title,
   description,
   icon,
@@ -30,6 +32,7 @@ export default function ExpandablePanel({
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div
+        id={id}
         className="p-6 border-b border-gray-200 flex justify-between items-center cursor-pointer hover:bg-gray-50"
         onClick={() => setIsExpanded(!isExpanded)}
         aria-expanded={isExpanded}

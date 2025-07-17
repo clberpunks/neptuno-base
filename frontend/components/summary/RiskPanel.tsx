@@ -31,7 +31,7 @@ interface RiskData {
   protectionLevel: "low" | "medium" | "high";
 }
 
-export default function RiskPanel() {
+export default function RiskPanel({ id }: { id?: string }) {
   const { t } = useTranslation('common');
   const [riskData, setRiskData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,6 +65,7 @@ export default function RiskPanel() {
   if (!riskData) {
     return (
       <ExpandablePanel
+        id={id}
         title={t("risk_panel_title")}
         icon={<ExclamationTriangleIcon className="h-6 w-6" />}
       >

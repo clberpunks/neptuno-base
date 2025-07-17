@@ -7,7 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { withAuth } from "../utils/withAuth";
 import { useFetchHistory } from "../hooks/userFetchHistory";
 import RiskPanel from "../components/summary/RiskPanel";
-import FirewallManager from "../components/firewall/FirewallManager";
+import FirewallManager, { Rule } from "../components/firewall/FirewallManager";
 import Radar from "../components/radar/Radar";
 import TrackingCodePanel from "../components/radar/TrackingCode";
 import SummarySection from "../components/summary/SummarySection";
@@ -23,6 +23,7 @@ import BetaBanner from "../components/BetaBanner";
 import RobotsGenerator from "../components/firewall/RobotsGenerator";
 import MetaSEO from "../components/firewall/MetaSEO";
 import PaymentHistory from "../components/profile/PaymentHistory";
+import FirewallDashboard from "../components/firewall/FirewallDashboard";
 
 interface LoginEntry {
   timestamp: string;
@@ -45,6 +46,7 @@ function Dashboard() {
     | "admin"
   >("summary");
   const { history: accessHistory } = useFetchHistory(user);
+  const [rules, setRules] = useState<Rule[]>([]);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -83,7 +85,6 @@ function Dashboard() {
                 accessHistory={accessHistory}
                 formatDate={formatDate}
               />
-
             </div>
           </>
         );
@@ -92,6 +93,7 @@ function Dashboard() {
       case "firewall":
         return (
           <div className="space-y-6">
+
             <FirewallManager />
           </div>
         );

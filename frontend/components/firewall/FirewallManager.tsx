@@ -9,6 +9,7 @@ import CompliancePanel from "../compliance/CompliancePanel";
 import TermsPanel from "../compliance/TermsPanel";
 import ExpandablePanel from "../shared/ExpandablePanel"; // Importamos el componente reutilizable
 import { ShieldCheckIcon } from "@heroicons/react/24/outline"; // Icono representativo para firewall
+import FirewallDashboard from "./FirewallDashboard";
 
 export interface Rule {
   id?: string;
@@ -100,8 +101,14 @@ export default function FirewallManager() {
 
   return (
     <div className="space-y-6">
+      <FirewallDashboard
+        rules={rules}
+        termsStatus="Active"
+        privacyStatus="Active"
+      />
       {/* Firewall Panel usando ExpandablePanel */}
       <ExpandablePanel
+        id="firewall-management" // ID para navegación
         title={t("firewall_management")}
         description={t("manage_access_rules")}
         icon={<ShieldCheckIcon className="h-6 w-6" />} // Icono representativo
@@ -559,17 +566,29 @@ export default function FirewallManager() {
 
       <h2>AVISOS LEGALES</h2>
 
-
-      <TermsPanel />
+      {/* Términos con ID para navegación */}
+      <div id="terms">
+        <TermsPanel />
+      </div>
 
       <h3>SEO</h3>
-      {/* Robots Generator Panel */}
-      <RobotsGenerator rules={rules} />
 
-      {/* Meta SEO Panel */}
-      <MetaSEO rules={rules} />
+      {/* Robots Generator con ID para navegación */}
+      <div id="robots-generator">
+        <RobotsGenerator rules={rules} />
+      </div>
+
+      {/* Meta SEO con ID para navegación */}
+      <div id="meta-seo">
+        <MetaSEO rules={rules} />
+      </div>
 
       <h3>Server</h3>
+
+      {/* Política de privacidad con ID para navegación */}
+      <div id="privacy">
+        <CompliancePanel />
+      </div>
     </div>
   );
 }

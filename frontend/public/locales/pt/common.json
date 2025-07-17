@@ -298,5 +298,18 @@
   "current_risk": "Situación Actual",
 
   "usage_limits": "Límites de Uso",
-  "usage": "Uso"
+  "usage": "Uso",
+
+  "firewall_dashboard": "Firewall Dashboard",
+  "allowed_count": "12",
+  "blocked_count": "8",
+  "restricted_count": "5",
+  "tariff_count": "3",
+  "allowed_tokens_count": "42K",
+  "meta_tags_count": "15",
+  "terms_status": "Active",
+  "privacy_status": "Active",
+
+  "meta_tags": "Meta Tags",
+  "terms_of_service": "Terms of Service"
 }

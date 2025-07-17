@@ -13,7 +13,7 @@ interface Notification {
   read: boolean;
 }
 
-export default function NotificationsInbox() {
+export default function NotificationsInbox({ id }: { id?: string }) {
   const [messages, setMessages] = useState<Notification[]>([]);
   const { t } = useTranslation("common");
 
@@ -40,6 +40,7 @@ export default function NotificationsInbox() {
 
   return (
     <ExpandablePanel
+      id={id}
       title={t("notifications")}
       icon={<BellIcon className="h-6 w-6" />}
       statusLabel={unreadCount > 0 ? `${unreadCount} ${t("unread")}` : t("all_read")}
