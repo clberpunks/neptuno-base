@@ -50,16 +50,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
-      # - ./backups:/backups  # Volumen para backups
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ciberpunk -d ciberpunkdb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - ./pgdata:/var/lib/postgresql/data 
     networks:
       app_net:
         ipv4_address: 172.80.0.150
+
 
 volumes:
   postgres_data:
