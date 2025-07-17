@@ -9,11 +9,11 @@
   "profile": "Cuenta",
   "firewall": "Proteger",
   "radar": "Detectar",
-  "reports" : "Informes",
+  "reports": "Informes",
   "compliance": "Monetizar",
-  "help" : "Ayuda",
+  "help": "Ayuda",
   "settings": "Configuración",
-  "logins" : "accesos",
+  "logins": "accesos",
   "access": "Accesos",
   "logout": "Cerrar sesión",
   "loading": "Cargando...",
@@ -298,6 +298,20 @@
 
   "inbox_empty": "Enhorabuena! No tienes mensajes",
   "monitor_ai_activity": "Actividad de la IA en tu sitio",
-  "risk_status_monitoring" : "Actividad de riesgo detectada",
-  "monetize" : "Monetiza las visitas de la IA"  
+  "risk_status_monitoring": "Actividad de riesgo detectada",
+  "monetize": "Monetiza las visitas de la IA",
+
+  "radar_dashboard": "Dashboard de Radar",
+  "total_hits": "Total Hits",
+
+  "limited": "Limitados",
+  "redirected": "Redirigidos",
+  "flagged": "Marcados",
+  "rate_limited": "Rate Limit",
+  "other": "Otros",
+
+  "current_risk": "Situación Actual",
+
+  "usage_limits": "Límites de Uso",
+  "usage": "Uso"
 }

@@ -12,6 +12,7 @@ import { Stats, Log } from "../types/radar";
 import { CodeBracketIcon } from "@heroicons/react/24/outline";
 import AdvancedCharts from "./AdvancedChart";
 import AdvancedInsights from "./AdvancesInsights";
+import RadarDashboard from "./RadarDashboard"; // Importamos el nuevo componente
 
 type Range = "24h" | "7d" | "1m" | "1y";
 
@@ -37,7 +38,7 @@ export default function Radar() {
         setLoading(true);
         const [statsData, logsData] = await Promise.all([
           apiFetch<Stats>("/api/logs/stats"),
-          apiFetch<Log[]>("/api/logs?limit=1000"), // traemos hasta 1000 registros
+          apiFetch<Log[]>("/api/logs?limit=1000"),
         ]);
         setStats(statsData);
         setAllLogs(logsData);
@@ -53,6 +54,8 @@ export default function Radar() {
 
   return (
     <div className="space-y-6 p-4">
+      <RadarDashboard /> {/* Añadimos el nuevo dashboard aquí */}
+      
       {/* selector de rango */}
       <div className="flex justify-end">
         <select

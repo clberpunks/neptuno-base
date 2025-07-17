@@ -284,5 +284,19 @@
   "total": "Total",
   "financial_insights": "Insights Financeiros",
   "finance_insight_1": "Monetização de tráfego de IA aumentou 24%",
-  "finance_insight_2": "Custos de infraestrutura diminuíram 8%"
+  "finance_insight_2": "Custos de infraestrutura diminuíram 8%",
+
+  "radar_dashboard": "Dashboard de Radar",
+  "total_hits": "Total Hits",
+
+  "limited": "Limitados",
+  "redirected": "Redirigidos",
+  "flagged": "Marcados",
+  "rate_limited": "Rate Limit",
+  "other": "Otros",
+
+  "current_risk": "Situación Actual",
+
+  "usage_limits": "Límites de Uso",
+  "usage": "Uso"
 }
