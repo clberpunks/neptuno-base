@@ -5,6 +5,7 @@ from routers import auth, user, admin, embed, detect, logs, firewall, payments
 from db import engine, Base, SessionLocal
 from models.models import User, UserRole
 from utils import hash_password
+from config import settings
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 import uuid
@@ -46,40 +47,41 @@ app.include_router(payments.router, prefix="/rest/payments")
 
 @app.on_event("startup")
 def startup_event():
-    """Crea las tablas y usuarios iniciales al iniciar la aplicación."""
-    Base.metadata.create_all(bind=engine)
-    db: Session = SessionLocal()
-    seed_default_plans(db)
-    try:
-        if not db.query(User).filter_by(email="user@example.com").first():
-            db.add(
-                User(
-                    id=str(uuid.uuid4()),
-                    email="user@example.com",
-                    name="Ejemplo User",
-                    password_hash=hash_password("123456"),
-                    auth_method="local",
-                    role=UserRole.user,
-                    picture=
-                    None  #f"https://ui-avatars.com/api/?name=Ejemplo+User&size=40"
-                ))
-        if not db.query(User).filter_by(email="admin@example.com").first():
-            db.add(
-                User(
-                    id=str(uuid.uuid4()),
-                    email="admin@example.com",
-                    name="Ejemplo Admin",
-                    password_hash=hash_password("123456"),
-                    auth_method="local",
-                    role=UserRole.admin,
-                    picture=
-                    None  #f"https://ui-avatars.com/api/?name=Ejemplo+Admin&size=40"
-                ))
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-    finally:
-        db.close()
+    if "sqlite" in settings.DATABASE_URL or settings.NODE_ENV == "development":
+        """Crea las tablas y usuarios iniciales al iniciar la aplicación."""
+        Base.metadata.create_all(bind=engine)
+        db: Session = SessionLocal()
+        seed_default_plans(db)
+        try:
+            if not db.query(User).filter_by(email="user@example.com").first():
+                db.add(
+                    User(
+                        id=str(uuid.uuid4()),
+                        email="user@example.com",
+                        name="Ejemplo User",
+                        password_hash=hash_password("123456"),
+                        auth_method="local",
+                        role=UserRole.user,
+                        picture=
+                        None  #f"https://ui-avatars.com/api/?name=Ejemplo+User&size=40"
+                    ))
+            if not db.query(User).filter_by(email="admin@example.com").first():
+                db.add(
+                    User(
+                        id=str(uuid.uuid4()),
+                        email="admin@example.com",
+                        name="Ejemplo Admin",
+                        password_hash=hash_password("123456"),
+                        auth_method="local",
+                        role=UserRole.admin,
+                        picture=
+                        None  #f"https://ui-avatars.com/api/?name=Ejemplo+Admin&size=40"
+                    ))
+            db.commit()
+        except IntegrityError:
+            db.rollback()
+        finally:
+            db.close()
 
 
 def seed_default_plans(db: Session):

@@ -9,6 +9,7 @@ services:
       - db 
     environment:
       - BACKEND_URL=http://localhost:8001
+      - DATABASE_URL=postgresql+psycopg2://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
     volumes:
       - ./data:/data
     networks:

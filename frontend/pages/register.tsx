@@ -136,12 +136,12 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {/* Selector de planes */}
+            {/* Selector de planes 
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Selecciona tu plan
               </h2>
-              
+
               {loadingPlans ? (
                 <p className="text-center py-4">Cargando planes...</p>
               ) : (
@@ -175,8 +175,9 @@ export default function RegisterPage() {
                     );
                   })}
                 </div>
-              )}
+              )} 
             </div>
+            */}
 
             {/* Botón de Google - Ahora antes del formulario */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
@@ -203,13 +204,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    O regístrate con tu correo
+                    o con tu correo
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Formulario de registro */}
+                    {/* Formulario de registro */}
             <form
               onSubmit={handleRegister}
               className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
@@ -288,6 +287,9 @@ export default function RegisterPage() {
                 </p>
               </div>
             </form>
+            </div>
+
+      
 
             <div className="mt-8 text-center text-sm text-gray-600">
               <p>
