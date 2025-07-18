@@ -1,0 +1,47 @@
+# 1. Generar credenciales seguras
+export RANDOM_STRING=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
+openssl rand -base64 32 > .env
+echo "DB_USER=cp_${RANDOM_STRING}" >> .env
+echo "DB_PASSWORD=$(openssl rand -base64 32)" >> .env
+echo "DB_NAME=ciberpunk_prod" >> .env
+echo "SECRET_KEY=$(openssl rand -hex 64)" >> .env
+echo "REDIS_PASSWORD=$(openssl rand -base64 32)" >> .env
+echo "GRAFANA_PASSWORD=$(openssl rand -base64 16)" >> .env
+
+# 2. Iniciar Docker Swarm
+docker swarm init
+
+# 3. Desplegar stack
+docker stack deploy -c docker-compose.yml ciberpunk --with-registry-auth
+
+# 4. Verificar estado
+docker service ls
+
+
+
+#Plan de Implementación Express (12h):
+
+Configurar red privada (10.0.0.0/16)
+
+Implementar balanceadores:
+
+bash
+apt install traefik keepalived -y
+systemctl enable traefik keepalived
+Desplegar DB cluster con Patroni:
+
+bash
+patronictl -c /etc/patroni.yml create ciberpunk-cluster
+Configurar Redis Sentinel:
+
+bash
+redis-sentinel /etc/redis/sentinel.conf
+Desplegar aplicación con Docker Swarm:
+
+bash
+docker swarm init
+docker stack deploy -c docker-compose.yml prod
+Configurar monitorización:
+
+bash
+docker run -d -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus

@@ -1,21 +1,32 @@
-FROM python:3.10-slim
+# Backend Dockerfile
+# Backend Dockerfile
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies first (if needed)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Instalar dependencias del sistema
+RUN apt-get update && \
+    apt-get install -y libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY backend/requirements.txt .
+# Copiar primero requirements.txt para cachear la instalación de dependencias
+COPY requirements.txt .
 
-# Upgrade pip first
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/ .
+# Copiar todo el código fuente
+COPY . .
 
+# Variables de entorno para configuración
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Puerto expuesto
 EXPOSE 8001
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001","--reload"]
+# Comando de arranque mejorado
+CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && uvicorn main:app --host 0.0.0.0 --port 8001"]
+
+#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001","--reload"]

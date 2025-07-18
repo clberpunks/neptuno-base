@@ -10,6 +10,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 import uuid
 
+
+#from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+#from fastapi.middleware.trustedhost import TrustedHostMiddleware
+#from fastapi.middleware.gzip import GZipMiddleware
+
 app = FastAPI(
     docs_url="/rest/docs",  # Swagger UI docs
     redoc_url=None,  # 
@@ -30,6 +35,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middlewares de seguridad
+#app.add_middleware(HTTPSRedirectMiddleware)
+#app.add_middleware(TrustedHostMiddleware, allowed_hosts=["ciberpunk.es", "www.ciberpunk.es"])
+#app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+
 
 app.include_router(auth.router, prefix="/rest/auth")
 app.include_router(user.router, prefix="/rest/user")
@@ -126,3 +138,9 @@ def seed_default_plans(db: Session):
         for p in defaults:
             db.add(SubscriptionPlan(**p, active=True))
         db.commit()
+
+# Endpoint de salud para monitorización
+@app.get("/health")
+@app.get("/rest/health")
+async def health_check():
+    return {"status": "ok", "version": "1.0.0"}
