@@ -47,7 +47,7 @@ app.include_router(payments.router, prefix="/rest/payments")
 
 @app.on_event("startup")
 def startup_event():
-    if "sqlite" in settings.DATABASE_URL or settings.NODE_ENV == "development":
+    #if "sqlite" in settings.DATABASE_URL or settings.NODE_ENV == "development":
         """Crea las tablas y usuarios iniciales al iniciar la aplicación."""
         Base.metadata.create_all(bind=engine)
         db: Session = SessionLocal()

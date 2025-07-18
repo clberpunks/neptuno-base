@@ -1,27 +1,30 @@
 # Backend Dockerfile
+# Backend Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Instalar dependencias del sistema para psycopg2
+# Instalar dependencias del sistema
 RUN apt-get update && \
     apt-get install -y libpq-dev gcc && \
     rm -rf /var/lib/apt/lists/*
 
-# Copiar dependencias
+# Copiar primero requirements.txt para cachear la instalación de dependencias
 COPY requirements.txt .
 
-# Instalar dependencias
+# Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar código fuente (excluyendo lo que ya está montado por volumen)
+# Copiar todo el código fuente
 COPY . .
 
-# Exponer puerto
+# Variables de entorno para configuración
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Puerto expuesto
 EXPOSE 8001
 
-# No necesitamos CMD aquí porque lo definimos en docker-compose
-# Comando de arranque
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
-
-
+# Comando de arranque mejorado
+CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && uvicorn main:app --host 0.0.0.0 --port 8001"]

@@ -11,3 +11,4 @@ __pycache__
 __init__
 pgdata/*
 data/*
+*.sqlite
