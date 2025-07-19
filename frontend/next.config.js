@@ -9,21 +9,25 @@ module.exports = {
     localeDetection: true,
   },
   images: {
+    unoptimized: true,
     domains: [
       "via.placeholder.com",
       "lh3.googleusercontent.com",
       "ui-avatars.com",
-      "www.gravatar.com",
+      "www.gravatar.com","gravatar.com",
+      "avatars.githubusercontent.com",
+      "cdn.discordapp.com"
     ],
     remotePatterns: [
+
       {
-        protocol: 'https',
-        hostname: '**.gravatar.com',
+        protocol: "https",
+        hostname: "**.gravatar.com",
       },
       {
-        protocol: 'https',
-        hostname: '**.googleusercontent.com',
-      }
+        protocol: "https",
+        hostname: "**.googleusercontent.com",
+      },
     ],
   },
   async rewrites() {
@@ -55,10 +59,17 @@ module.exports = {
     ];
   },
 
-  output: "standalone", 
+  output: "standalone",
   //experimental: {
   //  outputStandalone: true,
   //},
+  experimental: {
+    outputStandalone: true,
+    outputFileTracingRoot: path.join(__dirname, "../../"),
+    outputFileTracingIncludes: {
+      "/*": ["./public/**/*"],
+    },
+  },
   async headers() {
     return [
       {

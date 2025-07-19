@@ -16,7 +16,9 @@ EXPOSE 3000
 
 #CMD ["npm", "run", "start"]
 
-CMD ["sh", "-c", "node .next/standalone/server.js"]
+#CMD ["sh", "-c", "node .next/standalone/server.js"]
+
+CMD ["sh", "-c", "npm run build && node .next/standalone/server.js --hostname 0.0.0.0"]
 
 #CMD ["sh", "-c", "npm run build && node .next/standalone/server.js"]
 

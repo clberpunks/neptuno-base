@@ -10,7 +10,8 @@ services:
     environment:
       - HTTPX_TIMEOUT=30.0
       - BACKEND_URL=http://localhost:8001
-      - DATABASE_URL=postgresql+psycopg2://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
+      #- DATABASE_URL=postgresql+psycopg2://ciberpunk:ciberpunk123@db:5432/ciberpunkdb
+      - DATABASE_URL=postgresql://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
     volumes:
       - ./data:/data
     networks:
@@ -43,8 +44,9 @@ services:
     #dns:
     #  - 8.8.8.8
     #  - 1.1.1.1
-    extra_hosts:
-      - "www.gravatar.com:172.67.136.25"  # IP actual de Gravatar
+    #extra_hosts:
+    #  - "www.gravatar.com:172.67.136.25"  # IP actual de Gravatar
+    #network_mode: host
 
   db:
     image: postgres:15
