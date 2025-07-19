@@ -8,6 +8,7 @@ services:
     depends_on:
       - db 
     environment:
+      - HTTPX_TIMEOUT=30.0
       - BACKEND_URL=http://localhost:8001
       - DATABASE_URL=postgresql+psycopg2://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
     volumes:
@@ -15,6 +16,13 @@ services:
     networks:
       app_net:
         ipv4_address: 172.80.0.200
+    #dns:
+    #  - 8.8.8.8
+    #  - 1.1.1.1
+    #environment:
+    #  
+    #extra_hosts:
+    #  - "accounts.google.com:142.250.200.45"  # IP de Google (cambia según región)
 
 
   frontend:
