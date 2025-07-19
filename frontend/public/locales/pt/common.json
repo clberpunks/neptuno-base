@@ -311,5 +311,44 @@
   "privacy_status": "Active",
 
   "meta_tags": "Meta Tags",
-  "terms_of_service": "Terms of Service"
+  "terms_of_service": "Terms of Service",
+
+  
+  "inactive": "DESACTIVO",
+  "firewall_status": "Estado del Firewall",
+  "on": "ON",
+  "waiting": "a la espera",
+  "tracking_pixel": "Pixel de Seguimiento",
+  "view_firewall_status": "Ver estado del firewall",
+  "view_tracking_status": "Ver estado del seguimiento",
+  "view_allowed_rules": "Ver reglas permitidas",
+  "view_blocked_rules": "Ver reglas bloqueadas",
+  "view_restricted_rules": "Ver reglas restringidas",
+  "view_tariff_rules": "Ver reglas de tarifas",
+  "view_total_tokens": "Ver total de tokens",
+  "view_seo_rules": "Ver reglas SEO",
+  "view_terms_status": "Ver estado de términos",
+  "view_privacy_status": "Ver estado de privacidad",
+
+  "user_name": "Nombre de usuario",
+  "user_email": "Correo electrónico del usuario",
+  "user_role": "Rol del usuario",
+  "subscription_plan": "Plan de suscripción",
+  "plan_price": "Precio",
+  "signup_date": "Alta",
+  "renewal_date": "Renueva",
+  "hits_per_month": "Hits/mes",
+  "domains": "Dominios",
+  "users": "Usuarios",
+  "free": "Gratis",
+  "month": "mes",
+  "plan_price_tooltip": "Precio del plan",
+  "signup_date_tooltip": "Fecha de alta en el plan",
+  "renewal_date_tooltip": "Fecha de próxima renovación",
+  "hits_limit_tooltip": "Límite mensual de hits",
+  "domains_limit_tooltip": "Dominios permitidos",
+  "users_limit_tooltip": "Usuarios permitidos",
+  "hits": "hits",
+  "traffic_usage": "Uso de tráfico"
+
 }

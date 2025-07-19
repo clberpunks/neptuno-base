@@ -75,11 +75,24 @@ function Dashboard() {
 
     switch (section) {
       case "summary":
-        return <SummarySection user={user} formatDate={formatDate} />;
+        return (
+          <>
+            <div className="space-y-6">
+              {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+                {t("dashboard_summary")}
+              </h1> */}
+              <SummarySection user={user} formatDate={formatDate} />
+            </div>
+          </>
+        );
+
       case "profile":
         return (
           <>
             <div className="space-y-6">
+              {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+                {t("manage_profile_and_access")}
+              </h1> */ }
               <ProfileSection
                 user={user}
                 accessHistory={accessHistory}
@@ -89,20 +102,40 @@ function Dashboard() {
           </>
         );
       case "radar":
-        return <Radar />;
+        return (
+          <div className="space-y-6">
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("manage_profile_and_access")}
+            </h1> */ }
+            <Radar />
+          </div>
+        );
       case "firewall":
         return (
           <div className="space-y-6">
-
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("manage_access_rules")}
+            </h1> */ }
             <FirewallManager />
           </div>
         );
 
       case "help":
-        return <HelpSection />;
+        return (
+          <div className="space-y-6">
+            {/* }
+            <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("find_answers_and_support")}
+            </h1> */}
+            <HelpSection />
+          </div>
+        );
       case "compliance":
         return (
           <div className="space-y-6">
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("monetize")}
+            </h1> */ }
             <MonetizePanel />
             <CompliancePanel />
           </div>
@@ -110,11 +143,21 @@ function Dashboard() {
       case "reports":
         return (
           <div className="space-y-6">
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("view_detailed_reports")}
+            </h1> */ }
             <ReportsPanel />
           </div>
         );
       case "admin":
-        return <AdminDashboard />;
+        return (
+          <div className="space-y-6">
+            {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              {t("admin_panel")}
+            </h1> */ }
+            <AdminDashboard />;
+          </div>
+        );
       default:
         return null;
     }
@@ -134,7 +177,7 @@ function Dashboard() {
                 : section === "admin"
                 ? "Administración"
                 : t(section)}
-            </h1> */}
+            </h1> 
               <h2 className="font-bold text-gray-900">
                 {(() => {
                   switch (section) {
@@ -159,6 +202,7 @@ function Dashboard() {
                   }
                 })()}
               </h2>
+              */}
             </div>
             <div className={isMobile ? "px-4" : ""}>{renderSection()}</div>
           </div>

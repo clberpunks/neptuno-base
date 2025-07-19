@@ -99,12 +99,16 @@ export default function FirewallManager() {
     .filter((r) => r.policy === "tariff" && r.fee)
     .reduce((acc, r) => acc + (r.fee || 0), 0);
 
+  const hasTrackingData = totalTokens > 0;
+
   return (
     <div className="space-y-6">
       <FirewallDashboard
         rules={rules}
         termsStatus="Active"
         privacyStatus="Active"
+        isFirewallActive={!!user?.subscription} // Convertimos a booleano explícitamente
+        hasTrackingData={hasTrackingData}
       />
       {/* Firewall Panel usando ExpandablePanel */}
       <ExpandablePanel

@@ -1,4 +1,5 @@
 // components/FirewallDashboard.tsx
+// components/FirewallDashboard.tsx
 import { useTranslation } from "next-i18next";
 import {
   FiCheckCircle,
@@ -8,8 +9,11 @@ import {
   FiHash,
   FiTag,
   FiFileText,
-  FiShield
+  FiShield,
+  FiPower,
+  FiRadio
 } from "react-icons/fi";
+import DashboardCard from "../shared/DashboardCard";
 
 interface FirewallDashboardProps {
   rules: {
@@ -23,13 +27,17 @@ interface FirewallDashboardProps {
   metaTagsCount?: number;
   termsStatus?: string;
   privacyStatus?: string;
+  isFirewallActive?: boolean; // Nueva prop para estado del firewall
+  hasTrackingData?: boolean; // Nueva prop para pixel de seguimiento
 }
 
 export default function FirewallDashboard({ 
   rules, 
   metaTagsCount = 0,
   termsStatus = "Active",
-  privacyStatus = "Active"
+  privacyStatus = "Active",
+  isFirewallActive,
+  hasTrackingData
 }: FirewallDashboardProps) {
   const { t } = useTranslation("common");
 
@@ -55,159 +63,114 @@ export default function FirewallDashboard({
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">{t("firewall_dashboard")}</h2>
-      </div>
-
-      <div className="space-y-4">
-        {/* Fila 1: KPIs de Firewall */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Permitidos */}
-          <div 
-            className="bg-green-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+      <div className="space-y-3">
+        {/* Fila 1: Nuevos KPIs + KPIs principales */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* 1. Estado del firewall */}
+          <DashboardCard 
+            icon={<FiPower className="text-current text-lg" />}
+            value={isFirewallActive ? t("active") : t("inactive")}
+            label={t("firewall_status")}
+            color={isFirewallActive ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}
             onClick={() => scrollToSection("firewall-management")}
-          >
-            <div className="bg-green-100 p-2 rounded-full mr-3">
-              <FiCheckCircle className="text-green-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {allowedCount}
-              </div>
-              <div className="text-xs text-green-600">
-                {t("allowed_rules")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_firewall_status")}
+          />
 
-          {/* Bloqueados */}
-          <div 
-            className="bg-red-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          {/* 2. Pixel de seguimiento */}
+          <DashboardCard 
+            icon={<FiRadio className="text-current text-lg" />}
+            value={hasTrackingData ? t("on") : t("waiting")}
+            label={t("tracking_pixel")}
+            color={hasTrackingData ? "bg-green-50 text-green-800" : "bg-gray-100 text-gray-800"}
             onClick={() => scrollToSection("firewall-management")}
-          >
-            <div className="bg-red-100 p-2 rounded-full mr-3">
-              <FiXCircle className="text-red-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {blockedCount}
-              </div>
-              <div className="text-xs text-red-600">
-                {t("blocked_rules")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_tracking_status")}
+          />
 
-          {/* Restringidos */}
-          <div 
-            className="bg-orange-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          {/* 3. Permitidos */}
+          <DashboardCard 
+            icon={<FiCheckCircle className="text-green-600 text-lg" />}
+            value={allowedCount}
+            label={t("allowed_rules")}
+            color="bg-green-50 text-green-800"
             onClick={() => scrollToSection("firewall-management")}
-          >
-            <div className="bg-orange-100 p-2 rounded-full mr-3">
-              <FiLock className="text-orange-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {restrictedCount}
-              </div>
-              <div className="text-xs text-orange-600">
-                {t("restricted_rules")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_allowed_rules")}
+          />
 
-          {/* Tarifas */}
-          <div 
-            className="bg-blue-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          {/* 4. Bloqueados */}
+          <DashboardCard 
+            icon={<FiXCircle className="text-red-600 text-lg" />}
+            value={blockedCount}
+            label={t("blocked_rules")}
+            color="bg-red-50 text-red-800"
             onClick={() => scrollToSection("firewall-management")}
-          >
-            <div className="bg-blue-100 p-2 rounded-full mr-3">
-              <FiDollarSign className="text-blue-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {tariffCount}
-              </div>
-              <div className="text-xs text-blue-600">
-                {t("tariff_rules")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_blocked_rules")}
+          />
         </div>
 
-        {/* Fila 2: KPIs de SEO y Legal */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Tokens permitidos */}
-          <div 
-            className="bg-purple-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+        {/* Fila 2: Resto de KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Restringidos */}
+          <DashboardCard 
+            icon={<FiLock className="text-amber-600 text-lg" />}
+            value={restrictedCount}
+            label={t("restricted_rules")}
+            color="bg-amber-50 text-amber-800"
             onClick={() => scrollToSection("firewall-management")}
-          >
-            <div className="bg-purple-100 p-2 rounded-full mr-3">
-              <FiHash className="text-purple-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {totalTokens.toLocaleString()}
-              </div>
-              <div className="text-xs text-purple-600">
-                {t("total_tokens")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_restricted_rules")}
+          />
+
+          {/* Tarifas */}
+          <DashboardCard 
+            icon={<FiDollarSign className="text-blue-600 text-lg" />}
+            value={tariffCount}
+            label={t("tariff_rules")}
+            color="bg-blue-50 text-blue-800"
+            onClick={() => scrollToSection("firewall-management")}
+            ariaLabel={t("view_tariff_rules")}
+          />
+
+          {/* Tokens permitidos */}
+          <DashboardCard 
+            icon={<FiHash className="text-purple-600 text-lg" />}
+            value={totalTokens.toLocaleString()}
+            label={t("total_tokens")}
+            color="bg-purple-50 text-purple-800"
+            onClick={() => scrollToSection("firewall-management")}
+            ariaLabel={t("view_total_tokens")}
+          />
 
           {/* Meta tags generados */}
-          <div 
-            className="bg-indigo-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard 
+            icon={<FiTag className="text-indigo-600 text-lg" />}
+            value={seoBlockedCount + seoAllowedCount}
+            label={t("seo_rules")}
+            color="bg-indigo-50 text-indigo-800"
             onClick={() => scrollToSection("meta-seo")}
-          >
-            <div className="bg-indigo-100 p-2 rounded-full mr-3">
-              <FiTag className="text-indigo-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {seoBlockedCount + seoAllowedCount}
-              </div>
-              <div className="text-xs text-indigo-600">
-                {t("seo_rules")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_seo_rules")}
+          />
+        </div>
 
+        {/* Fila 3: KPIs de Legal */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Términos de servicio */}
-          <div 
-            className="bg-amber-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard 
+            icon={<FiFileText className="text-amber-600 text-lg" />}
+            value={termsStatus}
+            label={t("terms_status")}
+            color="bg-amber-50 text-amber-800"
             onClick={() => scrollToSection("terms")}
-          >
-            <div className="bg-amber-100 p-2 rounded-full mr-3">
-              <FiFileText className="text-amber-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {termsStatus}
-              </div>
-              <div className="text-xs text-amber-600">
-                {t("terms_status")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_terms_status")}
+          />
 
           {/* Política de privacidad */}
-          <div 
-            className="bg-cyan-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard 
+            icon={<FiShield className="text-cyan-600 text-lg" />}
+            value={privacyStatus}
+            label={t("privacy_status")}
+            color="bg-cyan-50 text-cyan-800"
             onClick={() => scrollToSection("privacy")}
-          >
-            <div className="bg-cyan-100 p-2 rounded-full mr-3">
-              <FiShield className="text-cyan-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {privacyStatus}
-              </div>
-              <div className="text-xs text-cyan-600">
-                {t("privacy_status")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_privacy_status")}
+          />
         </div>
       </div>
     </div>

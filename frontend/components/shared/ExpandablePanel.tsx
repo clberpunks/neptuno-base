@@ -23,7 +23,7 @@ export default function ExpandablePanel({
   statusLabel,
   statusColor = 'bg-gray-100 text-gray-800',
   children,
-  defaultExpanded = false,
+  defaultExpanded = true,
   loading = false,
   error,
 }: ExpandablePanelProps) {

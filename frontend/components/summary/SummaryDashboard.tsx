@@ -1,5 +1,4 @@
 // components/SummaryDashboard.tsx
-// components/SummaryDashboard.tsx
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../utils/api";
 import { useTranslation } from "next-i18next";
@@ -15,6 +14,7 @@ import {
   FiBookOpen,
 } from "react-icons/fi";
 import Spinner from "../shared/Spinner";
+import DashboardCard from "../shared/DashboardCard";
 
 interface DashboardData {
   unreadNotifications: number;
@@ -30,6 +30,7 @@ interface DashboardData {
       allowed: number;
     };
     protectionLevel: "low" | "medium" | "high";
+    isProUser: boolean; // Nuevo campo para determinar tipo de suscripción
   };
   onboardingProgress: {
     completed: number;
@@ -68,6 +69,9 @@ export default function SummaryDashboard() {
         // Obtener datos de riesgo
         const riskData = await apiFetch<any>("/rest/logs/insights");
 
+        // Añadir información de suscripción (simulada)
+        riskData.isProUser = true; // TODO: Cambiar por dato real del backend
+
         // Obtener progreso de onboarding (simulado)
         const onboardingProgress = {
           completed: 3,
@@ -99,7 +103,7 @@ export default function SummaryDashboard() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center min-h-[300px]">
         <Spinner />
       </div>
     );
@@ -107,24 +111,28 @@ export default function SummaryDashboard() {
 
   if (error || !dashboardData) {
     return (
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
-        <p className="text-center text-gray-500 p-6">
+      <div
+        className="bg-white rounded-xl shadow-sm overflow-hidden p-4"
+        role="alert"
+        aria-live="assertive"
+      >
+        <p className="text-center text-gray-700 p-6">
           {error || t("no_data_available")}
         </p>
       </div>
     );
   }
 
-  // Colores para niveles de riesgo
+  // Colores para niveles de riesgo (optimizados para AAA)
   const riskStatusColor = {
     low: "bg-green-100 text-green-800",
-    medium: "bg-yellow-100 text-yellow-800",
+    medium: "bg-amber-100 text-amber-800",
     high: "bg-red-100 text-red-800",
   };
 
   const protectionLevelColor = {
     low: "bg-red-100 text-red-800",
-    medium: "bg-yellow-100 text-yellow-800",
+    medium: "bg-amber-100 text-amber-800",
     high: "bg-green-100 text-green-800",
   };
 
@@ -135,170 +143,108 @@ export default function SummaryDashboard() {
     high: t("risk_high"),
   };
 
-  const protectionText = {
-    low: t("protection_low"),
-    medium: t("protection_medium"),
-    high: t("protection_high"),
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">{t("dashboard_summary")}</h2>
+    <div
+      className="bg-white rounded-xl shadow-sm overflow-hidden p-4 mb-6 transition-all duration-300"
+      aria-label={t("dashboard_summary")}
+    >
+     
+      {/* <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-900">
+          {t("dashboard_summary")}
+        </h2>
       </div>
+        */}
 
-      <div className="space-y-4">
-        {/* Fila 1: KPIs principales */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Notificaciones sin leer */}
-          <div 
-            className="bg-indigo-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+      <div className="space-y-3">
+        {/* Fila 1: KPIs principales - Nuevo orden */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* 1. Notificaciones sin leer */}
+          <DashboardCard
+            icon={<FiBell className="text-indigo-600 text-lg" />}
+            value={dashboardData.unreadNotifications}
+            label={t("unread_notifications")}
+            color="bg-indigo-50 text-indigo-800"
             onClick={() => scrollToSection("notifications")}
-          >
-            <div className="bg-indigo-100 p-2 rounded-full mr-3">
-              <FiBell className="text-indigo-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.unreadNotifications}
-              </div>
-              <div className="text-xs text-indigo-600">
-                {t("unread_notifications")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_notifications")}
+          />
 
-          {/* Situación de riesgo */}
-          <div 
-            className={`rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow ${
-              riskStatusColor[dashboardData.riskData.last24h.riskLevel]
-            }`}
+          {/* 2. Nivel de protección - Texto cambiado según suscripción */}
+          <DashboardCard
+            icon={<FiShield className="text-current text-lg" />}
+            value={
+              dashboardData.riskData.isProUser
+                ? t("protecting")
+                : t("only_analysis")
+            }
+            label={t("protection_status")}
+            color={protectionLevelColor[dashboardData.riskData.protectionLevel]}
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="p-2 rounded-full mr-3">
-              <FiAlertTriangle className="text-current text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {riskText[dashboardData.riskData.last24h.riskLevel]}
-              </div>
-              <div className="text-xs text-current">
-                {t("current_risk")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_protection_details")}
+          />
 
-          {/* Nivel de protección */}
-          <div 
-            className={`rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow ${
-              protectionLevelColor[dashboardData.riskData.protectionLevel]
-            }`}
+          {/* 3. Situación de riesgo */}
+          <DashboardCard
+            icon={<FiAlertTriangle className="text-current text-lg" />}
+            value={riskText[dashboardData.riskData.last24h.riskLevel]}
+            label={t("current_risk")}
+            color={riskStatusColor[dashboardData.riskData.last24h.riskLevel]}
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="p-2 rounded-full mr-3">
-              <FiShield className="text-current text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {protectionText[dashboardData.riskData.protectionLevel]}
-              </div>
-              <div className="text-xs text-current">
-                {t("protection_level")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_risk_details")}
+          />
 
-          {/* Tutoriales completados */}
-          <div 
-            className="bg-purple-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          {/* 4. Tutoriales completados */}
+          <DashboardCard
+            icon={<FiBookOpen className="text-purple-600 text-lg" />}
+            value={`${dashboardData.onboardingProgress.completed}/${dashboardData.onboardingProgress.total}`}
+            label={t("tutorials_completed")}
+            color="bg-purple-50 text-purple-800"
             onClick={() => scrollToSection("onboarding")}
-          >
-            <div className="bg-purple-100 p-2 rounded-full mr-3">
-              <FiBookOpen className="text-purple-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.onboardingProgress.completed}/
-                {dashboardData.onboardingProgress.total}
-              </div>
-              <div className="text-xs text-purple-600">
-                {t("tutorials_completed")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_onboarding_progress")}
+          />
         </div>
 
         {/* Fila 2: KPIs secundarios */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Bots detectados */}
-          <div 
-            className="bg-blue-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Total detectados */}
+          <DashboardCard
+            icon={<FiBarChart className="text-blue-600 text-lg" />}
+            value={dashboardData.riskData.last7days.totalDetected}
+            label={t("total_detected")}
+            color="bg-blue-50 text-blue-800"
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="bg-blue-100 p-2 rounded-full mr-3">
-              <FiBarChart className="text-blue-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.riskData.last7days.totalDetected}
-              </div>
-              <div className="text-xs text-blue-600">
-                {t("total_detected")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_detections_details")}
+          />
 
           {/* Bots disuadidos */}
-          <div 
-            className="bg-red-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard
+            icon={<FiUserX className="text-red-600 text-lg" />}
+            value={dashboardData.riskData.last7days.blocked}
+            label={t("bots_blocked")}
+            color="bg-red-50 text-red-800"
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="bg-red-100 p-2 rounded-full mr-3">
-              <FiUserX className="text-red-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.riskData.last7days.blocked}
-              </div>
-              <div className="text-xs text-red-600">{t("bots_blocked")}</div>
-            </div>
-          </div>
+            ariaLabel={t("view_blocked_bots")}
+          />
 
           {/* Bots limitados */}
-          <div 
-            className="bg-yellow-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard
+            icon={<FiUserCheck className="text-amber-600 text-lg" />}
+            value={dashboardData.riskData.last7days.limited}
+            label={t("bots_limited")}
+            color="bg-amber-50 text-amber-800"
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="bg-yellow-100 p-2 rounded-full mr-3">
-              <FiUserCheck className="text-yellow-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.riskData.last7days.limited}
-              </div>
-              <div className="text-xs text-yellow-600">
-                {t("bots_limited")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_limited_bots")}
+          />
 
           {/* Bots permitidos */}
-          <div 
-            className="bg-green-50 rounded-lg p-3 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          <DashboardCard
+            icon={<FiCheckCircle className="text-green-600 text-lg" />}
+            value={dashboardData.riskData.last7days.allowed}
+            label={t("bots_allowed")}
+            color="bg-green-50 text-green-800"
             onClick={() => scrollToSection("risk-panel")}
-          >
-            <div className="bg-green-100 p-2 rounded-full mr-3">
-              <FiCheckCircle className="text-green-600 text-lg" />
-            </div>
-            <div>
-              <div className="text-xl font-bold">
-                {dashboardData.riskData.last7days.allowed}
-              </div>
-              <div className="text-xs text-green-600">
-                {t("bots_allowed")}
-              </div>
-            </div>
-          </div>
+            ariaLabel={t("view_allowed_bots")}
+          />
         </div>
       </div>
     </div>
