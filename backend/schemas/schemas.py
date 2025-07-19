@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from enum import Enum
 
+#model_config = ConfigDict(from_attributes=True)  # Reemplaza orm_mode
 
 class UserRole(str, Enum):
     admin = "admin"

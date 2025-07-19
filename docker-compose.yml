@@ -40,6 +40,11 @@ services:
     networks:
       app_net:
         ipv4_address: 172.80.0.100
+    #dns:
+    #  - 8.8.8.8
+    #  - 1.1.1.1
+    extra_hosts:
+      - "www.gravatar.com:172.67.136.25"  # IP actual de Gravatar
 
   db:
     image: postgres:15

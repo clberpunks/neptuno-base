@@ -14,6 +14,7 @@ async function tryRefresh(): Promise<boolean> {
   }
 }
 
+
 export async function apiFetch<T>(
   url: string,
   options: Omit<RequestInit, 'body'> & { body?: BodyInit | object } = {}
@@ -53,4 +54,17 @@ export async function apiFetch<T>(
   }
 
   return res.json();
+}
+
+
+
+// probar 
+async function fetchWithRetry(url, options = {}, retries = 3) {
+  try {
+    return await fetch(url, options)
+  } catch (err) {
+    if (retries <= 0) throw err
+    await new Promise(res => setTimeout(res, 1000))
+    return fetchWithRetry(url, options, retries - 1)
+  }
 }

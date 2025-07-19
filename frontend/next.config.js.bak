@@ -15,16 +15,6 @@ module.exports = {
       "ui-avatars.com",
       "www.gravatar.com",
     ],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.gravatar.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.googleusercontent.com',
-      }
-    ],
   },
   async rewrites() {
     return [
