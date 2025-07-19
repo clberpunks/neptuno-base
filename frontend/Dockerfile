@@ -15,12 +15,12 @@ ENV DEBUG=next:*
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "cd .next/standalone && node server.js"]
+#CMD ["sh", "-c", "cd .next/standalone && node neptuno-base/frontend/server.js --hostname 0.0.0.0 --port 3000"]
 
 
 #CMD ["npm", "run", "dev"]
 
-#CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start"]
 
 #CMD ["sh", "-c", "node .next/standalone/server.js"]
 
