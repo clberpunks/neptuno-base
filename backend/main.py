@@ -9,6 +9,8 @@ from config import settings
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 import uuid
+import warnings
+#warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 
 #from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware

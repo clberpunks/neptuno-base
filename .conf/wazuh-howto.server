@@ -1,0 +1,33 @@
+#!/bin/bash
+# Ejecutar en TODOS los servidores
+
+# 1. Firewall básico
+ufw default deny incoming
+ufw allow from 10.0.0.0/16
+ufw allow 22/tcp
+ufw --force enable
+
+# 2. Kernel hardening
+echo "kernel.kptr_restrict=2" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter=1" >> /etc/sysctl.conf
+sysctl -p
+
+# 3. SSH hardening
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+systemctl restart sshd
+
+# 4. Instalar agentes de seguridad
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add -
+echo "deb https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+apt update
+apt install wazuh-agent -y
+systemctl enable wazuh-agent
+
+# Configuración mínima para todos los nodos:
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add -
+echo "deb https://packages.wazuh.com/4.x/apt/ stable main" | tee /etc/apt/sources.list.d/wazuh.list
+apt update
+apt install wazuh-agent -y
+systemctl enable --now wazuh-agent
+

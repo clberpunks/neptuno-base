@@ -1,0 +1,33 @@
+# EN TODOS LOS SERVIDORES:
+apt install libpam-google-authenticator -y
+echo "auth required pam_google_authenticator.so" >> /etc/pam.d/sshd
+echo "ChallengeResponseAuthentication yes" >> /etc/ssh/sshd_config
+systemctl restart sshd
+
+# Configurar por usuario:
+sudo -u tu_usuario google-authenticator
+
+#!/bin/bash
+# Ejecutar en TODOS los servidores
+
+# 1. Deshabilitar acceso root
+passwd -l root
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+
+# 2. Autenticación 2FA para SSH
+apt install libpam-google-authenticator -y
+echo "auth required pam_google_authenticator.so" >> /etc/pam.d/sshd
+echo "AuthenticationMethods publickey,keyboard-interactive" >> /etc/ssh/sshd_config
+
+# 3. Kernel hardening
+echo "kernel.kptr_restrict=2" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter=1" >> /etc/sysctl.conf
+echo "net.ipv4.icmp_echo_ignore_all=1" >> /etc/sysctl.conf
+sysctl -p
+
+# 4. Filesystem protection
+chattr +i /etc/passwd /etc/shadow /etc/group /etc/sudoers
+chmod 700 /boot /usr/src /lib/modules
+
+# 5. Reiniciar servicios
+systemctl restart sshd

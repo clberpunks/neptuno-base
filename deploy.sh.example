@@ -11,6 +11,10 @@ echo "GRAFANA_PASSWORD=$(openssl rand -base64 16)" >> .env
 # 2. Iniciar Docker Swarm
 docker swarm init
 
+#echo "DB_PASS=$(openssl rand -hex 32)" >> .env-secret
+#docker secret create db_pass .env-secret
+# docker run --rm --net=host instrumentisto/nmap -sV -Pn 10.0.0.0/24
+
 # 3. Desplegar stack
 docker stack deploy -c docker-compose.yml ciberpunk --with-registry-auth
 

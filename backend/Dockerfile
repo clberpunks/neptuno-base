@@ -28,4 +28,7 @@ USER ciberpunk
 EXPOSE 8001
 
 # Gunicorn para producción
-CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001 --timeout 120"]
+#CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001 --timeout 120"]
+
+# ultra optimizado para producción
+CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && gunicorn main:app --workers $((2 * $(nproc) + 1)) --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001 --timeout 120 --keep-alive 10"]
