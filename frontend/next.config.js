@@ -1,4 +1,5 @@
 // next.config.js
+const path = require("path");
 const backendUrl = process.env.BACKEND_URL;
 
 module.exports = {
@@ -14,12 +15,12 @@ module.exports = {
       "via.placeholder.com",
       "lh3.googleusercontent.com",
       "ui-avatars.com",
-      "www.gravatar.com","gravatar.com",
+      "www.gravatar.com",
+      "gravatar.com",
       "avatars.githubusercontent.com",
-      "cdn.discordapp.com"
+      "cdn.discordapp.com",
     ],
     remotePatterns: [
-
       {
         protocol: "https",
         hostname: "**.gravatar.com",
