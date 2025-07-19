@@ -37,6 +37,10 @@ module.exports = {
         source: "/rest/:path*",
         destination: `${backendUrl}/:path*`,
       },
+      {
+        source: "/_next/static/:path*",
+        destination: "/_next/static/:path*",
+      }
     ];
   },
   async redirects() {

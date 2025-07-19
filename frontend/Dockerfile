@@ -9,8 +9,14 @@ RUN npm run build
 
 # Especifica el host y puerto para Next.js
 ENV HOST=0.0.0.0 PORT=3000
+# logs
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV DEBUG=next:*
 
 EXPOSE 3000
+
+CMD ["sh", "-c", "cd .next/standalone && node server.js"]
+
 
 #CMD ["npm", "run", "dev"]
 
@@ -18,7 +24,7 @@ EXPOSE 3000
 
 #CMD ["sh", "-c", "node .next/standalone/server.js"]
 
-CMD ["sh", "-c", "npm run build && node .next/standalone/server.js --hostname 0.0.0.0"]
+#CMD ["sh", "-c", "npm run build && node .next/standalone/server.js --hostname 0.0.0.0"]
 
 #CMD ["sh", "-c", "npm run build && node .next/standalone/server.js"]
 
