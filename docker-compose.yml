@@ -71,7 +71,7 @@ volumes:
 networks:
   app_net:
     driver: bridge
-    internal: true 
+    internal: false 
     ipam:
       config:
         - subnet: 172.80.0.0/16
