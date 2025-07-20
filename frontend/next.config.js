@@ -69,11 +69,11 @@ module.exports = {
   //  outputStandalone: true,
   //},
   experimental: {
-    outputStandalone: true,
-    outputFileTracingRoot: path.join(__dirname, "../../"),
-    outputFileTracingIncludes: {
-      "/*": ["./public/**/*"],
-    },
+    // outputStandalone: true,
+    // outputFileTracingRoot: path.join(__dirname, "../../"),
+    //outputFileTracingIncludes: {
+    //  "/*": ["./public/**/*"],
+    //},
   },
   async headers() {
     return [
@@ -82,7 +82,7 @@ module.exports = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "", // "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' api.ciberpunk.es; frame-ancestors 'none';",
+            value: "", // "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' ciberpunk.es; frame-ancestors 'none';",
           },
           {
             key: "X-Frame-Options",

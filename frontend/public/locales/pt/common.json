@@ -313,7 +313,6 @@
   "meta_tags": "Meta Tags",
   "terms_of_service": "Terms of Service",
 
-  
   "inactive": "DESACTIVO",
   "firewall_status": "Estado del Firewall",
   "on": "ON",
@@ -350,5 +349,4 @@
   "users_limit_tooltip": "Usuarios permitidos",
   "hits": "hits",
   "traffic_usage": "Uso de tráfico"
-
 }

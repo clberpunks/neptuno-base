@@ -6,24 +6,17 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useAuth } from "../hooks/useAuth";
 import { withAuth } from "../utils/withAuth";
 import { useFetchHistory } from "../hooks/userFetchHistory";
-import RiskPanel from "../components/summary/RiskPanel";
 import FirewallManager, { Rule } from "../components/firewall/FirewallManager";
 import Radar from "../components/radar/Radar";
-import TrackingCodePanel from "../components/radar/TrackingCode";
 import SummarySection from "../components/summary/SummarySection";
 import ProfileSection from "../components/profile/ProfileSection";
 import HelpSection from "../components/help/HelpSection";
 import CompliancePanel from "../components/compliance/CompliancePanel";
-import TermsPanel from "../components/compliance/TermsPanel";
 import ReportsPanel from "../components/reports/ReportsPanel";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import Spinner from "../components/shared/Spinner";
 import MonetizePanel from "../components/monetize/MonetizePanel";
 import BetaBanner from "../components/BetaBanner";
-import RobotsGenerator from "../components/firewall/RobotsGenerator";
-import MetaSEO from "../components/firewall/MetaSEO";
-import PaymentHistory from "../components/profile/PaymentHistory";
-import FirewallDashboard from "../components/firewall/FirewallDashboard";
 
 interface LoginEntry {
   timestamp: string;
@@ -92,7 +85,7 @@ function Dashboard() {
             <div className="space-y-6">
               {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
                 {t("manage_profile_and_access")}
-              </h1> */ }
+              </h1> */}
               <ProfileSection
                 user={user}
                 accessHistory={accessHistory}
@@ -106,7 +99,7 @@ function Dashboard() {
           <div className="space-y-6">
             {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {t("manage_profile_and_access")}
-            </h1> */ }
+            </h1> */}
             <Radar />
           </div>
         );
@@ -115,7 +108,7 @@ function Dashboard() {
           <div className="space-y-6">
             {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {t("manage_access_rules")}
-            </h1> */ }
+            </h1> */}
             <FirewallManager />
           </div>
         );
@@ -135,7 +128,7 @@ function Dashboard() {
           <div className="space-y-6">
             {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {t("monetize")}
-            </h1> */ }
+            </h1> */}
             <MonetizePanel />
             <CompliancePanel />
           </div>
@@ -145,7 +138,7 @@ function Dashboard() {
           <div className="space-y-6">
             {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {t("view_detailed_reports")}
-            </h1> */ }
+            </h1> */}
             <ReportsPanel />
           </div>
         );
@@ -154,7 +147,7 @@ function Dashboard() {
           <div className="space-y-6">
             {/* <h1 className="text-2xl font-bold text-gray-900 capitalize">
               {t("admin_panel")}
-            </h1> */ }
+            </h1> */}
             <AdminDashboard />;
           </div>
         );

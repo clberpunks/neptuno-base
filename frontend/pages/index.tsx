@@ -1,12 +1,16 @@
-import { GetServerSideProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { NextPage } from 'next';
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { NextPage } from "next";
 
 const IndexPage: NextPage = () => {
   return null;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale, resolvedUrl, req }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  resolvedUrl,
+  req,
+}) => {
   // Redirigir si es solo el locale (/es o /en)
   if (resolvedUrl === `/${locale}`) {
     return {
@@ -18,10 +22,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, resolvedU
   }
 
   // Redirigir la raíz (/)
-  if (resolvedUrl === '/') {
+  if (resolvedUrl === "/") {
     return {
       redirect: {
-        destination: '/public', // o a tu locale por defecto
+        destination: "/public", // o a tu locale por defecto
         permanent: false,
       },
     };
@@ -29,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, resolvedU
 
   return {
     props: {
-      ...(await serverSideTranslations(locale || 'es', ['common'])),
+      ...(await serverSideTranslations(locale || "es", ["common"])),
     },
   };
 };

@@ -1,4 +1,4 @@
-// components/Radar.tsx
+// frontend/components/radar/Radar.tsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { useRadarNotifications } from "../../hooks/useRadarNotifications";
@@ -37,8 +37,8 @@ export default function Radar() {
       try {
         setLoading(true);
         const [statsData, logsData] = await Promise.all([
-          apiFetch<Stats>("/api/logs/stats"),
-          apiFetch<Log[]>("/api/logs?limit=1000"),
+          apiFetch<Stats>("/rest/logs/stats"),
+          apiFetch<Log[]>("/rest/logs?limit=1000"),
         ]);
         setStats(statsData);
         setAllLogs(logsData);

@@ -148,7 +148,6 @@ export default function SummaryDashboard() {
       className="bg-white rounded-xl shadow-sm overflow-hidden p-4 mb-6 transition-all duration-300"
       aria-label={t("dashboard_summary")}
     >
-     
       {/* <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-900">
           {t("dashboard_summary")}

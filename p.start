@@ -1,4 +1,4 @@
-A continuación, te presento un boilerplate base que estoy creando con Next.js en el frontend y FastAPI en el backend, utilizando SQLite3 como base de datos, 
+A continuación, te presento un boilerplate base que estoy creando con Next.js en el frontend y FastAPI en el backend, utilizando postgre como base de datos, 
 autenticación segura con OAuth2, JWT y logging básico. 
 
 Aqui tienes todos los archivos del proyecto para que los estudies:
