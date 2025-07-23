@@ -49,6 +49,7 @@ def list_logs(
     total = query.count()
     raw = query.offset(offset).limit(limit).all()
     
+    # Return only the logs within the cutoff
     return [{
         "id": r.id,
         "timestamp": r.timestamp,
@@ -126,77 +127,85 @@ def get_user_firewall_stats(
     stats["total"] = total
     return stats
 
-# backend/routers/logs.py (parte modificada)
+# backend/routers/logs.py
+# Add range to insights endpoint
 @router.get("/insights")
-def risk_insights(current_user=Depends(get_current_user),
-                  db: Session = Depends(get_db)):
-    now = datetime.utcnow()
+def risk_insights(
+    range: str = Query("24h", description="Time range for insights"),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    cutoff = get_cutoff_from_range(range)
+    
+    # Detections in selected range
+    detections = db.query(func.count(AccessLog.id)).filter(
+        AccessLog.tenant_id == current_user.id, 
+        AccessLog.timestamp >= cutoff,
+        AccessLog.outcome.in_(["block", "limit", "ratelimit", "redirect", "flagged"])
+    ).scalar()
 
-    # Detecciones en las últimas 24 horas
-    last_24h = now - timedelta(hours=24)
-    detections_24h = (db.query(func.count(AccessLog.id)).filter(
-        AccessLog.tenant_id == current_user.id, AccessLog.timestamp
-        >= last_24h,
-        AccessLog.outcome.in_(
-            ["block", "limit", "ratelimit", "redirect", "flagged"])).scalar())
-
-    # Determinar nivel de riesgo basado en detecciones
+    # Risk level based on detections
     risk_level = "low"
-    if detections_24h > 50:
+    if detections > 50:
         risk_level = "high"
-    elif detections_24h > 20:
+    elif detections > 20:
         risk_level = "medium"
 
-    # Estadísticas de los últimos 7 días
-    last_7d = now - timedelta(days=7)
-    last_7d_stats = (db.query(
+    # Stats for selected range
+    stats = db.query(
         func.count(AccessLog.id).label("total"),
-        func.sum(case((AccessLog.outcome == "block", 1),
-                      else_=0)).label("blocked"),
-        func.sum(case((AccessLog.outcome == "limit", 1),
-                      else_=0)).label("limited"),
-        func.sum(case((AccessLog.outcome == "allow", 1),
-                      else_=0)).label("allowed")).filter(
-                          AccessLog.tenant_id == current_user.id,
-                          AccessLog.timestamp >= last_7d).first())
+        func.sum(case((AccessLog.outcome == "block", 1), else_=0)).label("blocked"),
+        func.sum(case((AccessLog.outcome == "limit", 1), else_=0)).label("limited"),
+        func.sum(case((AccessLog.outcome == "allow", 1), else_=0)).label("allowed")
+    ).filter(
+        AccessLog.tenant_id == current_user.id,
+        AccessLog.timestamp >= cutoff
+    ).first()
 
-    # Obtener todos los logs para procesar los tipos de bots en Python
-    logs = (db.query(AccessLog.user_agent).filter(
-        AccessLog.tenant_id == current_user.id, AccessLog.timestamp >= last_7d,
-        AccessLog.outcome.in_(
-            ["block", "limit", "ratelimit", "redirect", "flagged"])).all())
+    # Get logs for bot types
+    logs = db.query(AccessLog.user_agent).filter(
+        AccessLog.tenant_id == current_user.id, 
+        AccessLog.timestamp >= cutoff,
+        AccessLog.outcome.in_(["block", "limit", "ratelimit", "redirect", "flagged"])
+    ).all()
 
-    # Procesar tipos de bots en Python
+    # Process bot types
     bot_counts = {}
     for log in logs:
-        # Extraer la primera parte del user_agent (normalmente el nombre del navegador/bot)
-        bot_type = log.user_agent.split('/')[0].split(
-            ' ')[0] if log.user_agent else "Unknown"
+        bot_type = log.user_agent.split('/')[0].split(' ')[0] if log.user_agent else "Unknown"
         bot_counts[bot_type] = bot_counts.get(bot_type, 0) + 1
 
-    # Ordenar y limitar a los 10 más comunes
-    sorted_bots = sorted(bot_counts.items(), key=lambda x: x[1],
-                         reverse=True)[:10]
+    sorted_bots = sorted(bot_counts.items(), key=lambda x: x[1], reverse=True)[:10]
     by_bot_type = [{"botType": bot[0], "count": bot[1]} for bot in sorted_bots]
 
-    # Nivel de protección según el plan del usuario (simulado)
-    protection_level = "low"  # En producción esto vendría del perfil del usuario
+    # Simulated protection level
+    protection_level = "low"
 
     return {
+        # New structure
+        "detections": detections,
+        "riskLevel": risk_level,
+        "stats": {
+            "total": stats.total or 0,
+            "blocked": stats.blocked or 0,
+            "limited": stats.limited or 0,
+            "allowed": stats.allowed or 0
+        },
+        "byBotType": by_bot_type,
+        "protectionLevel": protection_level,
+        
+        # Old structure for backward compatibility
         "last24h": {
-            "detections": detections_24h,
+            "detections": detections,
             "riskLevel": risk_level
         },
         "last7days": {
-            "totalDetected": last_7d_stats.total,
-            "blocked": last_7d_stats.blocked or 0,
-            "limited": last_7d_stats.limited or 0,
-            "allowed": last_7d_stats.allowed or 0
-        },
-        "byBotType": by_bot_type,
-        "protectionLevel": protection_level
+            "totalDetected": stats.total or 0,
+            "blocked": stats.blocked or 0,
+            "limited": stats.limited or 0,
+            "allowed": stats.allowed or 0
+        }
     }
-
 
 @router.get("/advanced-insights", response_model=AdvancedInsightsOut)
 def advanced_insights(current_user=Depends(get_current_user),

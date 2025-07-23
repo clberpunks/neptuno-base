@@ -123,7 +123,9 @@ export default function SummaryDashboard() {
     );
   }
 
-  // Colores para niveles de riesgo (optimizados para AAA)
+
+
+  // Use the mapped data instead of the raw response
   const riskStatusColor = {
     low: "bg-green-100 text-green-800",
     medium: "bg-amber-100 text-amber-800",
@@ -136,7 +138,6 @@ export default function SummaryDashboard() {
     high: "bg-green-100 text-green-800",
   };
 
-  // Textos traducidos
   const riskText = {
     low: t("risk_low"),
     medium: t("risk_medium"),
@@ -168,26 +169,26 @@ export default function SummaryDashboard() {
             ariaLabel={t("view_notifications")}
           />
 
-          {/* 2. Nivel de protección - Texto cambiado según suscripción */}
+          {/* 2. Nivel de protección - Updated to use mapped data */}
           <DashboardCard
             icon={<FiShield className="text-current text-lg" />}
             value={
-              dashboardData.riskData.isProUser
+              dashboardData?.riskData.isProUser
                 ? t("protecting")
                 : t("only_analysis")
             }
             label={t("protection_status")}
-            color={protectionLevelColor[dashboardData.riskData.protectionLevel]}
+            color={protectionLevelColor[dashboardData.riskData.protectionLevel || "low"]}
             onClick={() => scrollToSection("risk-panel")}
             ariaLabel={t("view_protection_details")}
           />
 
-          {/* 3. Situación de riesgo */}
+          {/* 3. Situación de riesgo - Updated to use mapped data */}
           <DashboardCard
             icon={<FiAlertTriangle className="text-current text-lg" />}
-            value={riskText[dashboardData.riskData.last24h.riskLevel]}
+            value={riskText[dashboardData.riskData.last24h.riskLevel || "low"]}
             label={t("current_risk")}
-            color={riskStatusColor[dashboardData.riskData.last24h.riskLevel]}
+            color={riskStatusColor[dashboardData.riskData.last24h.riskLevel || "low"]}
             onClick={() => scrollToSection("risk-panel")}
             ariaLabel={t("view_risk_details")}
           />
@@ -208,7 +209,7 @@ export default function SummaryDashboard() {
           {/* Total detectados */}
           <DashboardCard
             icon={<FiBarChart className="text-blue-600 text-lg" />}
-            value={dashboardData.riskData.last7days.totalDetected}
+            value={dashboardData.riskData.last7days.totalDetected || 0}
             label={t("total_detected")}
             color="bg-blue-50 text-blue-800"
             onClick={() => scrollToSection("risk-panel")}
@@ -218,7 +219,7 @@ export default function SummaryDashboard() {
           {/* Bots disuadidos */}
           <DashboardCard
             icon={<FiUserX className="text-red-600 text-lg" />}
-            value={dashboardData.riskData.last7days.blocked}
+            value={dashboardData.riskData.last7days.blocked || 0}
             label={t("bots_blocked")}
             color="bg-red-50 text-red-800"
             onClick={() => scrollToSection("risk-panel")}
@@ -228,7 +229,7 @@ export default function SummaryDashboard() {
           {/* Bots limitados */}
           <DashboardCard
             icon={<FiUserCheck className="text-amber-600 text-lg" />}
-            value={dashboardData.riskData.last7days.limited}
+            value={dashboardData.riskData.last7days.limited || 0}
             label={t("bots_limited")}
             color="bg-amber-50 text-amber-800"
             onClick={() => scrollToSection("risk-panel")}
@@ -238,7 +239,7 @@ export default function SummaryDashboard() {
           {/* Bots permitidos */}
           <DashboardCard
             icon={<FiCheckCircle className="text-green-600 text-lg" />}
-            value={dashboardData.riskData.last7days.allowed}
+            value={dashboardData.riskData.last7days.allowed || 0}
             label={t("bots_allowed")}
             color="bg-green-50 text-green-800"
             onClick={() => scrollToSection("risk-panel")}

@@ -40,12 +40,12 @@ const { timeLabels, timeData } = useMemo(() => {
   const now = new Date();
   let buckets: string[] = [];
   let counts: Record<string, number> = {};
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
+  
+  // Create buckets based on range
   if (range === "24h") {
     for (let i = 23; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 3600000);
-      const label = `${pad(d.getHours())}:00`;
+      const label = `${d.getHours().toString().padStart(2, '0')}:00`;
       buckets.push(label);
       counts[label] = 0;
     }
@@ -57,7 +57,7 @@ const { timeLabels, timeData } = useMemo(() => {
       buckets.push(label);
       counts[label] = 0;
     }
-  } 
+  }
   else if (range === "15d") {
     for (let i = 14; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -65,7 +65,7 @@ const { timeLabels, timeData } = useMemo(() => {
       buckets.push(label);
       counts[label] = 0;
     }
-  } 
+  }
   else if (range === "1m") {
     for (let i = 29; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -73,16 +73,17 @@ const { timeLabels, timeData } = useMemo(() => {
       buckets.push(label);
       counts[label] = 0;
     }
-  } 
+  }
   else if (range === "6m") {
-    for (let i = 179; i >= 0; i -= 7) { // Weekly buckets
-      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-      const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    // Monthly buckets for 6 months
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
       buckets.push(label);
       counts[label] = 0;
     }
-  } 
-  else { // 1y
+  }
+  else { // 1y - monthly buckets
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
@@ -91,21 +92,19 @@ const { timeLabels, timeData } = useMemo(() => {
     }
   }
 
+  // Count logs in each bucket
   logs.forEach(l => {
     const d = new Date(l.timestamp);
     let label = "";
     
     if (range === "24h") {
-      label = `${pad(d.getHours())}:00`;
+      label = `${d.getHours().toString().padStart(2, '0')}:00`;
     } 
     else if (["7d", "15d", "1m"].includes(range)) {
       label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     } 
     else if (range === "6m") {
-      // Find the closest bucket for weekly aggregation
-      const weekStart = new Date(d);
-      weekStart.setDate(d.getDate() - d.getDay());
-      label = weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
     } 
     else { // 1y
       label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });

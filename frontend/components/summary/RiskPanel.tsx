@@ -74,15 +74,16 @@ export default function RiskPanel({ id }: { id?: string }) {
     );
   }
 
+  // Use the mapped data instead of the raw response
   const riskStatusColor = {
     low: "bg-green-100 text-green-800",
-    medium: "bg-yellow-100 text-yellow-800",
+    medium: "bg-amber-100 text-amber-800",
     high: "bg-red-100 text-red-800",
   };
 
   const protectionLevelColor = {
     low: "bg-red-100 text-red-800",
-    medium: "bg-yellow-100 text-yellow-800",
+    medium: "bg-amber-100 text-amber-800",
     high: "bg-green-100 text-green-800",
   };
 
@@ -99,9 +100,9 @@ export default function RiskPanel({ id }: { id?: string }) {
   };
 
   const botTypeData = {
-    labels: riskData.byBotType.map(bot => bot.botType),
+    labels: riskData.byBotType.map(bot => bot.botType) || [],
     datasets: [{
-      data: riskData.byBotType.map(bot => bot.count),
+      data: riskData.byBotType.map(bot => bot.count) || [],
       backgroundColor: [
         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
         '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
@@ -114,8 +115,8 @@ export default function RiskPanel({ id }: { id?: string }) {
       title={t("risk_panel_title")}
       description={riskData.last24h.riskLevel === "high" ? t("high_risk_alert") : t("risk_status_monitoring")}
       icon={<ExclamationTriangleIcon className="h-6 w-6" />}
-      statusLabel={riskStatusText[riskData.last24h.riskLevel]}
-      statusColor={riskStatusColor[riskData.last24h.riskLevel]}
+      statusLabel={riskStatusText[riskData.last24h.riskLevel || "low"]}
+      statusColor={riskStatusColor[riskData.last24h.riskLevel || "low"]}
       defaultExpanded={false}
       error={error}
     >
