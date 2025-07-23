@@ -12,10 +12,30 @@ router = APIRouter(tags=["logs"])
 
 
 @router.get("/")
-def list_logs(page: int = 1,
-              limit: int = 10,
-              current_user=Depends(get_current_user),
-              db: Session = Depends(get_db)):
+def list_logs(  range: str = None, 
+                page: int = 1,
+                limit: int = 1000,
+                current_user=Depends(get_current_user),
+                db: Session = Depends(get_db)):
+    # Calculate time cutoff
+    cutoff = datetime.utcnow()
+    if range == "24h":
+        cutoff -= timedelta(hours=24)
+    elif range == "7d":
+        cutoff -= timedelta(days=7)
+    elif range == "15d":
+        cutoff -= timedelta(days=15)
+    elif range == "1m":
+        cutoff -= timedelta(days=30)
+    elif range == "6m":
+        cutoff -= timedelta(days=180)
+    elif range == "1y":
+        cutoff -= timedelta(days=365)
+    
+    query = db.query(AccessLog).filter(
+        AccessLog.tenant_id == current_user.id,
+        AccessLog.timestamp >= cutoff
+    )
     offset = (page - 1) * limit
     total = db.query(AccessLog).filter(
         AccessLog.tenant_id == current_user.id).count()
@@ -62,7 +82,24 @@ def unseen_logs_count(db: Session = Depends(get_db),
 
 # backend/routers/logs.py (modificado)
 @router.get("/stats")
-def get_firewall_stats(db: Session = Depends(get_db)):
+def get_firewall_stats(range: str = None,
+    db: Session = Depends(get_db)
+    ):
+    cutoff = datetime.utcnow()
+    query = db.query(AccessLog)
+    if range == "24h":
+        cutoff -= timedelta(hours=24)
+    elif range == "7d":
+        cutoff -= timedelta(days=7)
+    elif range == "15d":
+        cutoff -= timedelta(days=15)
+    elif range == "1m":
+        cutoff -= timedelta(days=30)
+    elif range == "6m":
+        cutoff -= timedelta(days=180)
+    elif range == "1y":
+        cutoff -= timedelta(days=365)
+    
     # Obtener estadísticas globales (sin filtrar por tenant_id)
     total = db.query(AccessLog).count()
     stats = {}

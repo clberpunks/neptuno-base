@@ -26,6 +26,7 @@ export async function apiFetch<T>(
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
+      Cookie: document.cookie,
     },
     body:
       options.body && typeof options.body === "object" && !(options.body instanceof FormData) && !(options.body instanceof Blob) && !(options.body instanceof ArrayBuffer)

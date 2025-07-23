@@ -11,7 +11,7 @@ interface SummaryChartsProps {
   stats: Stats;
   logs: Log[];
   loading: boolean;
-  range: "24h" | "7d" | "1m" | "1y";
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
 }
 
 export default function SummaryCharts({
@@ -54,18 +54,21 @@ export default function SummaryCharts({
         const lbl=`${pad(d.getHours())}:00`;
         if (counts[lbl]!=null) counts[lbl]++; 
       });
-    } else if (range === "7d") {
-      for (let i=6;i>=0;i--) {
-        const d=new Date(now.getFullYear(), now.getMonth(), now.getDate()-i);
-        const label = d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
-        buckets.push(label);
-        counts[label]=0;
+    } else if (range === "7d" || range === "15d") {
+        const days = range === "7d" ? 7 : 15;
+        for (let i = days - 1; i >= 0; i--) {
+          for (let i=23;i>=0;i--) {
+          const d = new Date(now.getTime() - i*3600000);
+          const label = `${pad(d.getHours())}:00`;
+          buckets.push(label);
+          counts[label]=0;
+        }
+        logs.forEach(l => {
+          const d=new Date(l.timestamp);
+          const lbl=`${pad(d.getHours())}:00`;
+          if (counts[lbl]!=null) counts[lbl]++; 
+        });
       }
-      logs.forEach(l => {
-        const d=new Date(l.timestamp);
-        const label = d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
-        if (counts[label]!=null) counts[label]++; 
-      });
     } else if (range === "1m") {
       for (let i=29;i>=0;i--) {
         const d=new Date(now.getFullYear(), now.getMonth(), now.getDate()-i);
@@ -78,6 +81,20 @@ export default function SummaryCharts({
         const label = d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
         if (counts[label]!=null) counts[label]++; 
       });
+    } else if (range === "6m") {
+        for (let i = 179; i >= 0; i--) {
+          for (let i=23;i>=0;i--) {
+          const d = new Date(now.getTime() - i*3600000);
+          const label = `${pad(d.getHours())}:00`;
+          buckets.push(label);
+          counts[label]=0;
+        }
+        logs.forEach(l => {
+          const d=new Date(l.timestamp);
+          const lbl=`${pad(d.getHours())}:00`;
+          if (counts[lbl]!=null) counts[lbl]++; 
+        });
+      }
     } else { /* 1y */
       for (let i=11;i>=0;i--) {
         const d=new Date(now.getFullYear(), now.getMonth()-i,1);
