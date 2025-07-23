@@ -14,20 +14,7 @@ export default function RecentDetections({
   loading,
   range,
 }: RecentDetectionsProps) {
-const filtered = useMemo(() => {
-  if (loading) return [];
-  const now = Date.now();
-  let cutoff = now;
-  if (range === "24h") cutoff -= 24 * 3600000;
-  else if (range === "7d") cutoff -= 7 * 24 * 3600000;
-  else if (range === "15d") cutoff -= 15 * 24 * 3600000;
-  else if (range === "1m") cutoff -= 30 * 24 * 3600000;
-  else if (range === "6m") cutoff -= 180 * 24 * 3600000;
-  else if (range === "1y") cutoff -= 365 * 24 * 3600000;
-  
-  return logs.filter((l) => new Date(l.timestamp).getTime() >= cutoff);
-}, [logs, loading, range]);
-
+  // Remove the useMemo filtering since backend already filters by range
   return (
     <ExpandablePanel
       title="Detecciones Recientes"
@@ -65,8 +52,8 @@ const filtered = useMemo(() => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((l) => (
-                <tr key={l.id} className="border-t hover:bg-gray-50">
+            {logs.map((l) => ( // Use logs directly
+              <tr key={l.id} className="border-t hover:bg-gray-50">
                   <td className="px-2 py-1 whitespace-nowrap">
                     {new Date(l.timestamp).toLocaleString()}
                   </td>

@@ -35,82 +35,90 @@ export default function SummaryCharts({
     return { agentLabels: labels, agentData: labels.map(l=>byAgent[l]) };
   }, [logs]);
 
-  // Time-series según rango
-  const { timeLabels, timeData } = useMemo(() => {
-    const now = new Date();
-    let buckets: string[] = [];
-    let counts: Record<string,number> = {};
-    const pad = (n: number) => n.toString().padStart(2,"0");
+// Time-series según rango
+const { timeLabels, timeData } = useMemo(() => {
+  const now = new Date();
+  let buckets: string[] = [];
+  let counts: Record<string, number> = {};
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
-    if (range === "24h") {
-      for (let i=23;i>=0;i--) {
-        const d = new Date(now.getTime() - i*3600000);
-        const label = `${pad(d.getHours())}:00`;
-        buckets.push(label);
-        counts[label]=0;
-      }
-      logs.forEach(l => {
-        const d=new Date(l.timestamp);
-        const lbl=`${pad(d.getHours())}:00`;
-        if (counts[lbl]!=null) counts[lbl]++; 
-      });
-    } else if (range === "7d" || range === "15d") {
-        const days = range === "7d" ? 7 : 15;
-        for (let i = days - 1; i >= 0; i--) {
-          for (let i=23;i>=0;i--) {
-          const d = new Date(now.getTime() - i*3600000);
-          const label = `${pad(d.getHours())}:00`;
-          buckets.push(label);
-          counts[label]=0;
-        }
-        logs.forEach(l => {
-          const d=new Date(l.timestamp);
-          const lbl=`${pad(d.getHours())}:00`;
-          if (counts[lbl]!=null) counts[lbl]++; 
-        });
-      }
-    } else if (range === "1m") {
-      for (let i=29;i>=0;i--) {
-        const d=new Date(now.getFullYear(), now.getMonth(), now.getDate()-i);
-        const label = d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
-        buckets.push(label);
-        counts[label]=0;
-      }
-      logs.forEach(l => {
-        const d=new Date(l.timestamp);
-        const label = d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
-        if (counts[label]!=null) counts[label]++; 
-      });
-    } else if (range === "6m") {
-        for (let i = 179; i >= 0; i--) {
-          for (let i=23;i>=0;i--) {
-          const d = new Date(now.getTime() - i*3600000);
-          const label = `${pad(d.getHours())}:00`;
-          buckets.push(label);
-          counts[label]=0;
-        }
-        logs.forEach(l => {
-          const d=new Date(l.timestamp);
-          const lbl=`${pad(d.getHours())}:00`;
-          if (counts[lbl]!=null) counts[lbl]++; 
-        });
-      }
-    } else { /* 1y */
-      for (let i=11;i>=0;i--) {
-        const d=new Date(now.getFullYear(), now.getMonth()-i,1);
-        const label = d.toLocaleDateString(undefined,{month:'short',year:'2-digit'});
-        buckets.push(label);
-        counts[label]=0;
-      }
-      logs.forEach(l => {
-        const d=new Date(l.timestamp);
-        const key = new Date(d.getFullYear(), d.getMonth(),1);
-        const label = key.toLocaleDateString(undefined,{month:'short',year:'2-digit'});
-        if (counts[label]!=null) counts[label]++;
-      });
+  if (range === "24h") {
+    for (let i = 23; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 3600000);
+      const label = `${pad(d.getHours())}:00`;
+      buckets.push(label);
+      counts[label] = 0;
     }
-    return { timeLabels: buckets, timeData: buckets.map(b=>counts[b]||0) };
-  }, [logs, range]);
+  } 
+  else if (range === "7d") {
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      buckets.push(label);
+      counts[label] = 0;
+    }
+  } 
+  else if (range === "15d") {
+    for (let i = 14; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      buckets.push(label);
+      counts[label] = 0;
+    }
+  } 
+  else if (range === "1m") {
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      buckets.push(label);
+      counts[label] = 0;
+    }
+  } 
+  else if (range === "6m") {
+    for (let i = 179; i >= 0; i -= 7) { // Weekly buckets
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      buckets.push(label);
+      counts[label] = 0;
+    }
+  } 
+  else { // 1y
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+      buckets.push(label);
+      counts[label] = 0;
+    }
+  }
+
+  logs.forEach(l => {
+    const d = new Date(l.timestamp);
+    let label = "";
+    
+    if (range === "24h") {
+      label = `${pad(d.getHours())}:00`;
+    } 
+    else if (["7d", "15d", "1m"].includes(range)) {
+      label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } 
+    else if (range === "6m") {
+      // Find the closest bucket for weekly aggregation
+      const weekStart = new Date(d);
+      weekStart.setDate(d.getDate() - d.getDay());
+      label = weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } 
+    else { // 1y
+      label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+    }
+    
+    if (counts[label] !== undefined) {
+      counts[label]++;
+    }
+  });
+
+  return { timeLabels: buckets, timeData: buckets.map(b => counts[b] || 0) };
+}, [logs, range]);
+
 
   if (loading) {
     return (
