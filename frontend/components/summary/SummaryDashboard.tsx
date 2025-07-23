@@ -46,13 +46,19 @@ interface UserNotification {
   read: boolean;
 }
 
-export default function SummaryDashboard() {
+interface SummaryDashboardProps {
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y"; // Nuevo prop
+}
+
+
+export default function SummaryDashboard({ range }: SummaryDashboardProps) {
   const { t } = useTranslation("common");
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +73,7 @@ export default function SummaryDashboard() {
         const unreadNotifications = notifications.filter((n) => !n.read).length;
 
         // Obtener datos de riesgo
-        const riskData = await apiFetch<any>("/rest/logs/insights");
+        const riskData = await apiFetch<any>(`/rest/logs/insights?range=${range}`);
 
         // Añadir información de suscripción (simulada)
         riskData.isProUser = true; // TODO: Cambiar por dato real del backend
@@ -92,7 +98,7 @@ export default function SummaryDashboard() {
     };
 
     fetchData();
-  }, [t]);
+  }, [t, range]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);

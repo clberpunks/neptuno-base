@@ -31,28 +31,34 @@ interface RiskData {
   protectionLevel: "low" | "medium" | "high";
 }
 
-export default function RiskPanel({ id }: { id?: string }) {
+interface RiskPanelProps {
+  id?: string;
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y"; // Añadir prop range
+}
+
+
+export default function RiskPanel({ id, range }: RiskPanelProps) {
   const { t } = useTranslation('common');
   const [riskData, setRiskData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRiskData = async () => {
-      try {
-        const data = await apiFetch<RiskData>("/rest/logs/insights");
-        setRiskData(data);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching risk insights:", error);
-        setError(t("error_loading_data"));
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchRiskData();
-  }, [t]);
+      const fetchRiskData = async () => {
+        try {
+          // Usar range en la API
+          const data = await apiFetch<RiskData>(`/rest/logs/insights?range=${range}`);
+          setRiskData(data);
+        } catch (error) {
+          console.error("Error fetching risk insights:", error);
+          setError(t("error_loading_data"));
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchRiskData();
+  }, [t, range]);
 
   if (loading) {
     return (

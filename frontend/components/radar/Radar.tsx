@@ -89,7 +89,7 @@ useEffect(() => {
         range={range}
       />
       <AdvancedCharts />
-      <AdvancedInsights />
+      <AdvancedInsights range={range} />
       <UsageLimits logs={allLogs} />
       <RecentDetections logs={allLogs} loading={loading} range={range} />
       <ExpandablePanel

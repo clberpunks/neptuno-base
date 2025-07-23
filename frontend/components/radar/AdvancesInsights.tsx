@@ -24,12 +24,19 @@ interface AdvancedInsights {
   timeSpentByAgent: BucketItem[];
 }
 
-export default function AdvancedInsights() {
+interface AdvancedInsightsProps {
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y"; // Nuevo prop
+}
+
+export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
+
   const [data, setData] = useState<AdvancedInsights | null>(null);
 
   useEffect(() => {
-    apiFetch<AdvancedInsights>("/rest/logs/advanced-insights").then(setData);
-  }, []);
+    apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights?range=${range}`)
+      .then(setData);
+  }, [range]);
+
 
   if (!data) return null;
 

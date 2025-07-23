@@ -14,6 +14,15 @@ interface SummaryChartsProps {
   range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
 }
 
+const rangeLabels = {
+  "24h": "24 horas",
+  "7d": "7 días",
+  "15d": "15 días",
+  "1m": "1 mes",
+  "6m": "6 meses",
+  "1y": "1 año"
+};
+
 export default function SummaryCharts({
   stats, logs, loading, range
 }: SummaryChartsProps) {
@@ -75,10 +84,13 @@ const { timeLabels, timeData } = useMemo(() => {
     }
   }
   else if (range === "6m") {
-    // Monthly buckets for 6 months
     for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const label = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+      const d = new Date(now);
+      d.setMonth(now.getMonth() - i);
+      const label = d.toLocaleDateString(undefined, { 
+        month: 'short', 
+        year: 'numeric' // Usar año completo para mayor claridad
+      });
       buckets.push(label);
       counts[label] = 0;
     }
@@ -146,7 +158,7 @@ const { timeLabels, timeData } = useMemo(() => {
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">
-            Hits Últimas {range === "24h" ? "24 h" : range === "7d" ? "7 d" : range === "1m" ? "30 d" : "12 m"}
+            Hits - Últimos {rangeLabels[range]}
           </h3>
           <Line
             data={{ labels: timeLabels, datasets:[{ label:"Hits", data: timeData, fill:false, tension:0.1 }] }}

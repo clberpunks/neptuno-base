@@ -15,11 +15,16 @@ async function tryRefresh(): Promise<boolean> {
 }
 
 
+// frontend/utils/api.ts
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
 export async function apiFetch<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Preprocesar el body si es un objeto y no string
+  // Construir URL absoluta usando la variable de entorno
+  const absoluteUrl = `${API_BASE_URL}${url}`;
+  
   const finalOptions: RequestInit = {
     credentials: "include",
     ...options,
