@@ -2,6 +2,7 @@
 import { Line, Bar, Radar, Doughnut } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
+import { Stats, Log } from "../types/radar";
 import ExpandablePanel from "../shared/ExpandablePanel";
 
 export default function AdvancedCharts() {
@@ -11,7 +12,7 @@ export default function AdvancedCharts() {
   const [insights, setInsights] = useState<any>(null);
 
 useEffect(() => {
-    apiFetch(`/rest/logs/insights?range=${range}`).then(setInsights);
+     apiFetch<Stats>(`/rest/logs/stats?range=${range}`).then(setInsights);
   }, [range]);
 
   if (!insights) return null;
