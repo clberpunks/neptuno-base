@@ -1,6 +1,6 @@
 # File: backend/routers/logs.py
 from schemas.schemas import AdvancedInsightsOut
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 from datetime import datetime, timedelta
@@ -10,39 +10,45 @@ from models.models import AccessLog
 
 router = APIRouter(tags=["logs"])
 
+def get_cutoff_from_range(range_str: str) -> datetime:
+    now = datetime.utcnow()
+    if range_str == "24h":
+        return now - timedelta(hours=24)
+    elif range_str == "7d":
+        return now - timedelta(days=7)
+    elif range_str == "15d":
+        return now - timedelta(days=15)
+    elif range_str == "1m":
+        return now - timedelta(days=30)
+    elif range_str == "6m":
+        return now - timedelta(days=180)
+    elif range_str == "1y":
+        return now - timedelta(days=365)
+    else:
+        return now - timedelta(hours=24)  # default to 24h
+
 
 @router.get("/")
-def list_logs(  range: str = None, 
-                page: int = 1,
-                limit: int = 1000,
-                current_user=Depends(get_current_user),
-                db: Session = Depends(get_db)):
+def list_logs(  
+    range: str = Query(None, description="Time range for logs"),
+    page: int = 1,
+    limit: int = 1000,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     # Calculate time cutoff
-    cutoff = datetime.utcnow()
-    if range == "24h":
-        cutoff -= timedelta(hours=24)
-    elif range == "7d":
-        cutoff -= timedelta(days=7)
-    elif range == "15d":
-        cutoff -= timedelta(days=15)
-    elif range == "1m":
-        cutoff -= timedelta(days=30)
-    elif range == "6m":
-        cutoff -= timedelta(days=180)
-    elif range == "1y":
-        cutoff -= timedelta(days=365)
+    cutoff = get_cutoff_from_range(range) if range else datetime.utcnow() - timedelta(hours=24)
     
+    # Build query with cutoff
     query = db.query(AccessLog).filter(
         AccessLog.tenant_id == current_user.id,
         AccessLog.timestamp >= cutoff
-    )
+    ).order_by(AccessLog.timestamp.desc())
+    
     offset = (page - 1) * limit
-    total = db.query(AccessLog).filter(
-        AccessLog.tenant_id == current_user.id).count()
-
-    raw = (db.query(AccessLog).filter(
-        AccessLog.tenant_id == current_user.id).order_by(
-            AccessLog.timestamp.desc()).offset(offset).limit(limit).all())
+    total = query.count()
+    raw = query.offset(offset).limit(limit).all()
+    
     return [{
         "id": r.id,
         "timestamp": r.timestamp,
@@ -80,58 +86,45 @@ def unseen_logs_count(db: Session = Depends(get_db),
     return {"unseen": count}
 
 
-# backend/routers/logs.py (modificado)
 @router.get("/stats")
-def get_firewall_stats(range: str = None,
+def get_firewall_stats(
+    range: str = Query(None, description="Time range for stats"),
     db: Session = Depends(get_db)
-    ):
-    cutoff = datetime.utcnow()
-    query = db.query(AccessLog)
-    if range == "24h":
-        cutoff -= timedelta(hours=24)
-    elif range == "7d":
-        cutoff -= timedelta(days=7)
-    elif range == "15d":
-        cutoff -= timedelta(days=15)
-    elif range == "1m":
-        cutoff -= timedelta(days=30)
-    elif range == "6m":
-        cutoff -= timedelta(days=180)
-    elif range == "1y":
-        cutoff -= timedelta(days=365)
+):
+    cutoff = get_cutoff_from_range(range) if range else datetime.utcnow() - timedelta(hours=24)
     
-    # Obtener estadísticas globales (sin filtrar por tenant_id)
-    total = db.query(AccessLog).count()
+    query = db.query(AccessLog).filter(AccessLog.timestamp >= cutoff)
+    
+    total = query.count()
     stats = {}
-    for outcome in [
-            "allow", "block", "limit", "ratelimit", "redirect", "flagged"
-    ]:
-        count = (db.query(AccessLog).filter(
-            AccessLog.outcome == outcome).count())
+    for outcome in ["allow", "block", "limit", "ratelimit", "redirect", "flagged"]:
+        count = query.filter(AccessLog.outcome == outcome).count()
         stats[outcome] = count
     stats["other"] = total - sum(stats.values())
     stats["total"] = total
     return stats
-
 
 @router.get("/stats/user")
-def get_user_firewall_stats(current_user=Depends(get_current_user),
-                            db: Session = Depends(get_db)):
-    # Mantenemos el endpoint anterior para estadísticas por usuario
-    total = db.query(AccessLog).filter(
-        AccessLog.tenant_id == current_user.id).count()
+def get_user_firewall_stats(
+    range: str = Query(None, description="Time range for stats"),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    cutoff = get_cutoff_from_range(range) if range else datetime.utcnow() - timedelta(hours=24)
+    
+    query = db.query(AccessLog).filter(
+        AccessLog.tenant_id == current_user.id,
+        AccessLog.timestamp >= cutoff
+    )
+    
+    total = query.count()
     stats = {}
-    for outcome in [
-            "allow", "block", "limit", "ratelimit", "redirect", "flagged"
-    ]:
-        count = (db.query(AccessLog).filter(
-            AccessLog.tenant_id == current_user.id,
-            AccessLog.outcome == outcome).count())
+    for outcome in ["allow", "block", "limit", "ratelimit", "redirect", "flagged"]:
+        count = query.filter(AccessLog.outcome == outcome).count()
         stats[outcome] = count
     stats["other"] = total - sum(stats.values())
     stats["total"] = total
     return stats
-
 
 # backend/routers/logs.py (parte modificada)
 @router.get("/insights")

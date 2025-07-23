@@ -63,7 +63,7 @@ useEffect(() => {
 
   return (
     <div className="space-y-6 p-4">
-      <RadarDashboard /> {/* Añadimos el nuevo dashboard aquí */}
+      <RadarDashboard range={range} />
       {/* selector de rango */}
       <div className="flex justify-end">
         <div className="flex justify-end gap-2 mb-4 flex-wrap">

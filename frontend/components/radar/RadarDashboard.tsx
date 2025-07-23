@@ -5,6 +5,10 @@ import { apiFetch } from "../../utils/api";
 import { useTranslation } from "next-i18next";
 import DashboardCard from "../shared/DashboardCard";
 
+interface RadarDashboardProps {
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
+}
+
 interface RadarDashboardData {
   stats: {
     allow: number;
@@ -30,7 +34,7 @@ interface RadarDashboardData {
   }[];
 }
 
-export default function RadarDashboard() {
+export default function RadarDashboard({ range }: RadarDashboardProps) {
   const { t } = useTranslation("common");
   const [dashboardData, setDashboardData] = useState<RadarDashboardData | null>(
     null
@@ -44,11 +48,14 @@ export default function RadarDashboard() {
         setLoading(true);
         setError(null);
 
+        const stats = await apiFetch<any>(`/api/logs/stats?range=${range}`);
+        const insights = await apiFetch<any>(`/rest/logs/insights?range=${range}`);
+
         // Obtener estadísticas
-        const stats = await apiFetch<any>("/api/logs/stats");
+        //const stats = await apiFetch<any>("/api/logs/stats");
 
         // Obtener insights de riesgo
-        const insights = await apiFetch<any>("/rest/logs/insights");
+        //const insights = await apiFetch<any>("/rest/logs/insights");
 
         // Obtener datos de uso de límites (simulado)
         const usageLimits = [
@@ -71,8 +78,8 @@ export default function RadarDashboard() {
     };
 
     fetchData();
-  }, [t]);
-
+ }, [t, range]);
+ 
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">

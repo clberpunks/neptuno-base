@@ -17,7 +17,7 @@ async function tryRefresh(): Promise<boolean> {
 
 export async function apiFetch<T>(
   url: string,
-  options: Omit<RequestInit, 'body'> & { body?: BodyInit | object } = {}
+  options: RequestInit = {}
 ): Promise<T> {
   // Preprocesar el body si es un objeto y no string
   const finalOptions: RequestInit = {
@@ -26,15 +26,19 @@ export async function apiFetch<T>(
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
-      Cookie: document.cookie,
     },
-    body:
-      options.body && typeof options.body === "object" && !(options.body instanceof FormData) && !(options.body instanceof Blob) && !(options.body instanceof ArrayBuffer)
-        ? JSON.stringify(options.body)
-        : options.body as BodyInit | undefined,
-    };
+  };
 
+  // Handle redirects manually
   let res = await fetch(url, finalOptions);
+  
+  // Handle 307 redirects
+  if (res.status === 307) {
+    const redirectUrl = res.headers.get("Location");
+    if (redirectUrl) {
+      res = await fetch(redirectUrl, finalOptions);
+    }
+  }
 
   if (res.status === 401) {
     const refreshed = await tryRefresh();
