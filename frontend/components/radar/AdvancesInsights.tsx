@@ -25,16 +25,15 @@ interface AdvancedInsights {
 }
 
 interface AdvancedInsightsProps {
-  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y"; // Nuevo prop
+  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
 }
 
-export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
 
+export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
   const [data, setData] = useState<AdvancedInsights | null>(null);
 
   useEffect(() => {
-    apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights?range=${range}`)
-      .then(setData);
+    apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights?range=${range}`).then(setData);
   }, [range]);
 
 

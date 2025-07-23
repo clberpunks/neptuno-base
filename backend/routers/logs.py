@@ -29,15 +29,14 @@ def get_cutoff_from_range(range_str: str) -> datetime:
 
 
 @router.get("/")
-def list_logs(  
-    range: str = Query(None, description="Time range for logs"),
+def list_logs(
+    range: str = Query("24h", description="Time range for logs"),
     page: int = 1,
     limit: int = 1000,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Calculate time cutoff
-    cutoff = get_cutoff_from_range(range) if range else datetime.utcnow() - timedelta(hours=24)
+    cutoff = get_cutoff_from_range(range)
     
     # Build query with cutoff
     query = db.query(AccessLog).filter(
