@@ -61,10 +61,18 @@ app.include_router(payments.router, prefix="/rest/payments")
 
 @app.on_event("startup")
 def startup_event():
-    #if "sqlite" in settings.DATABASE_URL or settings.NODE_ENV == "development":
-        """Crea las tablas y usuarios iniciales al iniciar la aplicación."""
-        Base.metadata.create_all(bind=engine)
-        db: Session = SessionLocal()
+    Base.metadata.create_all(bind=engine)  # Intenta crear tablas primero
+    db: Session = SessionLocal()
+    
+    try:
+        db.execute('SELECT 1')  # bError de conexión: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+    except Exception as e:
+        print(f"Error de conexión: {e}")
+        if "password authentication failed" in str(e):
+            print("Creando usuario y base de datos...")
+            _create_db_and_user()
+            
+    
         seed_default_plans(db)
         try:
             if not db.query(User).filter_by(email="user@example.com").first():
@@ -97,7 +105,20 @@ def startup_event():
         finally:
             db.close()
 
-
+def _create_db_and_user():
+    import subprocess
+    try:
+        # Comandos para crear usuario y base de datos
+        subprocess.run([
+            "sudo", "-u", "postgres", "psql",
+            "-c", f"CREATE USER ciberpunk WITH PASSWORD 'ciberpunk123';",
+            "-c", f"CREATE DATABASE ciberpunkdb WITH OWNER ciberpunk;",
+            "-c", f"GRANT ALL PRIVILEGES ON DATABASE ciberpunkdb TO ciberpunk;"
+        ], check=True)
+        print("Usuario y base de datos creados correctamente.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error al crear usuario/DB: {e}")
+        
 def seed_default_plans(db: Session):
     from models.models import SubscriptionPlan, PlanLevel
     defaults = [
