@@ -138,7 +138,7 @@ export default function SubscriptionSelector() {
 
                 {isCurrent && plan.price > 0 && (
                   <div className="mt-4 space-y-2">
-                    {process.env.NODE_ENV !== "development" && (
+                    {/* {process.env.NODE_ENV !== "development" && (
                       <div className="flex space-x-2">
                         <button
                           onClick={() =>
@@ -164,7 +164,7 @@ export default function SubscriptionSelector() {
                         </button>
                       </div>
                     )}
-                    {process.env.NODE_ENV === "development" && (
+                    {process.env.NODE_ENV === "development" && ( */}
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleSimulate("stripe")}
@@ -179,7 +179,7 @@ export default function SubscriptionSelector() {
                           Simular PayPal
                         </button>
                       </div>
-                    )}
+                    {/* )} */}
                   </div>
                 )}
               </div>
