@@ -1,4 +1,3 @@
-// frontend/components/FirewallManager.tsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
@@ -7,8 +6,8 @@ import RobotsGenerator from "./RobotsGenerator";
 import MetaSEO from "./MetaSEO";
 import CompliancePanel from "../compliance/CompliancePanel";
 import TermsPanel from "../compliance/TermsPanel";
-import ExpandablePanel from "../shared/ExpandablePanel"; // Importamos el componente reutilizable
-import { ShieldCheckIcon } from "@heroicons/react/24/outline"; // Icono representativo para firewall
+import ExpandablePanel from "../shared/ExpandablePanel";
+import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 import FirewallDashboard from "./FirewallDashboard";
 
 export interface Rule {
@@ -17,7 +16,7 @@ export interface Rule {
   pattern: string;
   policy: "allow" | "block" | "restricted" | "tariff";
   limit?: number | null;
-  fee?: number | null; // Nuevo campo para tarifa
+  fee?: number | null;
 }
 
 export default function FirewallManager() {
@@ -26,8 +25,6 @@ export default function FirewallManager() {
   const [rules, setRules] = useState<Rule[]>([]);
   const [saving, setSaving] = useState(false);
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
-
-  // Estados para paneles desplegables (solo se usa robotsExpanded y metaExpanded)
   const [robotsExpanded, setRobotsExpanded] = useState(true);
   const [metaExpanded, setMetaExpanded] = useState(true);
 
@@ -87,7 +84,6 @@ export default function FirewallManager() {
     setExpandedRule(expandedRule === ruleId ? null : ruleId);
   };
 
-  // Calcular estadísticas
   const blockedCount = rules.filter((r) => r.policy === "block").length;
   const allowedCount = rules.filter((r) => r.policy === "allow").length;
   const restrictedCount = rules.filter((r) => r.policy === "restricted").length;
@@ -107,15 +103,14 @@ export default function FirewallManager() {
         rules={rules}
         termsStatus="Active"
         privacyStatus="Active"
-        isFirewallActive={!!user?.subscription} // Convertimos a booleano explícitamente
+        isFirewallActive={!!user?.subscription}
         hasTrackingData={hasTrackingData}
       />
-      {/* Firewall Panel usando ExpandablePanel */}
       <ExpandablePanel
-        id="firewall-management" // ID para navegación
+        id="firewall-management"
         title={t("firewall_management")}
         description={t("manage_access_rules")}
-        icon={<ShieldCheckIcon className="h-6 w-6" />} // Icono representativo
+        icon={<ShieldCheckIcon className="h-6 w-6" />}
         statusLabel={
           rules.length > 0 ? `${rules.length} ${t("rules")}` : t("no_rules")
         }
@@ -127,9 +122,7 @@ export default function FirewallManager() {
         defaultExpanded={false}
       >
         <div className="space-y-6">
-          {/* Bloque de estadísticas KPIs */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {/* Permitidos */}
             <div className="bg-gradient-to-br from-green-100 to-green-50 border border-green-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center">
                 <div className="bg-green-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
@@ -158,8 +151,6 @@ export default function FirewallManager() {
                 </div>
               </div>
             </div>
-
-            {/* Bloqueados */}
             <div className="bg-gradient-to-br from-red-100 to-red-50 border border-red-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center">
                 <div className="bg-red-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
@@ -188,8 +179,6 @@ export default function FirewallManager() {
                 </div>
               </div>
             </div>
-
-            {/* Restringidos */}
             <div className="bg-gradient-to-br from-orange-100 to-orange-50 border border-orange-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center">
                 <div className="bg-orange-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
@@ -218,8 +207,6 @@ export default function FirewallManager() {
                 </div>
               </div>
             </div>
-
-            {/* Tarifas */}
             <div className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center">
                 <div className="bg-blue-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
@@ -239,7 +226,7 @@ export default function FirewallManager() {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <div className="text-2xl font-bold text \text-blue-800">
+                  <div className="text-2xl font-bold text-blue-800">
                     {tariffCount}
                   </div>
                   <div className="text-sm font-medium text-blue-600">
@@ -248,8 +235,6 @@ export default function FirewallManager() {
                 </div>
               </div>
             </div>
-
-            {/* Tokens permitidos */}
             <div className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center">
                 <div className="bg-purple-500 w-12 h-12 rounded-xl flex items-center justify-center text-white">
@@ -527,7 +512,6 @@ export default function FirewallManager() {
             </div>
           )}
 
-          {/* Botón de guardar */}
           <div className="text-right pt-4">
             <button
               className={`bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-lg font-medium shadow-md transition-all duration-300 ${
@@ -568,28 +552,24 @@ export default function FirewallManager() {
         </div>
       </ExpandablePanel>
 
-      <h2>AVISOS LEGALES</h2>
+      <h2>{t("legal_notices")}</h2>
 
-      {/* Términos con ID para navegación */}
       <div id="terms">
         <TermsPanel />
       </div>
 
-      <h3>SEO</h3>
+      <h3>{t("seo")}</h3>
 
-      {/* Robots Generator con ID para navegación */}
       <div id="robots-generator">
         <RobotsGenerator rules={rules} />
       </div>
 
-      {/* Meta SEO con ID para navegación */}
       <div id="meta-seo">
         <MetaSEO rules={rules} />
       </div>
 
-      <h3>Server</h3>
+      <h3>{t("server")}</h3>
 
-      {/* Política de privacidad con ID para navegación */}
       <div id="privacy">
         <CompliancePanel />
       </div>

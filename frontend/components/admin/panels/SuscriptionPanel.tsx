@@ -1,7 +1,7 @@
-// frontend/components/admin/SubscriptionPlansPanel.tsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../utils/api";
 import Spinner from "../../shared/Spinner";
+import { useTranslation } from "next-i18next";
 
 export interface Plan {
   id: string;
@@ -11,10 +11,11 @@ export interface Plan {
   user_limit: number;
   price: number;
   active: boolean;
-  description: string; // desc
+  description: string;
 }
 
 export default function SubscriptionPlansPanel() {
+  const { t } = useTranslation("common");
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export default function SubscriptionPlansPanel() {
       setPlans(data);
     } catch (err) {
       console.error("Error:", err);
-      setError("No se pudieron cargar los planes");
+      setError(t("error_loading_plans"));
     } finally {
       setLoading(false);
     }
@@ -48,7 +49,7 @@ export default function SubscriptionPlansPanel() {
       await fetchPlans();
     };
     load();
-  }, []);
+  }, [t]);
 
   const toggleStatus = async (id: string) => {
     await apiFetch(`/rest/admin/subscription-plans/${id}/toggle`, {
@@ -58,7 +59,7 @@ export default function SubscriptionPlansPanel() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Seguro que deseas eliminar este plan?")) return;
+    if (!confirm(t("confirm_delete_plan"))) return;
     await apiFetch(`/rest/admin/subscription-plans/${id}`, {
       method: "DELETE",
     });
@@ -100,19 +101,19 @@ export default function SubscriptionPlansPanel() {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
       <h2 className="text-xl font-bold mb-4">
-        Gestión de Planes de Suscripción
+        {t("subscription_plans_management")}
       </h2>
       <table className="min-w-full text-sm text-left">
         <thead>
           <tr>
-            <th>Plan</th>
-            <th>Descripción</th>
-            <th>Tráfico</th>
-            <th>Dominios</th>
-            <th>Usuarios</th>
-            <th>Precio</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th>{t("plan")}</th>
+            <th>{t("description")}</th>
+            <th>{t("traffic")}</th>
+            <th>{t("domains")}</th>
+            <th>{t("users")}</th>
+            <th>{t("price")}</th>
+            <th>{t("status")}</th>
+            <th>{t("actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -133,7 +134,6 @@ export default function SubscriptionPlansPanel() {
                   p.description
                 )}
               </td>
-
               <td>
                 {editingId === p.id ? (
                   <input
@@ -196,7 +196,7 @@ export default function SubscriptionPlansPanel() {
                     p.active ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-                  {p.active ? "Activo" : "Inactivo"}
+                  {p.active ? t("active") : t("inactive")}
                 </span>
               </td>
               <td className="space-x-2">
@@ -206,13 +206,13 @@ export default function SubscriptionPlansPanel() {
                       onClick={handleSave}
                       className="text-blue-600 hover:underline"
                     >
-                      Guardar
+                      {t("save")}
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
                       className="text-gray-500 hover:underline"
                     >
-                      Cancelar
+                      {t("cancel")}
                     </button>
                   </>
                 ) : (
@@ -221,19 +221,19 @@ export default function SubscriptionPlansPanel() {
                       onClick={() => handleEdit(p)}
                       className="text-indigo-600 hover:underline"
                     >
-                      Editar
+                      {t("edit")}
                     </button>
                     <button
                       onClick={() => toggleStatus(p.id)}
                       className="text-sm"
                     >
-                      {p.active ? "Desactivar" : "Activar"}
+                      {p.active ? t("deactivate") : t("activate")}
                     </button>
                     <button
                       onClick={() => handleDelete(p.id)}
                       className="text-red-600 hover:underline"
                     >
-                      Eliminar
+                      {t("delete")}
                     </button>
                   </>
                 )}

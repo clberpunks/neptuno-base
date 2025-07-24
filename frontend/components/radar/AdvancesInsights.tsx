@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "next-i18next";
 
 interface BucketItem {
   key: string;
@@ -13,7 +14,7 @@ interface CTRItem {
   impressions: number;
   rate: number;
 }
- 
+
 interface AdvancedInsights {
   trafficByAgentType: BucketItem[];
   mostActiveAgents: BucketItem[];
@@ -28,14 +29,13 @@ interface AdvancedInsightsProps {
   range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
 }
 
-
 export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
+  const { t } = useTranslation("common");
   const [data, setData] = useState<AdvancedInsights | null>(null);
 
   useEffect(() => {
     apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights?range=${range}`).then(setData);
   }, [range]);
-
 
   if (!data) return null;
 
@@ -54,12 +54,12 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
 
   return (
     <ExpandablePanel
-      title="Insights Avanzados"
-      statusLabel="Ver detalles"
+      title={t("advanced_insights")}
+      statusLabel={t("view_details")}
       defaultExpanded={false}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card title="Tráfico por Tipo de Agente">
+        <Card title={t("traffic_by_agent_type")}>
           <ul>
             {data.trafficByAgentType.map((item) => (
               <li key={item.key} className="flex justify-between">
@@ -69,8 +69,7 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
             ))}
           </ul>
         </Card>
-
-        <Card title="Agentes más Activos">
+        <Card title={t("most_active_agents")}>
           <ul>
             {data.mostActiveAgents.map((item) => (
               <li key={item.key} className="flex justify-between">
@@ -80,8 +79,7 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
             ))}
           </ul>
         </Card>
-
-        <Card title="Países de Origen Top">
+        <Card title={t("top_originating_countries")}>
           <ul>
             {data.topOriginatingCountries.map((item) => (
               <li key={item.key} className="flex justify-between">
@@ -91,14 +89,12 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
             ))}
           </ul>
         </Card>
-
-        <Card title="Click-Through Rate">
-          <p>Clicks: {data.referralClickRate.clicks}</p>
-          <p>Impresiones: {data.referralClickRate.impressions}</p>
-          <p>CTR: {data.referralClickRate.rate}%</p>
+        <Card title={t("click_through_rate")}>
+          <p>{t("clicks")}: {data.referralClickRate.clicks}</p>
+          <p>{t("impressions")}: {data.referralClickRate.impressions}</p>
+          <p>{t("ctr")}: {data.referralClickRate.rate}%</p>
         </Card>
-
-        <Card title="Top Referred Pages">
+        <Card title={t("top_referred_pages")}>
           <ul>
             {data.topReferredPages.map((i) => (
               <li key={i.key} className="flex justify-between">
@@ -108,8 +104,7 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
             ))}
           </ul>
         </Card>
-
-        <Card title="Traffic by LLM Referrer">
+        <Card title={t("traffic_by_llm_referrer")}>
           <ul>
             {data.trafficByLLMReferrer.map((i) => (
               <li key={i.key} className="flex justify-between">
@@ -119,9 +114,7 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
             ))}
           </ul>
         </Card>
-
-        <Card title="Time Spent Browsing (s)">
-          {/* Gráfico de barras sencillo */}
+        <Card title={t("time_spent_browsing")}>
           <Bar
             data={{
               labels: data.timeSpentByAgent.map((i) => i.key),

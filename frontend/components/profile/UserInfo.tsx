@@ -208,7 +208,7 @@ export default function UserInfo({
               value={
                 subscription.price === 0
                   ? t("free")
-                  : `€${subscription.price}/${t("month")}`
+                  : `€${subscription.price}/${t("year")}`
               }
               label={t("plan_price")}
               color="bg-indigo-50 text-indigo-800"

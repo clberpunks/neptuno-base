@@ -1,7 +1,9 @@
 // components/radar/TrackingCode.tsx
+// components/radar/TrackingCode.tsx
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import { useTranslation } from "next-i18next";
 
 function useAutoResizeTextArea(value: string) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -17,6 +19,7 @@ function useAutoResizeTextArea(value: string) {
 }
 
 export default function TrackingCodePanel() {
+  const { t } = useTranslation("common");
   const { user } = useAuth();
   const [snippet, setSnippet] = useState("");
   const [copied, setCopied] = useState(false);
@@ -39,10 +42,10 @@ export default function TrackingCodePanel() {
       
       const code = await response.text();
       setSnippet(code.trim());
-      toast.success("Código generado correctamente");
+      toast.success(t("code_generated_success"));
     } catch (error) {
       console.error("Error generating code:", error);
-      toast.error("Error al generar el código");
+      toast.error(t("error_generating_code"));
     } finally {
       setIsGenerating(false);
     }
@@ -60,7 +63,7 @@ export default function TrackingCodePanel() {
     navigator.clipboard.writeText(snippet);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.info("Código copiado al portapapeles");
+    toast.info(t("code_copied"));
   };
 
   if (!user) return null;
@@ -68,7 +71,7 @@ export default function TrackingCodePanel() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Código de Seguimiento</h3>
+        <h3 className="text-lg font-semibold">{t("tracking_code")}</h3>
         <button
           onClick={fetchSnippet}
           disabled={isGenerating}
@@ -78,7 +81,7 @@ export default function TrackingCodePanel() {
               : 'bg-indigo-600 hover:bg-indigo-700 text-white'
           }`}
         >
-          {isGenerating ? 'Generando...' : 'Generar Código'}
+          {isGenerating ? t("generating") : t("generate_code")}
         </button> 
       </div>
       <div className="relative border rounded bg-gray-50 overflow-hidden">
@@ -89,7 +92,7 @@ export default function TrackingCodePanel() {
           value={snippet}
           style={{ overflow: "hidden" }}
           rows={1}
-          aria-label="Código de seguimiento"
+          aria-label={t("tracking_code")}
         />
         <button
           onClick={copyToClipboard}
@@ -99,9 +102,9 @@ export default function TrackingCodePanel() {
               ? "bg-green-500 text-white"
               : "bg-indigo-500 hover:bg-indigo-600 text-white"
           }`}
-          aria-label="Copiar código al portapapeles"
+          aria-label={t("copy_code_to_clipboard")}
         >
-          {copied ? "✓ Copiado" : "Copiar"}
+          {copied ? t("copied_short") : t("copy")}
         </button>
       </div>
     </div>

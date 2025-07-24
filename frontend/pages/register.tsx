@@ -1,10 +1,12 @@
 // pages/auth/register.tsx
+// pages/auth/register.tsx
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../utils/api";
+import { useTranslation } from "next-i18next";
 
 interface SubscriptionPlan {
   id: string;
@@ -18,6 +20,7 @@ interface SubscriptionPlan {
 }
 
 export default function RegisterPage() {
+  const { t } = useTranslation("common");
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
   const router = useRouter();
   const { refresh } = useAuth();
@@ -42,35 +45,35 @@ export default function RegisterPage() {
         setPlans(data.filter((p) => p.active)); // Solo planes activos
         setLoadingPlans(false);
       } catch (err) {
-        setError("Error al cargar los planes de suscripción");
+        setError(t("error_loading_plans"));
         setLoadingPlans(false);
       }
     };
 
     fetchPlans();
-  }, []);
+  }, [t]);
 
   const selectedPlan = plans.find((p) => p.plan === plan) || plans[0];
 
   // Mapear los planes a un formato más amigable para mostrar
   const getPlanDisplayInfo = (plan: SubscriptionPlan) => ({
     id: plan.id,
-    name: plan.plan.charAt(0).toUpperCase() + plan.plan.slice(1),
-    priceText: plan.price === 0 ? "Gratis" : `$${plan.price}/mes`,
+    name: t(plan.plan),
+    priceText: plan.price === 0 ? t("free") : `$${plan.price}/mes`,
     description: plan.description,
   });
 
   const validateForm = () => {
     if (!name || !email || !password) {
-      setError("Todos los campos son obligatorios.");
+      setError(t("all_fields_required"));
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Correo electrónico no válido.");
+      setError(t("invalid_email"));
       return false;
     }
     if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
+      setError(t("password_too_short"));
       return false;
     }
     return true;
@@ -96,7 +99,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name, password, plan }),
       });
-      setSuccess("¡Registro exitoso! Redirigiendo al panel...");
+      setSuccess(t("registration_success"));
       setEmail("");
       setPassword("");
       setName("");
@@ -106,7 +109,7 @@ export default function RegisterPage() {
         router.replace("/dashboard");
       }, 2000);
     } catch (err) {
-      setError((err as Error).message || "Error al registrarse.");
+      setError((err as Error).message || t("registration_error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -115,10 +118,10 @@ export default function RegisterPage() {
   return (
     <>
       <Head>
-        <title>Registro | {appName}</title>
+        <title>{t("register_title", { appName })}</title>
         <meta
           name="description"
-          content={`Crea una cuenta en ${appName} para acceder a todas tus herramientas`}
+          content={t("register_description", { appName })}
         />
       </Head>
 
@@ -128,21 +131,21 @@ export default function RegisterPage() {
           <div className="max-w-md w-full">
             <div className="mb-8 text-center">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Crea una cuenta
+                {t("create_account")}
               </h1>
               <p className="text-gray-600">
-                Comienza a gestionar tus servicios fácilmente
+                {t("start_managing_services")}
               </p>
             </div>
 
             {/* Selector de planes 
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Selecciona tu plan
+                {t("select_your_plan")}
               </h2>
 
               {loadingPlans ? (
-                <p className="text-center py-4">Cargando planes...</p>
+                <p className="text-center py-4">{t("loading_plans")}</p>
               ) : (
                 <div className="flex gap-3">
                   {plans.map((p) => {
@@ -151,7 +154,7 @@ export default function RegisterPage() {
                       <div
                         key={p.id}
                         className={`flex-1 rounded-lg border p-4 cursor-pointer transition-all ${
-                          plan === p.plan
+ Plan === p.plan
                             ? "border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50"
                             : "border-gray-200 hover:shadow-md"
                         }`}
@@ -211,7 +214,7 @@ export default function RegisterPage() {
                     />
                   </g>
                 </svg>
-                {isRedirecting ? "Redirigiendo..." : "Regístrate con Google"}
+                {isRedirecting ? t("redirecting") : t("register_with_google")}
               </button>
 
               <div className="relative my-6">
@@ -220,7 +223,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    o con tu correo
+                    {t("or_with_email")}
                   </span>
                 </div>
               </div>
@@ -245,7 +248,7 @@ export default function RegisterPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre completo
+                      {t("full_name")}
                     </label>
                     <input
                       type="text"
@@ -258,7 +261,7 @@ export default function RegisterPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico
+                      {t("email_address")}
                     </label>
                     <input
                       type="email"
@@ -271,7 +274,7 @@ export default function RegisterPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contraseña
+                      {t("password")}
                     </label>
                     <input
                       type="password"
@@ -288,16 +291,16 @@ export default function RegisterPage() {
                     className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Registrando..." : "Registrarse"}
+                    {isSubmitting ? t("registering") : t("register")}
                   </button>
                 </div>
 
                 <div className="mt-6 text-center">
                   <p className="text-gray-600 text-sm">
-                    ¿Ya tienes una cuenta?{" "}
+                    {t("already_have_account")}{" "}
                     <Link href="login" legacyBehavior>
                       <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                        Inicia sesión
+                        {t("login")}
                       </a>
                     </Link>
                   </p>
@@ -307,8 +310,7 @@ export default function RegisterPage() {
 
             <div className="mt-8 text-center text-sm text-gray-600">
               <p>
-                © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos
-                reservados.
+                © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. {t("all_rights_reserved")}
               </p>
             </div>
           </div>
@@ -321,20 +323,15 @@ export default function RegisterPage() {
               {selectedPlan && (
                 <>
                   <h2 className="text-4xl font-bold mb-4">
-                    Plan{" "}
-                    {selectedPlan.plan.charAt(0).toUpperCase() +
-                      selectedPlan.plan.slice(1)}
+                    {t("plan")}{" "}
+                    {t(selectedPlan.plan)}
                   </h2>
                   <div className="text-3xl font-bold mb-8">
-                    {selectedPlan.price === 0
-                      ? "Gratis"
-                      : `$${selectedPlan.price}/mes`}
+                    {selectedPlan.price === 0 ? t("free") : `$${selectedPlan.price}/mes`}
                   </div>
 
                   <p className="text-xl mb-8">
-                    {selectedPlan.description === ""
-                      ? ""
-                      : `$${selectedPlan.description}`}
+                    {selectedPlan.description}
                   </p>
 
                   <ul className="space-y-4 mb-8">
@@ -353,9 +350,9 @@ export default function RegisterPage() {
                         />
                       </svg>
                       <span>
-                        <strong>Tráfico:</strong>{" "}
+                        <strong>{t("traffic")}:</strong>{" "}
                         {selectedPlan.traffic_limit.toLocaleString()}{" "}
-                        visitas/mes
+                        {t("visits_per_month")}
                       </span>
                     </li>
                     <li className="flex items-start">
@@ -373,7 +370,7 @@ export default function RegisterPage() {
                         />
                       </svg>
                       <span>
-                        <strong>Dominios:</strong> {selectedPlan.domain_limit}
+                        <strong>{t("domains")}:</strong> {selectedPlan.domain_limit}
                       </span>
                     </li>
                     <li className="flex items-start">
@@ -391,7 +388,7 @@ export default function RegisterPage() {
                         />
                       </svg>
                       <span>
-                        <strong>Usuarios:</strong> {selectedPlan.user_limit}
+                        <strong>{t("users")}:</strong> {selectedPlan.user_limit}
                       </span>
                     </li>
                   </ul>
@@ -400,7 +397,7 @@ export default function RegisterPage() {
 
               <div className="mt-8">
                 <h3 className="text-xl font-semibold mb-3">
-                  Beneficios adicionales
+                  {t("additional_benefits")}
                 </h3>
                 <ul className="space-y-2">
                   <li className="flex items-center">
@@ -417,7 +414,7 @@ export default function RegisterPage() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    Soporte prioritario
+                    {t("priority_support")}
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -433,7 +430,7 @@ export default function RegisterPage() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    Actualizaciones continuas
+                    {t("continuous_updates")}
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -449,7 +446,7 @@ export default function RegisterPage() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    Garantía de satisfacción
+                    {t("satisfaction_guarantee")}
                   </li>
                 </ul>
               </div>

@@ -1,16 +1,18 @@
 //  frontend/components/radar/UsageLimits.tsx
+// frontend/components/radar/UsageLimits.tsx
 import { Doughnut } from "react-chartjs-2";
 import { Log } from "../types/radar";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import "chart.js/auto";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { useTranslation } from "next-i18next";
 
 interface UsageLimitsProps {
   logs: Log[];
 }
 
-
 export default function UsageLimits({ logs }: UsageLimitsProps) {
+  const { t } = useTranslation("common");
   const usageMap: Record<string, { used: number; max: number }> = {};
 
   logs.forEach((l) => {
@@ -33,9 +35,9 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
 
   return (
     <ExpandablePanel
-      title="Consumo de Límites"
+      title={t("limits_usage")}
       icon={<ShieldCheckIcon className="h-6 w-6" />}
-      statusLabel={`${limitPatterns.length} límites`}
+      statusLabel={`${limitPatterns.length} ${t("limits")}`}
       statusColor="bg-purple-100 text-purple-800"
       defaultExpanded={false}
     >
@@ -45,7 +47,7 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
             <h4 className="font-medium">{p}</h4>
             <Doughnut
               data={{
-                labels: ["Usado", "Restante"],
+                labels: [t("used"), t("remaining")],
                 datasets: [{
                   data: [
                     usageMap[p].used,
@@ -64,7 +66,7 @@ export default function UsageLimits({ logs }: UsageLimitsProps) {
               }}
             />
             <p className="mt-2 text-sm font-medium">
-              {usageMap[p].used}/{usageMap[p].max} usadas
+              {usageMap[p].used}/{usageMap[p].max} {t("used_label")}
             </p>
           </div>
         ))}

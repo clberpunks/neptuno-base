@@ -1,5 +1,6 @@
 // frontend/components/admin/panels/FirewallPanel.tsx
 import { MetricCard } from './MetricCard';
+import { useTranslation } from "next-i18next";
 
 interface FirewallStats {
   total: number;
@@ -17,49 +18,50 @@ interface FirewallPanelProps {
 }
 
 export const FirewallPanel = ({ stats }: FirewallPanelProps) => {
+  const { t } = useTranslation("common");
   const outcomes = [
-    { name: 'Permitidos', value: stats.allow, color: 'bg-green-100 text-green-800' },
-    { name: 'Bloqueados', value: stats.block, color: 'bg-red-100 text-red-800' },
-    { name: 'Limitados', value: stats.limit, color: 'bg-yellow-100 text-yellow-800' },
-    { name: 'Rate Limit', value: stats.ratelimit, color: 'bg-orange-100 text-orange-800' },
-    { name: 'Redirecciones', value: stats.redirect, color: 'bg-blue-100 text-blue-800' },
-    { name: 'Marcados', value: stats.flagged, color: 'bg-purple-100 text-purple-800' },
-    { name: 'Otros', value: stats.other, color: 'bg-gray-100 text-gray-800' },
+    { name: t('allowed'), value: stats.allow, color: 'bg-green-100 text-green-800' },
+    { name: t('blocked'), value: stats.block, color: 'bg-red-100 text-red-800' },
+    { name: t('limited'), value: stats.limit, color: 'bg-yellow-100 text-yellow-800' },
+    { name: t('rate_limit'), value: stats.ratelimit, color: 'bg-orange-100 text-orange-800' },
+    { name: t('redirected'), value: stats.redirect, color: 'bg-blue-100 text-blue-800' },
+    { name: t('flagged'), value: stats.flagged, color: 'bg-purple-100 text-purple-800' },
+    { name: t('other'), value: stats.other, color: 'bg-gray-100 text-gray-800' },
   ];
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard 
-          title="Total Eventos" 
+          title={t("total_events")} 
           value={stats.total} 
-          description="Todos los eventos registrados" 
+          description={t("all_registered_events")} 
         />
         
         <MetricCard 
-          title="Tasa de Bloqueo" 
+          title={t("block_rate")} 
           value={`${stats.total > 0 ? Math.round((stats.block / stats.total) * 100) : 0}%`} 
-          description="Porcentaje de bloqueos" 
+          description={t("percentage_of_blocks")} 
           color="bg-red-50"
         />
         
         <MetricCard 
-          title="Tasa de Limitación" 
+          title={t("limit_rate")} 
           value={`${stats.total > 0 ? Math.round((stats.limit / stats.total) * 100) : 0}%`} 
-          description="Porcentaje de limitaciones" 
+          description={t("percentage_of_limits")} 
           color="bg-yellow-50"
         />
         
         <MetricCard 
-          title="Tasa de Redirección" 
+          title={t("redirect_rate")} 
           value={`${stats.total > 0 ? Math.round((stats.redirect / stats.total) * 100) : 0}%`} 
-          description="Porcentaje de redirecciones" 
+          description={t("percentage_of_redirects")} 
           color="bg-blue-50"
         />
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-medium text-gray-700 mb-4">Distribución de Eventos</h3>
+        <h3 className="text-lg font-medium text-gray-700 mb-4">{t("event_distribution")}</h3>
         <div className="space-y-3">
           {outcomes.map((outcome) => (
             <div key={outcome.name} className="flex items-center">

@@ -1,5 +1,5 @@
-// frontend/components/admin/panels/BotActivityPanel.tsx
 import { MetricCard } from './MetricCard';
+import { useTranslation } from "next-i18next";
 
 interface BotActivity {
   user_agent: string;
@@ -13,47 +13,48 @@ interface BotActivityPanelProps {
 }
 
 export const BotActivityPanel = ({ botActivities }: BotActivityPanelProps) => {
+  const { t } = useTranslation("common");
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard 
-          title="Agentes Detectados" 
+          title={t("detected_agents")} 
           value={botActivities.length} 
-          description="Agentes de bots identificados" 
+          description={t("identified_bot_agents")} 
           color="bg-orange-50"
         />
         
         <MetricCard 
-          title="Solicitudes Totales" 
+          title={t("total_requests")} 
           value={botActivities.reduce((sum, bot) => sum + bot.request_count, 0)} 
-          description="De todos los bots" 
+          description={t("from_all_bots")} 
         />
         
         <MetricCard 
-          title="Bot más Activo" 
+          title={t("most_active_bot")} 
           value={botActivities[0]?.user_agent.split('/')[0] || 'N/A'} 
-          description={`${botActivities[0]?.request_count || 0} solicitudes`} 
+          description={`${botActivities[0]?.request_count || 0} ${t("requests")}`} 
           color="bg-red-50"
         />
         
         <MetricCard 
-          title="Tasa de Bloqueo" 
+          title={t("block_rate")} 
           value={`${botActivities.reduce((sum, bot) => sum + bot.block_rate, 0) / botActivities.length || 0}%`} 
-          description="Promedio de bloqueos" 
+          description={t("average_block_rate")} 
           color="bg-yellow-50"
         />
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-medium text-gray-700 mb-4">Actividad de Bots</h3>
+        <h3 className="text-lg font-medium text-gray-700 mb-4">{t("bot_activity")}</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Agent</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitudes</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tasa de Bloqueo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Actividad</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("user_agent")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("requests")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("block_rate")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("last_activity")}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">

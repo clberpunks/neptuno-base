@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { FiCreditCard, FiShield, FiCalendar } from "react-icons/fi";
 import ExpandablePanel from "../shared/ExpandablePanel";
+import { useTranslation } from "next-i18next";
 
 interface PaymentRecord {
   id: string;
@@ -12,10 +13,11 @@ interface PaymentRecord {
   currency: string;
   status: string;
   created_at: string;
-  subscription_plan: string; // <-- campo correcto
+  subscription_plan: string;
 }
 
 export default function PaymentHistory() {
+  const { t } = useTranslation("common");
   const [records, setRecords] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,21 +25,21 @@ export default function PaymentHistory() {
   useEffect(() => {
     apiFetch<PaymentRecord[]>("/rest/payments/records")
       .then(setRecords)
-      .catch(() => setError("No se pudo cargar historial"))
+      .catch(() => setError(t("error_loading_payment_history")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   return (
     <ExpandablePanel
-      title="Historial de Pagos"
-      description="Todos tus pagos registrados"
+      title={t("payment_history")}
+      description={t("all_your_registered_payments")}
       icon={<FiCreditCard />}
       defaultExpanded={false}
       loading={loading}
       error={error || undefined}
     >
       {!records.length && !loading ? (
-        <p>No hay pagos registrados.</p>
+        <p>{t("no_payments_registered")}</p>
       ) : (
         <ul className="space-y-4">
           {records.map((r) => (
@@ -54,9 +56,8 @@ export default function PaymentHistory() {
                   )}
                   <span className="font-medium capitalize">{r.provider}</span>
                 </div>
-                <p className="text-sm">ID: {r.provider_charge_id}</p>
-                {/* Usamos subscription_plan en lugar de subscription.plan */}
-                <p className="text-sm">Plan: {r.subscription_plan}</p>
+                <p className="text-sm">{t("id")}: {r.provider_charge_id}</p>
+                <p className="text-sm">{t("plan")}: {r.subscription_plan}</p>
               </div>
               <div className="text-right">
                 <p className="font-semibold">

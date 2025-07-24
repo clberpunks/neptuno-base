@@ -1,5 +1,4 @@
 // components/radar/RadarDashboard.tsx
-// 
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { useTranslation } from "next-i18next";
@@ -33,12 +32,10 @@ interface RadarDashboardData {
     max: number;
   }[];
 }
-  
+
 export default function RadarDashboard({ range }: RadarDashboardProps) {
   const { t } = useTranslation("common");
-  const [dashboardData, setDashboardData] = useState<RadarDashboardData | null>(
-    null
-  );
+  const [dashboardData, setDashboardData] = useState<RadarDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,17 +48,10 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
         const stats = await apiFetch<any>(`/rest/logs/stats/user?range=${range}`);
         const insights = await apiFetch<any>(`/rest/logs/insights?range=${range}`);
 
-        // Obtener estadísticas
-        //const stats = await apiFetch<any>("/api/logs/stats");
-
-        // Obtener insights de riesgo
-        //const insights = await apiFetch<any>("/rest/logs/insights");
-
-        // Obtener datos de uso de límites (simulado)
         const usageLimits = [
-          { pattern: "API Requests", used: 850, max: 1000 },
-          { pattern: "Bot Detection", used: 120, max: 200 },
-          { pattern: "User Sessions", used: 450, max: 500 },
+          { pattern: t("api_requests"), used: 850, max: 1000 },
+          { pattern: t("bot_detection"), used: 120, max: 200 },
+          { pattern: t("user_sessions"), used: 450, max: 500 },
         ];
 
         setDashboardData({
@@ -78,8 +68,8 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
     };
 
     fetchData();
- }, [t, range]);
- 
+  }, [t, range]);
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
@@ -104,7 +94,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
     );
   }
 
-  // Colores para niveles de riesgo (optimizados para accesibilidad)
   const riskStatusColor = {
     low: "bg-green-100 text-green-800",
     medium: "bg-amber-100 text-amber-800",
@@ -117,7 +106,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
     high: "bg-green-100 text-green-800",
   };
 
-  // Textos traducidos
   const riskText = {
     low: t("risk_low"),
     medium: t("risk_medium"),
@@ -133,9 +121,7 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4 mb-6">
       <div className="space-y-3">
-        {/* Primera fila: Detecciones, Riesgo, Protección */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Detecciones 24h */}
           <DashboardCard
             icon={
               <span className="bg-purple-100 p-2 rounded-full">
@@ -167,8 +153,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("detections_24h")}
           />
-
-          {/* Situación de riesgo */}
           <DashboardCard
             icon={
               <span className="p-2 rounded-full">
@@ -194,8 +178,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("current_risk")}
           />
-
-          {/* Nivel de protección */}
           <DashboardCard
             icon={
               <span className="p-2 rounded-full">
@@ -222,10 +204,7 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             ariaLabel={t("protection_level")}
           />
         </div>
-
-        {/* Segunda fila: Estadísticas de hits */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {/* Total Hits */}
           <DashboardCard
             icon={
               <span className="bg-indigo-100 p-2 rounded-full">
@@ -251,8 +230,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("total_hits")}
           />
-
-          {/* Hits Permitidos */}
           <DashboardCard
             icon={
               <span className="bg-green-100 p-2 rounded-full">
@@ -278,8 +255,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("allowed")}
           />
-
-          {/* Hits Bloqueados */}
           <DashboardCard
             icon={
               <span className="bg-red-100 p-2 rounded-full">
@@ -305,8 +280,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("blocked")}
           />
-
-          {/* Hits Limitados */}
           <DashboardCard
             icon={
               <span className="bg-amber-100 p-2 rounded-full">
@@ -332,8 +305,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("limited")}
           />
-
-          {/* Hits Redirigidos */}
           <DashboardCard
             icon={
               <span className="bg-blue-100 p-2 rounded-full">
@@ -359,8 +330,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("redirected")}
           />
-
-          {/* Hits Marcados */}
           <DashboardCard
             icon={
               <span className="bg-pink-100 p-2 rounded-full">
@@ -386,8 +355,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("flagged")}
           />
-
-          {/* Hits con Rate Limit */}
           <DashboardCard
             icon={
               <span className="bg-orange-100 p-2 rounded-full">
@@ -413,8 +380,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             onClick={() => {}}
             ariaLabel={t("rate_limited")}
           />
-
-          {/* Otros Hits */}
           <DashboardCard
             icon={
               <span className="bg-gray-100 p-2 rounded-full">
@@ -441,8 +406,6 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             ariaLabel={t("other")}
           />
         </div>
-
-        {/* Uso de límites */}
         {dashboardData.usageLimits.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -468,7 +431,7 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
                   <div
                     key={index}
                     className="bg-gray-50 rounded-lg p-3"
-                    aria-label={`${limit.pattern}: ${limit.used} de ${limit.max} (${percentage}%)`}
+                    aria-label={`${limit.pattern}: ${limit.used} ${t("of")} ${limit.max} (${percentage}%)`}
                   >
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-sm">

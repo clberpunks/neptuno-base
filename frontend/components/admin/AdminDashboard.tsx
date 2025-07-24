@@ -1,4 +1,3 @@
-// frontend/components/admin/AdminDashboard.tsx
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../utils/api";
 import Spinner from "../shared/Spinner";
@@ -15,6 +14,7 @@ import {
   UsersIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
+import { useTranslation } from "next-i18next";
 
 interface DashboardData {
   new_users: number;
@@ -57,12 +57,9 @@ interface BotActivity {
 }
 
 export default function AdminDashboard() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
-    null
-  );
-  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(
-    null
-  );
+  const { t } = useTranslation("common");
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(null);
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
   const [botActivities, setBotActivities] = useState<BotActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,30 +69,23 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-
         const dashboard = await apiFetch<DashboardData>("/rest/admin/overview");
         setDashboardData(dashboard);
-
         const stats = await apiFetch<FirewallStats>("/rest/logs/stats");
         setFirewallStats(stats);
-
         const users = await apiFetch<TopUser[]>("/rest/admin/top-users");
         setTopUsers(users);
-
-        const bots = await apiFetch<BotActivity[]>(
-          "/rest/admin/bot-activities"
-        );
+        const bots = await apiFetch<BotActivity[]>("/rest/admin/bot-activities");
         setBotActivities(bots);
       } catch (err) {
-        setError("Error al cargar los datos del dashboard");
+        setError(t("error_loading_data"));
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -111,7 +101,7 @@ export default function AdminDashboard() {
           className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
           role="alert"
         >
-          <strong className="font-bold">Error: </strong>
+          <strong className="font-bold">{t("error")}: </strong>
           <span className="block sm:inline">{error}</span>
         </div>
       </div>
@@ -119,12 +109,11 @@ export default function AdminDashboard() {
 
   if (!dashboardData || !firewallStats) return null;
 
-  // Calcular valores para los badges
   const totalUsers = Object.values(dashboardData.plan_distribution).reduce(
     (sum, count) => sum + count,
     0
   );
-  const activePlans = Object.keys(dashboardData.plan_distribution).length; // Número de planes con usuarios
+  const activePlans = Object.keys(dashboardData.plan_distribution).length;
   const activeRules = firewallStats.total;
   const activeUsers = topUsers.length;
   const detectedBots = botActivities.length;
@@ -132,9 +121,9 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <ExpandablePanel
-        title="Resumen General"
+        title={t("general_summary")}
         icon={<ChartBarIcon className="h-6 w-6" />}
-        statusLabel={`${totalUsers} usuarios`}
+        statusLabel={`${totalUsers} ${t("users")}`}
         statusColor="bg-blue-100 text-blue-800"
         defaultExpanded={true}
       >
@@ -142,36 +131,36 @@ export default function AdminDashboard() {
       </ExpandablePanel>
 
       <ExpandablePanel
-        title="Planes de Suscripción"
+        title={t("subscription_plans")}
         icon={<CreditCardIcon className="h-6 w-6" />}
-        statusLabel={`${activePlans} planes activos`}
+        statusLabel={`${activePlans} ${t("active_plans")}`}
         statusColor="bg-green-100 text-green-800"
       >
         <SubscriptionPlansPanel />
       </ExpandablePanel>
 
       <ExpandablePanel
-        title="Análisis de Firewall"
+        title={t("firewall_analysis")}
         icon={<ShieldCheckIcon className="h-6 w-6" />}
-        statusLabel={`${activeRules} reglas`}
+        statusLabel={`${activeRules} ${t("rules")}`}
         statusColor="bg-red-100 text-red-800"
       >
         <FirewallPanel stats={firewallStats} />
       </ExpandablePanel>
 
       <ExpandablePanel
-        title="Actividad de Usuarios"
+        title={t("user_activity")}
         icon={<UsersIcon className="h-6 w-6" />}
-        statusLabel={`${activeUsers} usuarios activos`}
+        statusLabel={`${activeUsers} ${t("active_users")}`}
         statusColor="bg-purple-100 text-purple-800"
       >
         <UserActivityPanel topUsers={topUsers} />
       </ExpandablePanel>
 
       <ExpandablePanel
-        title="Actividad de Bots"
+        title={t("bot_activity")}
         icon={<ExclamationTriangleIcon className="h-6 w-6" />}
-        statusLabel={`${detectedBots} bots detectados`}
+        statusLabel={`${detectedBots} ${t("detected_bots")}`}
         statusColor="bg-yellow-100 text-yellow-800"
       >
         <BotActivityPanel botActivities={botActivities} />

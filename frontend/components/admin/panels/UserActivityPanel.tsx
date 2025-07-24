@@ -1,5 +1,6 @@
 // frontend/components/admin/panels/UserActivityPanel.tsx
 import { MetricCard } from './MetricCard';
+import { useTranslation } from "next-i18next";
 
 interface TopUser {
   id: string;
@@ -15,31 +16,32 @@ interface UserActivityPanelProps {
 }
 
 export const UserActivityPanel = ({ topUsers }: UserActivityPanelProps) => {
+  const { t } = useTranslation("common");
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard 
-          title="Usuarios Activos" 
+          title={t("active_users")} 
           value={topUsers.length} 
-          description="Usuarios con más actividad" 
+          description={t("users_with_most_activity")} 
           color="bg-blue-50"
         />
         
         <MetricCard 
-          title="Solicitudes Totales" 
+          title={t("total_requests")} 
           value={topUsers.reduce((sum, user) => sum + user.request_count, 0)} 
-          description="De los usuarios más activos" 
+          description={t("from_most_active_users")} 
         />
         
         <MetricCard 
-          title="Usuario Top" 
+          title={t("top_user")} 
           value={topUsers[0]?.name || 'N/A'} 
-          description={`${topUsers[0]?.request_count || 0} solicitudes`} 
+          description={`${topUsers[0]?.request_count || 0} ${t("requests")}`} 
           color="bg-green-50"
         />
         
         <MetricCard 
-          title="Plan más usado" 
+          title={t("most_used_plan")} 
           value={(() => {
             const planCounts: Record<string, number> = {};
             topUsers.forEach(user => {
@@ -47,21 +49,21 @@ export const UserActivityPanel = ({ topUsers }: UserActivityPanelProps) => {
             });
             return Object.entries(planCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
           })()} 
-          description="Entre usuarios activos" 
+          description={t("among_active_users")} 
           color="bg-purple-50"
         />
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-medium text-gray-700 mb-4">Top Usuarios por Actividad</h3>
+        <h3 className="text-lg font-medium text-gray-700 mb-4">{t("top_users_by_activity")}</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitudes</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Actividad</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("user")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("plan")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("requests")}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("last_activity")}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">

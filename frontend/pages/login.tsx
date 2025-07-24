@@ -4,15 +4,16 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../utils/api";
+import { useTranslation } from "next-i18next";
 
 export default function LoginPage() {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const { refresh } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,11 +25,11 @@ export default function LoginPage() {
     setError("");
 
     if (!validateEmail(email)) {
-      setError("Introduce un correo válido");
+      setError(t("invalid_email"));
       return;
     }
     if (!password) {
-      setError("Introduce una contraseña");
+      setError(t("password_required"));
       return;
     }
 
@@ -46,7 +47,7 @@ export default function LoginPage() {
       await refresh();
       router.push("/dashboard"); // ialert
     } catch (err: any) {
-      setError(err.message || "Error desconocido");
+      setError(err.message || t("login_error"));
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export default function LoginPage() {
       })
       .catch((err) => {
         setIsRedirecting(false);
-        setError("Error al iniciar sesión. Inténtalo de nuevo.");
+        setError(t("login_error"));
         console.error("Login error:", err);
       });
   };
@@ -84,10 +85,10 @@ export default function LoginPage() {
         <div className="max-w-md w-full">
           <div className="mb-12 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Accede a tu cuenta
+              {t("access_your_account")}
             </h1>
             <p className="text-gray-600">
-              Gestiona todos tus servicios en un solo lugar
+              {t("manage_all_services")}
             </p>
           </div>
 
@@ -129,9 +130,7 @@ export default function LoginPage() {
                       />
                     </g>
                   </svg>
-                  {isRedirecting
-                    ? "Redirigiendo..."
-                    : "Iniciar sesión con Google"}
+                  {isRedirecting ? t("redirecting") : t("login_with_google")}
                 </button>
 
                 <div className="relative mt-6">
@@ -140,7 +139,7 @@ export default function LoginPage() {
                   </div>
                   <div className="relative flex justify-center text-sm">
                     <span className="px-2 bg-white text-gray-500">
-                      O continúa con
+                      {t("or_continue_with")}
                     </span>
                   </div>
                 </div>
@@ -150,7 +149,7 @@ export default function LoginPage() {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Correo electrónico
+                    {t("email_address")}
                   </label>
                   <input
                     id="email"
@@ -168,7 +167,7 @@ export default function LoginPage() {
                     htmlFor="password"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Contraseña
+                    {t("password")}
                   </label>
                   <input
                     id="password"
@@ -193,7 +192,7 @@ export default function LoginPage() {
                     htmlFor="remember"
                     className="ml-2 block text-sm text-gray-700"
                   >
-                    Recordar sesión
+                    {t("remember_session")}
                   </label>
                 </div>
 
@@ -202,17 +201,17 @@ export default function LoginPage() {
                   className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                   disabled={loading}
                 >
-                  {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+                  {loading ? t("logging_in") : t("login")}
                 </button>
               </div>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                ¿No tienes cuenta?{" "}
+                {t("dont_have_account")}{" "}
                 <Link href="/register" legacyBehavior>
                   <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Regístrate
+                    {t("register")}
                   </a>
                 </Link>
               </p>
@@ -221,8 +220,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-sm text-gray-600">
             <p>
-              © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Todos los derechos
-              reservados.
+              © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. {t("all_rights_reserved")}
             </p>
           </div>
         </div>
@@ -233,11 +231,10 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-white max-w-lg">
             <h2 className="text-4xl font-bold mb-4">
-              Potencia tu productividad
+              {t("boost_your_productivity")}
             </h2>
             <p className="text-xl mb-8">
-              Conecta todas tus herramientas en una sola plataforma y optimiza
-              tu flujo de trabajo diario.
+              {t("connect_tools_optimize_workflow")}
             </p>
             <ul className="space-y-3">
               <li className="flex items-center">
@@ -254,7 +251,7 @@ export default function LoginPage() {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                Integraciones con Google Workspace
+                {t("integrations_with_google_workspace")}
               </li>
               <li className="flex items-center">
                 <svg
@@ -270,7 +267,7 @@ export default function LoginPage() {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                Seguridad empresarial
+                {t("enterprise_security")}
               </li>
               <li className="flex items-center">
                 <svg
@@ -286,7 +283,7 @@ export default function LoginPage() {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                Soporte 24/7
+                {t("support_24_7")}
               </li>
             </ul>
           </div>

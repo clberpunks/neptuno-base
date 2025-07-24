@@ -1,4 +1,3 @@
-// components/HelpSection.tsx
 import { useTranslation } from "next-i18next";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import { 
@@ -16,28 +15,28 @@ export default function HelpSection() {
       title: t("how_to_use_radar"),
       content: t("radar_help_content"),
       icon: <QuestionMarkCircleIcon className="h-6 w-6" />,
-      statusLabel: "Info",
+      statusLabel: t("info"),
       statusColor: "bg-blue-100 text-blue-800"
     },
     {
       title: t("firewall_settings"),
       content: t("firewall_help_content"),
       icon: <ShieldCheckIcon className="h-6 w-6" />,
-      statusLabel: "Seguridad",
+      statusLabel: t("security"),
       statusColor: "bg-green-100 text-green-800"
     },
     {
       title: t("profile_management"),
       content: t("profile_help_content"),
       icon: <UserCircleIcon className="h-6 w-6" />,
-      statusLabel: "Usuario",
+      statusLabel: t("user"),
       statusColor: "bg-purple-100 text-purple-800"
     },
     {
       title: t("contact_support"),
       content: t("contact_help_content"),
       icon: <EnvelopeIcon className="h-6 w-6" />,
-      statusLabel: "Soporte",
+      statusLabel: t("support"),
       statusColor: "bg-yellow-100 text-yellow-800"
     }
   ];
