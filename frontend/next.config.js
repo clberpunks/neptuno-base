@@ -35,7 +35,7 @@ module.exports = {
     return [
 {
         source: '/rest/:path*',
-        destination: `${backendUrl}/rest/:path*`, 
+        destination: `${backendUrl}/:path*`, 
       },
       {
         source: "/_next/static/:path*",
