@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiFetch } from "../../../utils/api";
 import Spinner from "../../shared/Spinner";
 import { useTranslation } from "next-i18next";
@@ -31,7 +31,7 @@ export default function SubscriptionPlansPanel() {
     "description",
   ];
 
-  const fetchPlans = async () => {
+  const fetchPlans = useCallback(async () => {
     try {
       console.log("Solicitando planes...");
       const data = await apiFetch<Plan[]>(`/rest/admin/subscription-plans/all`);
@@ -43,13 +43,13 @@ export default function SubscriptionPlansPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
   useEffect(() => {
     const load = async () => {
       await fetchPlans();
     };
     load();
-  }, [t]);
+  }, [t, fetchPlans]);
 
   const toggleStatus = async (id: string) => {
     await apiFetch(`/rest/admin/subscription-plans/${id}/toggle`, {

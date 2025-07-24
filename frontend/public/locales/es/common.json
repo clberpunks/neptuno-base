@@ -300,7 +300,6 @@
   "inbox_empty": "Enhorabuena! No tienes mensajes",
   "monitor_ai_activity": "Actividad de la IA en tu sitio",
   "risk_status_monitoring": "Actividad de riesgo detectada",
-  "monetize": "Monetiza las visitas de la IA",
 
   "radar_dashboard": "Dashboard de Radar",
   "total_hits": "Total Hits",
@@ -557,6 +556,55 @@
   "restricted_rules": "Reglas restringidas",
   "tariff_rules": "Reglas de tarifas",
   "total_tokens": "Total de tokens",
-  "seo_rules": "Reglas SEO"
+  "seo_rules": "Reglas SEO",
+
+
+  "monetization_subtitle": "Monetiza el tráfico de bots en tu sitio",
+  "monetization_description": "Activa diferentes estrategias para generar ingresos a partir del tráfico automatizado que visita tu sitio web.",
+  "monetization_strategies": "Estrategias de Monetización",
+  "active_methods": "Métodos activos",
+  "toggle_method": "Activar/desactivar método",
+  "configure": "Configurar",
+  "view_stats": "Ver estadísticas",
+  "monetization_tips": "Consejos de monetización",
+  "tip_combine_methods": "Combina múltiples métodos para maximizar tus ingresos",
+  "tip_legal_compliance": "Asegúrate de cumplir con todas las regulaciones aplicables",
+  "tip_user_experience": "Equilibra la monetización con una buena experiencia de usuario",
+  "tip_analytics": "Monitorea regularmente tus métricas de monetización",
+  
+  "monetize": {
+    "http402": {
+      "name": "HTTP 402",
+      "description": "Detección de bots, respuesta 402 con instrucciones de pago"
+    },
+    "api_rate": {
+      "name": "Limitación de Tasa de API",
+      "description": "Middleware de limitación, integración de pago"
+    },
+    "subscriptions": {
+      "name": "Suscripciones",
+      "description": "Gestión de cuentas, autenticación, control de acceso"
+    },
+    "legal_agreements": {
+      "name": "Acuerdos Legales",
+      "description": "Registro de actividad, términos de servicio"
+    },
+    "blockchain": {
+      "name": "Micropagos con Blockchain",
+      "description": "Integración blockchain, contratos inteligentes"
+    },
+    "captchas": {
+      "name": "CAPTCHAs",
+      "description": "Integración CAPTCHA, desafíos para humanos"
+    },
+    "ip_blocking": {
+      "name": "Bloqueo de IPs",
+      "description": "Listas negras/blancas, reglas de firewall"
+    },
+    "custom_auth": {
+      "name": "Autenticación Personalizada",
+      "description": "Validación de encabezados, gestión de tokens"
+    }
+  }
 
 }

@@ -1,6 +1,6 @@
 // components/radar/TrackingCode.tsx
 // components/radar/TrackingCode.tsx
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { useTranslation } from "next-i18next";
@@ -26,7 +26,7 @@ export default function TrackingCodePanel() {
   const [isGenerating, setIsGenerating] = useState(false);
   const textAreaRef = useAutoResizeTextArea(snippet);
 
-  const fetchSnippet = async () => {
+  const fetchSnippet = useCallback(async () => {
     setIsGenerating(true);
     try {
       const response = await fetch("/rest/embed/snippet.js", {
@@ -49,13 +49,13 @@ export default function TrackingCodePanel() {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [t, toast, user]);
 
   useEffect(() => {
     if (user && !snippet) {
       fetchSnippet();
     }
-  }, [user, snippet]);
+  }, [user, snippet, fetchSnippet]);
 
   const copyToClipboard = () => {
     if (!snippet) return;

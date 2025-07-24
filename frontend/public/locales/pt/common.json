@@ -252,7 +252,6 @@
 
   "usage_costs": "Custos de Uso",
   "demand_costs": "Custos de Demanda",
-  "monetization": "Monetização",
   "ai_tariffs": "Tarifas de IA",
   "revenue": "Receita",
 
@@ -522,5 +521,55 @@
   "support_24_7": "Suporte 24/7",
   "all_rights_reserved": "Todos os direitos reservados",
   "terms": "Termos",
-  "privacy": "Privacidade"
+  "privacy": "Privacidade",
+
+  
+  "monetization": "Monetização",
+  "monetization_subtitle": "Monetize o tráfego de bots no seu site",
+  "monetization_description": "Ative diferentes estratégias para gerar receita a partir do tráfego automatizado que visita seu site.",
+  "monetization_strategies": "Estratégias de Monetização",
+  "active_methods": "Métodos ativos",
+  "toggle_method": "Ativar/desativar método",
+  "configure": "Configurar",
+  "view_stats": "Ver estatísticas",
+  "monetization_tips": "Dicas de monetização",
+  "tip_combine_methods": "Combine múltiplos métodos para maximizar sua receita",
+  "tip_legal_compliance": "Garanta conformidade com todas as regulamentações aplicáveis",
+  "tip_user_experience": "Equilibre monetização com boa experiência do usuário",
+  "tip_analytics": "Monitore regularmente suas métricas de monetização",
+  
+  "monetize": {
+    "http402": {
+      "name": "HTTP 402",
+      "description": "Detecção de bots, resposta 402 com instruções de pagamento"
+    },
+    "api_rate": {
+      "name": "Limitação de Taxa da API",
+      "description": "Middleware de limitação, integração de pagamento"
+    },
+    "subscriptions": {
+      "name": "Assinaturas",
+      "description": "Gestão de contas, autenticação, controle de acesso"
+    },
+    "legal_agreements": {
+      "name": "Acordos Legais",
+      "description": "Registro de atividade, termos de serviço"
+    },
+    "blockchain": {
+      "name": "Micropagamentos com Blockchain",
+      "description": "Integração blockchain, contratos inteligentes"
+    },
+    "captchas": {
+      "name": "CAPTCHAs",
+      "description": "Integração CAPTCHA, desafios para humanos"
+    },
+    "ip_blocking": {
+      "name": "Bloqueio de IPs",
+      "description": "Listas negras/brancas, regras de firewall"
+    },
+    "custom_auth": {
+      "name": "Autenticação Personalizada",
+      "description": "Validação de cabeçalhos, gestão de tokens"
+    }
+  }
 }

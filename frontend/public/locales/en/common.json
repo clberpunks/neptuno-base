@@ -252,7 +252,6 @@
 
   "usage_costs": "Usage Costs",
   "demand_costs": "Demand Costs",
-  "monetization": "Monetization",
   "ai_tariffs": "AI Tariffs",
   "revenue": "Revenue",
 
@@ -302,7 +301,6 @@
   "inbox_empty": "Congratulations! You have no messages.",
   "monitor_ai_activity": "AI activity on your site",
   "risk_status_monitoring": "Risky activity detected",
-  "monetize": "Monetize AI visits",
 
   "radar_dashboard": "Dashboard de Radar",
   "total_hits": "Total Hits",
@@ -558,7 +556,57 @@
   "restricted_rules": "Restricted rules",
   "tariff_rules": "Tariff rules",
   "total_tokens": "Total tokens",
-  "seo_rules": "SEO rules"
+  "seo_rules": "SEO rules",
+
+  
+  "monetization": "Monetization",
+  "monetization_subtitle": "Monetize bot traffic on your site",
+  "monetization_description": "Activate different strategies to generate income from automated traffic visiting your website.",
+  "monetization_strategies": "Monetization Strategies",
+  "active_methods": "Active methods",
+  "toggle_method": "Enable/disable method",
+  "configure": "Configure",
+  "view_stats": "View statistics",
+  "monetization_tips": "Monetization tips",
+  "tip_combine_methods": "Combine multiple methods to maximize your income",
+  "tip_legal_compliance": "Ensure compliance with all applicable regulations",
+  "tip_user_experience": "Balance monetization with good user experience",
+  "tip_analytics": "Regularly monitor your monetization metrics",
+  
+  "monetize": {
+    "http402": {
+      "name": "HTTP 402",
+      "description": "Bot detection, 402 response with payment instructions"
+    },
+    "api_rate": {
+      "name": "API Rate Limiting",
+      "description": "Rate limiting middleware, payment integration"
+    },
+    "subscriptions": {
+      "name": "Subscriptions",
+      "description": "Account management, authentication, access control"
+    },
+    "legal_agreements": {
+      "name": "Legal Agreements",
+      "description": "Activity logging, terms of service"
+    },
+    "blockchain": {
+      "name": "Blockchain Micropayments",
+      "description": "Blockchain integration, smart contracts"
+    },
+    "captchas": {
+      "name": "CAPTCHAs",
+      "description": "CAPTCHA integration, human challenges"
+    },
+    "ip_blocking": {
+      "name": "IP Blocking",
+      "description": "Blacklists/whitelists, firewall rules"
+    },
+    "custom_auth": {
+      "name": "Custom Authentication",
+      "description": "Header validation, token management"
+    }
+  }
 
 
 }

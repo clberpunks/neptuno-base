@@ -1,26 +1,35 @@
 // components/shared/CollapsiblePanel.tsx
 import { useState } from "react";
 
+
 interface CollapsiblePanelProps {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   defaultExpanded?: boolean;
   loading?: boolean;
+  onToggle?: () => void;
 }
 
-export default function CollapsiblePanel({
-  title,
-  children,
-  defaultExpanded = false,
-  loading = false
-}: CollapsiblePanelProps) {
+export default function CollapsiblePanel(props: CollapsiblePanelProps) {
+  const {
+    title,
+    children,
+    defaultExpanded = false,
+    loading = false,
+    onToggle
+  } = props;
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+// ...existing code...
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <button
         className="w-full p-4 text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          setIsExpanded(!isExpanded);
+          if (onToggle) onToggle();
+        }}
         aria-expanded={isExpanded}
         disabled={loading}
       >
