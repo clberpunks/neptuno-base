@@ -30,7 +30,7 @@ module.exports = {
         hostname: "**.googleusercontent.com",
       },
     ],
-  },
+  }, 
   async rewrites() {
     return [
 {
