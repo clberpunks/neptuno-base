@@ -36,7 +36,7 @@ interface RiskPanelProps {
   range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y"; // Añadir prop range
 }
 
-
+ 
 export default function RiskPanel({ id, range }: RiskPanelProps) {
   const { t } = useTranslation('common');
   const [riskData, setRiskData] = useState<RiskData | null>(null);

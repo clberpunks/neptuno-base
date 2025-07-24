@@ -59,7 +59,7 @@ export default function SummaryDashboard({ range }: SummaryDashboardProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {

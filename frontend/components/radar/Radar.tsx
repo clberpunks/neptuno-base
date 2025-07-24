@@ -15,7 +15,7 @@ import AdvancedInsights from "./AdvancesInsights";
 import RadarDashboard from "./RadarDashboard"; // Importamos el nuevo componente
 
 type Range = "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
-
+ 
 export default function Radar() {
   const [stats, setStats] = useState<Stats>({
     allow: 0,

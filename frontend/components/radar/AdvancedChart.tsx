@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../../utils/api";
 import { Stats, Log } from "../types/radar";
 import ExpandablePanel from "../shared/ExpandablePanel";
-
+ 
 export default function AdvancedCharts() {
   // Define Range type to allow "24h" as a value
   type Range = "24h" | "7d" | "15d" | "1m" | "6m" | "1y";

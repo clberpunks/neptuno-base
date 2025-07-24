@@ -13,7 +13,7 @@ interface CTRItem {
   impressions: number;
   rate: number;
 }
-
+ 
 interface AdvancedInsights {
   trafficByAgentType: BucketItem[];
   mostActiveAgents: BucketItem[];

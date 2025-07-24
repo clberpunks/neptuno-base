@@ -33,7 +33,7 @@ interface RadarDashboardData {
     max: number;
   }[];
 }
-
+  
 export default function RadarDashboard({ range }: RadarDashboardProps) {
   const { t } = useTranslation("common");
   const [dashboardData, setDashboardData] = useState<RadarDashboardData | null>(
