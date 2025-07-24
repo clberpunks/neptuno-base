@@ -1,3 +1,4 @@
+
 // components/radar/AdvancedCharts.tsx
 import { Line, Bar, Radar, Doughnut } from "react-chartjs-2";
 import { useEffect, useState } from "react";
@@ -5,49 +6,39 @@ import { apiFetch } from "../../utils/api";
 import { Stats, Log } from "../types/radar";
 import ExpandablePanel from "../shared/ExpandablePanel";
 
-interface AdvancedChartsProps {
-  range: "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
-}
-
-export default function AdvancedCharts({ range }: AdvancedChartsProps) {
+export default function AdvancedCharts() {
+  // Define Range type to allow "24h" as a value
+  type Range = "24h" | "7d" | "15d" | "1m" | "6m" | "1y";
+  const [range, setRange] = useState<Range>("24h");
   const [insights, setInsights] = useState<any>(null);
 
-  useEffect(() => {
-    apiFetch<any>(`/rest/logs/insights/?range=${range}`).then(setInsights);
+useEffect(() => {
+     apiFetch<Stats>(`/rest/logs/stats/?range=${range}`).then(setInsights);
   }, [range]);
 
   if (!insights) return null;
 
-  const rangeLabels = {
-    "24h": "24 horas",
-    "7d": "7 días",
-    "15d": "15 días",
-    "1m": "1 mes",
-    "6m": "6 meses",
-    "1y": "1 año"
-  };
-
   const detectionData = {
     labels: ["Permitido", "Limitado", "Bloqueado"],
     datasets: [{
-      label: `Últimos ${rangeLabels[range]}`,
+      label: "Últimos 7 días",
       data: [
-        insights.stats.allowed ?? 0,
-        insights.stats.limited ?? 0,
-        insights.stats.blocked ?? 0,
+        insights?.last7days?.allowed ?? 0,
+        insights?.last7days?.limited ?? 0,
+        insights?.last7days?.blocked ?? 0,
       ],
       backgroundColor: ["#4ade80", "#fbbf24", "#f87171"]
     }]
   };
 
   const botData = {
-    labels: insights.byBotType?.map(b => b.botType) || [],
+    labels: Array.isArray(insights?.byBotType) ? insights.byBotType.map(b => b.botType) : [],
     datasets: [{
       label: "Bots detectados",
-      data: insights.byBotType?.map(b => b.count) || [],
-      backgroundColor: insights.byBotType?.map((_, i) => 
-        `hsl(${i * 40}, 70%, 60%)`
-      ) || []
+      data: Array.isArray(insights?.byBotType) ? insights.byBotType.map(b => b.count) : [],
+      backgroundColor: Array.isArray(insights?.byBotType)
+        ? insights.byBotType.map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
+        : []
     }]
   };
 
@@ -56,11 +47,17 @@ export default function AdvancedCharts({ range }: AdvancedChartsProps) {
     datasets: [{
       label: "Nivel general",
       data: [
-        insights.riskLevel === "high" ? 100 : 
-          insights.riskLevel === "medium" ? 60 : 20,
-        insights.protectionLevel === "high" ? 90 : 
-          insights.protectionLevel === "medium" ? 60 : 30,
-        insights.stats.total ?? 0
+        insights?.last24h?.riskLevel === "high"
+          ? 100
+          : insights?.last24h?.riskLevel === "medium"
+            ? 60
+            : 20,
+        insights?.protectionLevel === "high"
+          ? 90
+          : insights?.protectionLevel === "medium"
+            ? 60
+            : 30,
+        insights?.last7days?.totalDetected ?? 0
       ],
       backgroundColor: "rgba(99, 102, 241, 0.2)",
       borderColor: "#6366f1",
@@ -72,9 +69,24 @@ export default function AdvancedCharts({ range }: AdvancedChartsProps) {
     <ExpandablePanel
       title="Análisis Avanzado"
       defaultExpanded={false}
-      statusLabel={`${insights.detections ?? 0} detecciones recientes`}
+      statusLabel={`${insights?.last24h?.detections ?? 0} detecciones recientes`}
       statusColor="bg-red-100 text-red-700"
     >
+
+      <div className="flex justify-end mb-4">
+        <select 
+          className="border rounded px-2 py-1 text-sm"
+          value={range}
+          onChange={(e) => setRange(e.target.value as Range)}
+        >
+          <option value="24h">24h</option>
+          <option value="7d">7d</option>
+          <option value="15d">15d</option>
+          <option value="1m">1m</option>
+          <option value="6m">6m</option>
+          <option value="1y">1y</option>
+        </select>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-medium text-sm mb-2">Comparativa de Tráfico</h3>

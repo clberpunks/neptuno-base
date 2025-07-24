@@ -126,8 +126,6 @@ def get_user_firewall_stats(
     stats["total"] = total
     return stats
 
-# backend/routers/logs.py
-# Add range to insights endpoint
 @router.get("/insights")
 def risk_insights(
     range: str = Query("24h", description="Time range for insights"),
