@@ -207,12 +207,8 @@ def risk_insights(
     }
 
 @router.get("/advanced-insights", response_model=AdvancedInsightsOut)
-def advanced_insights(
-    range: str = Query("24h", description="Time range for insights"),
-    current_user=Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    cutoff = get_cutoff_from_range(range)
+def advanced_insights(current_user=Depends(get_current_user),
+                      db: Session = Depends(get_db)):
     tenant = current_user.id
 
     # 1. Traffic by Agent Type
@@ -222,39 +218,34 @@ def advanced_insights(
         "AI Data Scraper": ["Scrapy", "Octoparse"],
         "Uncategorized": []
     }
-    
-    # Filtrar por rango temporal
-    base_query = db.query(AccessLog).filter(
-        AccessLog.tenant_id == tenant,
-        AccessLog.timestamp >= cutoff
-    )
-    
     traffic_by_agent = []
     for label, patterns in agent_buckets.items():
         if patterns:
-            count = base_query.filter(
-                or_(*[AccessLog.user_agent.ilike(f"%{pat}%") for pat in patterns])
-            ).count()
+            count = db.query(func.count(AccessLog.id)).filter(
+                AccessLog.tenant_id == tenant,
+                *[AccessLog.user_agent.ilike(f"%{pat}%")
+                  for pat in patterns]).scalar()
         else:
             count = 0
         traffic_by_agent.append({"key": label, "count": count})
 
-    total_hits = base_query.count()
+    total_hits = db.query(func.count(
+        AccessLog.id)).filter(AccessLog.tenant_id == tenant).scalar()
     known = sum(item["count"] for item in traffic_by_agent)
     traffic_by_agent.append({
         "key": "Uncategorized",
         "count": total_hits - known
     })
 
-    # 2. Top referred pages (con filtro de rango)
-    top_referrals = base_query.filter(
-        AccessLog.referrer != None
-    ).group_by(AccessLog.referrer).order_by(
-        func.count(AccessLog.id).desc()
-    ).limit(10).values(
+    # 2. Top referred pages
+    top_referrals = db.query(
         AccessLog.referrer.label("key"),
-        func.count(AccessLog.id).label("count")
-    )
+        func.count(AccessLog.id).label("count")).filter(
+            AccessLog.tenant_id == tenant, AccessLog.referrer
+            != None).group_by(AccessLog.referrer).order_by(
+                func.count(AccessLog.id).desc()).limit(10).all()
+    top_referrals = [{"key": r.key, "count": r.count} for r in top_referrals]
+
     # 3. Traffic by LLM referrer
     traffic_by_llm = db.query(
         AccessLog.referrer.label("key"),
