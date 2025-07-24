@@ -37,8 +37,8 @@ useEffect(() => {
     try {
       setLoading(true);
       const [statsData, logsData] = await Promise.all([
-        apiFetch<Stats>(`/rest/logs/stats/?range=${range}`),
-        apiFetch<Log[]>(`/rest/logs/?range=${range}&limit=1000`),
+        apiFetch<Stats>(`/rest/logs/stats?range=${range}`),
+        apiFetch<Log[]>(`/rest/logs?range=${range}&limit=1000`),
       ]);
       setStats(statsData);
       setAllLogs(logsData);
