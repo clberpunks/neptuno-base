@@ -2,7 +2,7 @@
 from schemas.schemas import AdvancedInsightsOut
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case, or_
+from sqlalchemy import func, case
 from datetime import datetime, timedelta
 from dependencies import get_current_user
 from db import get_db
@@ -127,7 +127,7 @@ def get_user_firewall_stats(
     return stats
 
 # backend/routers/logs.py
-# backend/routers/logs.py
+# Add range to insights endpoint
 @router.get("/insights")
 def risk_insights(
     range: str = Query("24h", description="Time range for insights"),
@@ -141,7 +141,7 @@ def risk_insights(
         AccessLog.tenant_id == current_user.id, 
         AccessLog.timestamp >= cutoff,
         AccessLog.outcome.in_(["block", "limit", "ratelimit", "redirect", "flagged"])
-    ).scalar() or 0
+    ).scalar()
 
     # Risk level based on detections
     risk_level = "low"
@@ -161,14 +161,6 @@ def risk_insights(
         AccessLog.timestamp >= cutoff
     ).first()
 
-    # Procesar resultados
-    stats_data = {
-        "total": stats.total or 0,
-        "blocked": stats.blocked or 0,
-        "limited": stats.limited or 0,
-        "allowed": stats.allowed or 0
-    }
-
     # Get logs for bot types
     logs = db.query(AccessLog.user_agent).filter(
         AccessLog.tenant_id == current_user.id, 
@@ -179,9 +171,8 @@ def risk_insights(
     # Process bot types
     bot_counts = {}
     for log in logs:
-        if log.user_agent:
-            bot_type = log.user_agent.split('/')[0].split(' ')[0] or "Unknown"
-            bot_counts[bot_type] = bot_counts.get(bot_type, 0) + 1
+        bot_type = log.user_agent.split('/')[0].split(' ')[0] if log.user_agent else "Unknown"
+        bot_counts[bot_type] = bot_counts.get(bot_type, 0) + 1
 
     sorted_bots = sorted(bot_counts.items(), key=lambda x: x[1], reverse=True)[:10]
     by_bot_type = [{"botType": bot[0], "count": bot[1]} for bot in sorted_bots]
@@ -190,11 +181,29 @@ def risk_insights(
     protection_level = "low"
 
     return {
+        # New structure
         "detections": detections,
         "riskLevel": risk_level,
-        "stats": stats_data,
+        "stats": {
+            "total": stats.total or 0,
+            "blocked": stats.blocked or 0,
+            "limited": stats.limited or 0,
+            "allowed": stats.allowed or 0
+        },
         "byBotType": by_bot_type,
         "protectionLevel": protection_level,
+        
+        # Old structure for backward compatibility
+        "last24h": {
+            "detections": detections,
+            "riskLevel": risk_level
+        },
+        "last7days": {
+            "totalDetected": stats.total or 0,
+            "blocked": stats.blocked or 0,
+            "limited": stats.limited or 0,
+            "allowed": stats.allowed or 0
+        }
     }
 
 @router.get("/advanced-insights", response_model=AdvancedInsightsOut)
@@ -246,7 +255,6 @@ def advanced_insights(
         AccessLog.referrer.label("key"),
         func.count(AccessLog.id).label("count")
     )
-    
     # 3. Traffic by LLM referrer
     traffic_by_llm = db.query(
         AccessLog.referrer.label("key"),
@@ -331,7 +339,7 @@ def advanced_insights(
             "impressions": total_impressions,
             "rate": round(ctr, 2)
         },
-        "topReferredPages": [{"key": r[0], "count": r[1]} for r in top_referrals],
+        "topReferredPages": top_referrals,
         "trafficByLLMReferrer": traffic_by_llm,
         "timeSpentByAgent": by_time,
     }
