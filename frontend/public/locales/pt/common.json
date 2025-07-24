@@ -571,5 +571,21 @@
       "name": "Autenticação Personalizada",
       "description": "Validação de cabeçalhos, gestão de tokens"
     }
-  }
+  },
+
+  "radar_statistics_aria": "Estatísticas do radar de segurança",
+  "general_summary_aria": "Resumo geral de atividade",
+  "hits_by_agent_aria": "Acessos por tipo de agente",
+  "hits_last_24h_aria": "Acessos nas últimas 24 horas",
+  "hits_last_15d_aria": "Acessos nos últimos 15 dias",
+  "hits_last_6m_aria": "Acessos nos últimos 6 meses",
+  "geographic_distribution": "Distribuição geográfica",
+  "geographic_distribution_aria": "Distribuição geográfica de acessos",
+  "threat_detection": "Detecção de ameaças",
+  "threat_detection_aria": "Nível de detecção de ameaças",
+  "security_trends": "Tendências de segurança",
+  "security_trends_aria": "Tendências recentes de segurança",
+  "malicious_activity": "Atividade maliciosa",
+  "coming_soon": "Em breve",
+  "unknown": "Desconhecido"
 }

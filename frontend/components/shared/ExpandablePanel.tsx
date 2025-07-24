@@ -13,6 +13,7 @@ interface ExpandablePanelProps {
   defaultExpanded?: boolean;
   loading?: boolean;
   error?: string;
+  ariaLabel?: string;
 }
 
 export default function ExpandablePanel({
@@ -36,6 +37,7 @@ export default function ExpandablePanel({
         className="p-6 border-b border-gray-200 flex justify-between items-center cursor-pointer hover:bg-gray-50"
         onClick={() => setIsExpanded(!isExpanded)}
         aria-expanded={isExpanded}
+        // aria-label={ariaLabel}
         aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
       >
         <div className="flex items-center space-x-4">

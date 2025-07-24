@@ -64,7 +64,6 @@ export default function Radar() {
 
   return (
     <div className="space-y-6 p-4">
-      <RadarDashboard range={range} />
       {/* selector de rango */}
       <div className="flex justify-end">
         <div className="flex justify-end gap-2 mb-4 flex-wrap">
@@ -83,6 +82,8 @@ export default function Radar() {
           ))}
         </div>
       </div>
+      <RadarDashboard range={range} />
+
       <SummaryCharts stats={stats} logs={allLogs} loading={loading} range={range} />
       <AdvancedCharts />
       <AdvancedInsights range={range} />

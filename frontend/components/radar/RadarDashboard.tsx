@@ -406,6 +406,7 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             ariaLabel={t("other")}
           />
         </div>
+        {/*  
         {dashboardData.usageLimits.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -464,6 +465,7 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
             </div>
           </div>
         )}
+        */}
       </div>
     </div>
   );

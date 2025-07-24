@@ -606,7 +606,23 @@
       "name": "Custom Authentication",
       "description": "Header validation, token management"
     }
-  }
+  },
+
+  "radar_statistics_aria": "Security radar statistics",
+  "general_summary_aria": "General activity summary",
+  "hits_by_agent_aria": "Hits by agent type",
+  "hits_last_24h_aria": "Hits in the last 24 hours",
+  "hits_last_15d_aria": "Hits in the last 15 days",
+  "hits_last_6m_aria": "Hits in the last 6 months",
+  "geographic_distribution": "Geographic distribution",
+  "geographic_distribution_aria": "Geographic distribution of hits",
+  "threat_detection": "Threat detection",
+  "threat_detection_aria": "Threat detection level",
+  "security_trends": "Security trends",
+  "security_trends_aria": "Recent security trends",
+  "malicious_activity": "Malicious activity",
+  "coming_soon": "Coming soon",
+  "unknown": "Unknown"
 
 
 }
