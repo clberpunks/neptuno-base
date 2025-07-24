@@ -545,8 +545,20 @@
 
     
   "protection_status" : "Protection Status",
- "tutorials_completed" : "Completed Tutorials"
+ "tutorials_completed" : "Completed Tutorials",
 
+  "user_since": "User since",
+  "last_login_short": "Last login",
+  "force_send_weekly_report": "Send weekly report",
+  "count": "Count",
+  "tracking_code": "Tracking code",
+  "tracking_code_instructions": "Instructions for tracking code",
+  "allowed_rules": "Allowed rules",
+  "blocked_rules": "Blocked rules",
+  "restricted_rules": "Restricted rules",
+  "tariff_rules": "Tariff rules",
+  "total_tokens": "Total tokens",
+  "seo_rules": "SEO rules"
 
 
 }

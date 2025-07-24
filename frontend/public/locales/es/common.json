@@ -544,5 +544,19 @@
   "unread_notifications" : "Notificaciones no leídas",
   
   "protection_status" : "Estado de Protección",
- "tutorials_completed" :"Tutoriais concluídos"
+ "tutorials_completed" :"Tutoriais concluídos",
+
+ "user_since": "Usuario desde",
+  "last_login_short": "Último inicio de sesión",
+  "force_send_weekly_report": "Enviar informe semanal",
+  "count": "Cantidad",
+  "tracking_code": "Código de seguimiento",
+  "tracking_code_instructions": "Instrucciones para el código de seguimiento",
+  "allowed_rules": "Reglas permitidas",
+  "blocked_rules": "Reglas bloqueadas",
+  "restricted_rules": "Reglas restringidas",
+  "tariff_rules": "Reglas de tarifas",
+  "total_tokens": "Total de tokens",
+  "seo_rules": "Reglas SEO"
+
 }

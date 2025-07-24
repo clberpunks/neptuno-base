@@ -522,21 +522,5 @@
   "support_24_7": "Suporte 24/7",
   "all_rights_reserved": "Todos os direitos reservados",
   "terms": "Termos",
-  "privacy": "Privacidade",
-
-  "user_since": "Usuário desde",
-  "last_login_short": "Último login",
-  "force_send_weekly_report": "Enviar relatório semanal",
-  "unread_notifications": "Notificações não lidas",
-  "protection_status": "Status de proteção",
-  "tutorials_completed": "Tutoriais concluídos",
-  "count": "Contagem",
-  "tracking_code": "Código de rastreamento",
-  "tracking_code_instructions": "Instruções para o código de rastreamento",
-  "allowed_rules": "Regras permitidas",
-  "blocked_rules": "Regras bloqueadas",
-  "restricted_rules": "Regras restritas",
-  "tariff_rules": "Regras de tarifas",
-  "total_tokens": "Total de tokens",
-  "seo_rules": "Regras SEO"
+  "privacy": "Privacidade"
 }
