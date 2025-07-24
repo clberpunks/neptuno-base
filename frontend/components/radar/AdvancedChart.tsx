@@ -13,7 +13,7 @@ export default function AdvancedCharts() {
   const [insights, setInsights] = useState<any>(null);
 
 useEffect(() => {
-     apiFetch<Stats>(`/rest/logs/stats?range=${range}`).then(setInsights);
+     apiFetch<Stats>(`/rest/logs/stats/?range=${range}`).then(setInsights);
   }, [range]);
 
   if (!insights) return null;

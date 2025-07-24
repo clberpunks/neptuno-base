@@ -33,7 +33,7 @@ export default function AdvancedInsights({ range }: AdvancedInsightsProps) {
   const [data, setData] = useState<AdvancedInsights | null>(null);
 
   useEffect(() => {
-    apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights?range=${range}`).then(setData);
+    apiFetch<AdvancedInsights>(`/rest/logs/advanced-insights/?range=${range}`).then(setData);
   }, [range]);
 
 
