@@ -43,24 +43,34 @@ module.exports = {
       }
     ];
   },
+  
   async redirects() {
     return [
       {
         source: "/:locale", // Captura /es o /en
         destination: "/:locale/dashboard", // Redirige a /es/dashboard o /en/dashboard
         permanent: false,
-        locale: false, // Importante: desactiva el manejo de locale para esta redirección
+        locale: false,
       },
       {
         source: "/", // Redirige la raíz
         destination: "/public", // Al dashboard en español por defecto
         permanent: false,
       },
+      // Redirige /es/public a /public/es
       {
-        source: "/:locale/public/",
-        destination: "/public/:locale",
+        source: "/:locale/public", // Captura /es/public, /en/public, etc.
+        destination: "/public/:locale", // Redirige a /public/es, /public/en, etc.
         permanent: false,
+        locale: false,
       },
+      // Opcional: manejar también el caso con barra final
+      {
+        source: "/:locale/public/", // Captura /es/public/, /en/public/, etc.
+        destination: "/public/:locale", // Redirige a /public/es, /public/en, etc.
+        permanent: false,
+        locale: false,
+      }
     ];
   },
 
