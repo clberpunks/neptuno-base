@@ -33,9 +33,9 @@ module.exports = {
   },
   async rewrites() {
     return [
-      {
-        source: "/rest/:path*",
-        destination: `${backendUrl}/:path*`,
+{
+        source: '/rest/:path*',
+        destination: `${backendUrl}/rest/:path*`, 
       },
       {
         source: "/_next/static/:path*",
