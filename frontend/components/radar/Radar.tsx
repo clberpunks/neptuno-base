@@ -63,7 +63,7 @@ useEffect(() => {
 
   return (
     <div className="space-y-6 p-4">
-      <RadarDashboard range={range} />
+
       {/* selector de rango */}
       <div className="flex justify-end">
         <div className="flex justify-end gap-2 mb-4 flex-wrap">
@@ -82,13 +82,14 @@ useEffect(() => {
           ))}
         </div>
       </div>
+      <RadarDashboard range={range} />
       <SummaryCharts
         stats={stats}
         logs={allLogs}
         loading={loading}
         range={range}
       />
-      <AdvancedCharts />
+      <AdvancedCharts range={range}  />
       <AdvancedInsights range={range} />
       <UsageLimits logs={allLogs} />
       <RecentDetections logs={allLogs} loading={loading} range={range} />

@@ -2,7 +2,7 @@
 from schemas.schemas import AdvancedInsightsOut
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case
+from sqlalchemy import func, case, or_
 from datetime import datetime, timedelta
 from dependencies import get_current_user
 from db import get_db
@@ -127,7 +127,7 @@ def get_user_firewall_stats(
     return stats
 
 # backend/routers/logs.py
-# Add range to insights endpoint
+# backend/routers/logs.py
 @router.get("/insights")
 def risk_insights(
     range: str = Query("24h", description="Time range for insights"),
@@ -141,7 +141,7 @@ def risk_insights(
         AccessLog.tenant_id == current_user.id, 
         AccessLog.timestamp >= cutoff,
         AccessLog.outcome.in_(["block", "limit", "ratelimit", "redirect", "flagged"])
-    ).scalar()
+    ).scalar() or 0
 
     # Risk level based on detections
     risk_level = "low"
@@ -161,6 +161,14 @@ def risk_insights(
         AccessLog.timestamp >= cutoff
     ).first()
 
+    # Procesar resultados
+    stats_data = {
+        "total": stats.total or 0,
+        "blocked": stats.blocked or 0,
+        "limited": stats.limited or 0,
+        "allowed": stats.allowed or 0
+    }
+
     # Get logs for bot types
     logs = db.query(AccessLog.user_agent).filter(
         AccessLog.tenant_id == current_user.id, 
@@ -171,8 +179,9 @@ def risk_insights(
     # Process bot types
     bot_counts = {}
     for log in logs:
-        bot_type = log.user_agent.split('/')[0].split(' ')[0] if log.user_agent else "Unknown"
-        bot_counts[bot_type] = bot_counts.get(bot_type, 0) + 1
+        if log.user_agent:
+            bot_type = log.user_agent.split('/')[0].split(' ')[0] or "Unknown"
+            bot_counts[bot_type] = bot_counts.get(bot_type, 0) + 1
 
     sorted_bots = sorted(bot_counts.items(), key=lambda x: x[1], reverse=True)[:10]
     by_bot_type = [{"botType": bot[0], "count": bot[1]} for bot in sorted_bots]
@@ -181,34 +190,20 @@ def risk_insights(
     protection_level = "low"
 
     return {
-        # New structure
         "detections": detections,
         "riskLevel": risk_level,
-        "stats": {
-            "total": stats.total or 0,
-            "blocked": stats.blocked or 0,
-            "limited": stats.limited or 0,
-            "allowed": stats.allowed or 0
-        },
+        "stats": stats_data,
         "byBotType": by_bot_type,
         "protectionLevel": protection_level,
-        
-        # Old structure for backward compatibility
-        "last24h": {
-            "detections": detections,
-            "riskLevel": risk_level
-        },
-        "last7days": {
-            "totalDetected": stats.total or 0,
-            "blocked": stats.blocked or 0,
-            "limited": stats.limited or 0,
-            "allowed": stats.allowed or 0
-        }
     }
 
 @router.get("/advanced-insights", response_model=AdvancedInsightsOut)
-def advanced_insights(current_user=Depends(get_current_user),
-                      db: Session = Depends(get_db)):
+def advanced_insights(
+    range: str = Query("24h", description="Time range for insights"),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    cutoff = get_cutoff_from_range(range)
     tenant = current_user.id
 
     # 1. Traffic by Agent Type
@@ -218,34 +213,40 @@ def advanced_insights(current_user=Depends(get_current_user),
         "AI Data Scraper": ["Scrapy", "Octoparse"],
         "Uncategorized": []
     }
+    
+    # Filtrar por rango temporal
+    base_query = db.query(AccessLog).filter(
+        AccessLog.tenant_id == tenant,
+        AccessLog.timestamp >= cutoff
+    )
+    
     traffic_by_agent = []
     for label, patterns in agent_buckets.items():
         if patterns:
-            count = db.query(func.count(AccessLog.id)).filter(
-                AccessLog.tenant_id == tenant,
-                *[AccessLog.user_agent.ilike(f"%{pat}%")
-                  for pat in patterns]).scalar()
+            count = base_query.filter(
+                or_(*[AccessLog.user_agent.ilike(f"%{pat}%") for pat in patterns])
+            ).count()
         else:
             count = 0
         traffic_by_agent.append({"key": label, "count": count})
 
-    total_hits = db.query(func.count(
-        AccessLog.id)).filter(AccessLog.tenant_id == tenant).scalar()
+    total_hits = base_query.count()
     known = sum(item["count"] for item in traffic_by_agent)
     traffic_by_agent.append({
         "key": "Uncategorized",
         "count": total_hits - known
     })
 
-    # 2. Top referred pages
-    top_referrals = db.query(
+    # 2. Top referred pages (con filtro de rango)
+    top_referrals = base_query.filter(
+        AccessLog.referrer != None
+    ).group_by(AccessLog.referrer).order_by(
+        func.count(AccessLog.id).desc()
+    ).limit(10).values(
         AccessLog.referrer.label("key"),
-        func.count(AccessLog.id).label("count")).filter(
-            AccessLog.tenant_id == tenant, AccessLog.referrer
-            != None).group_by(AccessLog.referrer).order_by(
-                func.count(AccessLog.id).desc()).limit(10).all()
-    top_referrals = [{"key": r.key, "count": r.count} for r in top_referrals]
-
+        func.count(AccessLog.id).label("count")
+    )
+    
     # 3. Traffic by LLM referrer
     traffic_by_llm = db.query(
         AccessLog.referrer.label("key"),
@@ -330,7 +331,7 @@ def advanced_insights(current_user=Depends(get_current_user),
             "impressions": total_impressions,
             "rate": round(ctr, 2)
         },
-        "topReferredPages": top_referrals,
+        "topReferredPages": [{"key": r[0], "count": r[1]} for r in top_referrals],
         "trafficByLLMReferrer": traffic_by_llm,
         "timeSpentByAgent": by_time,
     }
