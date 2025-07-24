@@ -19,7 +19,7 @@ services:
   frontend:
     image: ciberpunk-frontend:prod
     environment:
-      NEXT_PUBLIC_API_URL: https://api.ciberpunk.es
+      #- NEXT_PUBLIC_API_URL: https://api.ciberpunk.es
     networks:
       - secure_net
     labels:

@@ -15,16 +15,11 @@ async function tryRefresh(): Promise<boolean> {
 }
 
 
-// frontend/utils/api.ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-
 export async function apiFetch<T>(
   url: string,
-  options: RequestInit = {}
+  options: Omit<RequestInit, 'body'> & { body?: BodyInit | object } = {}
 ): Promise<T> {
-  // Construir URL absoluta usando la variable de entorno
-  const absoluteUrl = `${API_BASE_URL}${url}`;
-  
+  // Preprocesar el body si es un objeto y no string
   const finalOptions: RequestInit = {
     credentials: "include",
     ...options,
@@ -32,18 +27,13 @@ export async function apiFetch<T>(
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-  };
+    body:
+      options.body && typeof options.body === "object" && !(options.body instanceof FormData) && !(options.body instanceof Blob) && !(options.body instanceof ArrayBuffer)
+        ? JSON.stringify(options.body)
+        : options.body as BodyInit | undefined,
+    };
 
-  // Handle redirects manually
   let res = await fetch(url, finalOptions);
-  
-  // Handle 307 redirects
-  if (res.status === 307) {
-    const redirectUrl = res.headers.get("Location");
-    if (redirectUrl) {
-      res = await fetch(redirectUrl, finalOptions);
-    }
-  }
 
   if (res.status === 401) {
     const refreshed = await tryRefresh();

@@ -7,11 +7,11 @@ services:
       - "8001:8001"
     depends_on:
       - db 
-    environment:
-      - HTTPX_TIMEOUT=30.0
-      - BACKEND_URL=http://localhost:8001
+    #environment:
+      #- HTTPX_TIMEOUT=30.0
+      #- BACKEND_URL=http://localhost:8001
       #- DATABASE_URL=postgresql+psycopg2://ciberpunk:ciberpunk123@db:5432/ciberpunkdb
-      - DATABASE_URL=postgresql://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
+      #- DATABASE_URL=postgresql://ciberpunk:ciberpunk123@db:5432/ciberpunkdb 
     volumes:
       - ./data:/data
     networks:
@@ -32,10 +32,10 @@ services:
     container_name: frontend
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=/api
-      - HOST=0.0.0.0
-      - PORT=3000
+    #environment:
+      #- NEXT_PUBLIC_API_URL=/api
+      #- HOST=0.0.0.0
+      #- PORT=3000
     depends_on:
       - backend
     networks:
