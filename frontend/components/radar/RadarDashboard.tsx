@@ -48,8 +48,8 @@ export default function RadarDashboard({ range }: RadarDashboardProps) {
         setLoading(true);
         setError(null);
 
-        const stats = await apiFetch<any>(`/rest/logs/stats/user?range=${range}`);
-        const insights = await apiFetch<any>(`/rest/logs/insights?range=${range}`);
+        const stats = await apiFetch<any>(`/rest/logs/stats/user/?range=${range}`);
+        const insights = await apiFetch<any>(`/rest/logs/insights/?range=${range}`);
 
         // Obtener estadísticas
         //const stats = await apiFetch<any>("/api/logs/stats");
