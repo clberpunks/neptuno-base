@@ -27,6 +27,13 @@ USER ciberpunk
 
 EXPOSE 8001
 
+# Comando de arranque mejorado
+#CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && uvicorn main:app --host 0.0.0.0 --port 8001"]
+
+#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001","--reload"]
+
+
+
 # Gunicorn para producción
 #CMD ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001 --timeout 120"]
 
