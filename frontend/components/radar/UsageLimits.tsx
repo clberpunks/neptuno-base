@@ -9,23 +9,24 @@ interface UsageLimitsProps {
   logs: Log[];
 }
 
+
 export default function UsageLimits({ logs }: UsageLimitsProps) {
   const usageMap: Record<string, { used: number; max: number }> = {};
-  
+
   logs.forEach((l) => {
-    if (l.rule.startsWith("limit:")) {
+    if (typeof l.rule === "string" && l.rule.startsWith("limit:")) {
       const m = l.rule.match(/limit:(.*?)\((\d+)\/(\d+)\)/);
       if (m) {
         const key = m[1];
-        const used = parseInt(m[2], 10);
-        const max = parseInt(m[3], 10);
+        const used = Number.isFinite(Number(m[2])) ? parseInt(m[2], 10) : 0;
+        const max = Number.isFinite(Number(m[3])) ? parseInt(m[3], 10) : 0;
         if (!usageMap[key] || usageMap[key].max < max) {
           usageMap[key] = { used, max };
         }
       }
     }
   });
-  
+
   const limitPatterns = Object.keys(usageMap);
 
   if (limitPatterns.length === 0) return null;

@@ -22,22 +22,22 @@ useEffect(() => {
     datasets: [{
       label: "Últimos 7 días",
       data: [
-        insights.last7days.allowed,
-        insights.last7days.limited,
-        insights.last7days.blocked,
+        insights?.last7days?.allowed ?? 0,
+        insights?.last7days?.limited ?? 0,
+        insights?.last7days?.blocked ?? 0,
       ],
       backgroundColor: ["#4ade80", "#fbbf24", "#f87171"]
     }]
   };
 
   const botData = {
-    labels: insights.byBotType.map(b => b.botType),
+    labels: Array.isArray(insights?.byBotType) ? insights.byBotType.map(b => b.botType) : [],
     datasets: [{
       label: "Bots detectados",
-      data: insights.byBotType.map(b => b.count),
-      backgroundColor: insights.byBotType.map((_, i) =>
-        `hsl(${i * 40}, 70%, 60%)`
-      )
+      data: Array.isArray(insights?.byBotType) ? insights.byBotType.map(b => b.count) : [],
+      backgroundColor: Array.isArray(insights?.byBotType)
+        ? insights.byBotType.map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
+        : []
     }]
   };
 
@@ -46,9 +46,17 @@ useEffect(() => {
     datasets: [{
       label: "Nivel general",
       data: [
-        insights.last24h.riskLevel === "high" ? 100 : insights.last24h.riskLevel === "medium" ? 60 : 20,
-        insights.protectionLevel === "high" ? 90 : insights.protectionLevel === "medium" ? 60 : 30,
-        insights.last7days.totalDetected
+        insights?.last24h?.riskLevel === "high"
+          ? 100
+          : insights?.last24h?.riskLevel === "medium"
+            ? 60
+            : 20,
+        insights?.protectionLevel === "high"
+          ? 90
+          : insights?.protectionLevel === "medium"
+            ? 60
+            : 30,
+        insights?.last7days?.totalDetected ?? 0
       ],
       backgroundColor: "rgba(99, 102, 241, 0.2)",
       borderColor: "#6366f1",
@@ -60,7 +68,7 @@ useEffect(() => {
     <ExpandablePanel
       title="Análisis Avanzado"
       defaultExpanded={false}
-      statusLabel={`${insights.last24h.detections} detecciones recientes`}
+      statusLabel={`${insights?.last24h?.detections ?? 0} detecciones recientes`}
       statusColor="bg-red-100 text-red-700"
     >
 
