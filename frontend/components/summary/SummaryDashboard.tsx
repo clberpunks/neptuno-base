@@ -73,7 +73,7 @@ export default function SummaryDashboard({ range }: SummaryDashboardProps) {
         const unreadNotifications = notifications.filter((n) => !n.read).length;
 
         // Obtener datos de riesgo
-        const riskData = await apiFetch<any>(`/rest/logs/insights/?range=${range}`);
+        const riskData = await apiFetch<any>(`/rest/logs/insights?range=${range}`);
 
         // Añadir información de suscripción (simulada)
         riskData.isProUser = true; // TODO: Cambiar por dato real del backend

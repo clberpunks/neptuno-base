@@ -47,7 +47,7 @@ export default function RiskPanel({ id, range }: RiskPanelProps) {
       const fetchRiskData = async () => {
         try {
           // Usar range en la API
-          const data = await apiFetch<RiskData>(`/rest/logs/insights/?range=${range}`);
+          const data = await apiFetch<RiskData>(`/rest/logs/insights?range=${range}`);
           setRiskData(data);
         } catch (error) {
           console.error("Error fetching risk insights:", error);
