@@ -367,12 +367,12 @@
   "traffic_usage": "Uso de tráfico",
 
   
-  "range_24h": "24 horas",
-  "range_7d": "7 días",
-  "range_15d": "15 días",
-  "range_1m": "1 mes",
-  "range_6m": "6 meses",
-  "range_1y": "1 año",
+  "range_24h": "24h",
+  "range_7d": "7d",
+  "range_15d": "15d",
+  "range_1m": "1m",
+  "range_6m": "6m",
+  "range_1y": "1a",
   "advanced_analysis": "Análisis Avanzado",
   "recent_detections": "detecciones recientes",
   "traffic_comparison": "Comparativa de Tráfico",

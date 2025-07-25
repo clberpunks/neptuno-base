@@ -49,7 +49,7 @@ export default function TrackingCodePanel() {
     } finally {
       setIsGenerating(false);
     }
-  }, [t, toast, user]);
+  }, [t]);
 
   useEffect(() => {
     if (user && !snippet) {
