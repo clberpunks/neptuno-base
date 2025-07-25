@@ -15,10 +15,10 @@ EMBED_TEMPLATE = (
     "return new Promise(r=>setTimeout(()=>r(o),5))}"
     "h().then(e=>{if(!e){var f=[navigator.userAgent,navigator.language,"
     "screen.width+'x'+screen.height,Intl.DateTimeFormat().resolvedOptions().timeZone]"
-    ".join('|'),i=new Image;i.src='https://ialert.ciberpunk.es/detect/{t}.png?fp='+encodeURIComponent(f)"
+    ".join('|'),i=new Image;i.src='https://losguardias.com/detect/{t}.png?fp='+encodeURIComponent(f)"
     "+'&src='+encodeURIComponent(location.href);"
     "i.style.display='none';document.body.appendChild(i)}})})();"
-    "<noscript><img src='https://ialert.ciberpunk.es/detect/{t}.png?noscript=1' style='display:none'/></noscript>"
+    "<noscript><img src='https://losguardias.com/detect/{t}.png?noscript=1' style='display:none'/></noscript>"
 )
 
 EMBED_TEMPLATE = (
@@ -35,38 +35,38 @@ EMBED_TEMPLATE = (
 )
 
 EMBED_TEMPLATE = (
-    '<a href="https://ialert.ciberpunk.es/detect/{t}.png" '
+    '<a href="https://losguardias.com/detect/{t}.png" '
     'style="display:none" rel="nofollow">Contenido IA oculto'
-    '<img src="https://ialert.ciberpunk.es/detect/{t}.png?js=0" '
+    '<img src="https://losguardias.com/detect/{t}.png?js=0" '
     'width="1" height="1" style="display:none" alt="" /></a>'
-    '<script>fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(()=>{});</script>'
+    '<script>fetch("https://losguardias.com/detect/{t}.png?js=1").catch(()=>{});</script>'
 )
 
 EMBED_TEMPLATE = (
-    '<a href="https://ialert.ciberpunk.es/detect/{t}.png" '
+    '<a href="https://losguardias.com/detect/{t}.png" '
     'style="display:none" rel="nofollow">Contenido IA oculto'
-    '<img src="https://ialert.ciberpunk.es/detect/{t}.png?js=0" '
+    '<img src="https://losguardias.com/detect/{t}.png?js=0" '
     'width="1" height="1" style="display:none" alt=""/></a>'
     '<script>!async function(){function d(){if(navigator.webdriver)return Promise.resolve(!0);'
     'return new Promise(r=>{const t=performance.now(),m={rh:!0};'
     'requestAnimationFrame(()=>{performance.now()-t<2&&(m.rh=!1),r(m.rh)}),'
     'setTimeout(()=>r(m.rh),5)})}const b=await d();if(b){'
-    'fetch("https://ialert.ciberpunk.es/detect/{t}.png?js=1").catch(()=>{});'
+    'fetch("https://losguardias.com/detect/{t}.png?js=1").catch(()=>{});'
     'const f=[navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
     'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"),i=new Image;'
-    'i.src="https://ialert.ciberpunk.es/detect/{t}.png?js=2&fp="'
+    'i.src="https://losguardias.com/detect/{t}.png?js=2&fp="'
     '+encodeURIComponent(f)+"&src="+encodeURIComponent(location.href),'
     'i.style.display="none",document.body.appendChild(i)}}();</script>'
-    '<noscript><img src="https://ialert.ciberpunk.es/detect/{t}.png?noscript=1" '
+    '<noscript><img src="https://losguardias.com/detect/{t}.png?noscript=1" '
     'style="display:none" alt=""/></noscript>'
 )
 
 
 
 EMBED_TEMPLATE = (
-    '<a href=https://ialert.ciberpunk.es/detect/{t}.png style=display:none rel=nofollow></a>'
+    '<a href=https://losguardias.com/detect/{t}.png style=display:none rel=nofollow></a>'
     '<script>!async function(){'
-    'const url="https://ialert.ciberpunk.es/detect/{t}.png";'
+    'const url="https://losguardias.com/detect/{t}.png";'
     'const params=new URLSearchParams();'
     'params.set("src",location.href);'
     '// 1) webdriver check'
@@ -87,9 +87,9 @@ EMBED_TEMPLATE = (
 
 # Optimized embed template: unified params, minimal fingerprint + brands, noscript
 EMBED_TEMPLATE = (
-    '<a href="https://ialert.ciberpunk.es/detect/{t}.png" style="display:none" rel="nofollow"></a>'
+    '<a href="https://losguardias.com/detect/{t}.png" style="display:none" rel="nofollow"></a>'
     '<script>!async function(){'
-      'const u="https://ialert.ciberpunk.es/detect/{t}.png",p=new URLSearchParams;'
+      'const u="https://losguardias.com/detect/{t}.png",p=new URLSearchParams;'
       'p.set("src",encodeURIComponent(location.href));'
       'if(navigator.webdriver){p.set("mode","probe");p.set("webdriver","1");new Image().src=u+"?"+p;return;}'
       'const f=await new Promise(r=>{const s=performance.now();'
@@ -109,23 +109,23 @@ EMBED_TEMPLATE = (
       'new Image().src=u+"?"+p'
     '}();</script>'
     '<noscript>'
-      '<img src="https://ialert.ciberpunk.es/detect/{t}.png?noscript=1&src='
+      '<img src="https://losguardias.com/detect/{t}.png?noscript=1&src='
         '"+encodeURIComponent(location.href)+"'
       '" style="display:none" alt>'
     '</noscript>'
 )
  
 EMBED_TEMPLATE = (
-    '<a href=https://ialert.ciberpunk.es/rest/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
-    '<img src=https://ialert.ciberpunk.es/rest/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
+    '<a href=https://losguardias.com/rest/detect/{t}.png style=display:none rel=nofollow>@prompt:/?</a>'
+    '<img src=https://losguardias.com/rest/detect/{t}.png?js=0 width=1 height=1 style=display:none alt>'
     '<script>!async function(){if(navigator.webdriver||!(await new Promise(r=>{let e=performance.now(),t=1;'
     'requestAnimationFrame(()=>{(performance.now()-e<2)&&(t=0),r(t)}),setTimeout(()=>r(t),5)}))return '
-    'fetch("https://ialert.ciberpunk.es/rest/detect/{t}.png?js=1").catch(1);let n=new Image;'
-    'n.src=`https://ialert.ciberpunk.es/rest/detect/{t}.png?js=2&fp=${encodeURIComponent(['
+    'fetch("https://losguardias.com/rest/detect/{t}.png?js=1").catch(1);let n=new Image;'
+    'n.src=`https://losguardias.com/rest/detect/{t}.png?js=2&fp=${encodeURIComponent(['
     'navigator.userAgent,navigator.language,screen.width+"x"+screen.height,'
     'Intl.DateTimeFormat().resolvedOptions().timeZone].join("|"))}&src=${encodeURIComponent(location.href)}`,'
     'n.style.display="none",document.body.appendChild(n)}()</script>'
-    '<noscript><img src=https://ialert.ciberpunk.es/rest/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
+    '<noscript><img src=https://losguardias.com/rest/detect/{t}.png?noscript=1 style=display:none alt></noscript>'
 )
 
 @router.get("/embed/snippet.js", response_class=PlainTextResponse)
