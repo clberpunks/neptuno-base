@@ -5,7 +5,7 @@ import { Stats, Log } from "../types/radar";
 import ExpandablePanel from "../shared/ExpandablePanel";
 import "chart.js/auto";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import Spinner from "../shared/Spinner";
 import { useTranslation } from "next-i18next";
 import { apiFetch } from "../../utils/api";
@@ -31,6 +31,13 @@ export default function SummaryCharts({
   const [timeData6m, setTimeData6m] = useState<TimeData | null>(null);
   const [loadingTimeData, setLoadingTimeData] = useState(true);
 
+
+  // Obtener datos para un rango específico
+  const fetchTimeDataForRange = useCallback(async (range: string): Promise<TimeData> => {
+    const logs = await apiFetch<Log[]>(`/rest/logs/?range=${range}&limit=10000`);
+    return processTimeData(logs, range);
+  }, []);
+
   // Cargar datos para múltiples rangos temporales
   useEffect(() => {
     const fetchTimeData = async () => {
@@ -53,13 +60,7 @@ export default function SummaryCharts({
     };
 
     fetchTimeData();
-  }, []);
-
-  // Obtener datos para un rango específico
-  const fetchTimeDataForRange = async (range: string): Promise<TimeData> => {
-    const logs = await apiFetch<Log[]>(`/rest/logs/?range=${range}&limit=10000`);
-    return processTimeData(logs, range);
-  };
+  }, [fetchTimeDataForRange]);
 
   // Procesar datos temporales
   const processTimeData = (logs: Log[], range: string): TimeData => {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { apiFetch } from "../utils/api";
 import { useTranslation } from "next-i18next";
 
@@ -45,7 +46,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
-      router.push("/dashboard"); // ialert
+      router.push("/dashboard"); //
     } catch (err: any) {
       setError(err.message || t("login_error"));
     } finally {
@@ -66,7 +67,7 @@ export default function LoginPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          router.replace("/dashboard"); // ialert
+          router.replace("/dashboard"); //
         } else {
           window.location.href = `/rest/auth/login`;
         }
@@ -291,4 +292,12 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }

@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "Ciberpunk"
+    APP_NAME: str = "guardIAs"
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str = "http://localhost:8001/rest/auth/callback"
@@ -13,8 +13,8 @@ class Settings(BaseSettings):
 
     NODE_ENV: str = "development"
 
-    BACKEND_URL: str = "https://ialerts.ciberpunk.es/rest"
-    FRONTEND_URL: str = "https://ialert.ciberpunk.es"
+    BACKEND_URL: str = "https://losguardias.com/rest"
+    FRONTEND_URL: str = "https://losguardias.com"
 
     # Nuevas variables para Refresh Token
     REFRESH_SECRET: str = "super_refresh_secret"

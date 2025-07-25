@@ -6,6 +6,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../utils/api";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
 interface SubscriptionPlan {
@@ -456,4 +457,13 @@ export default function RegisterPage() {
       </div>
     </>
   );
+}
+
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }

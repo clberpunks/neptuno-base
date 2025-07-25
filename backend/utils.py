@@ -88,7 +88,7 @@ def create_stripe_session(price_cents: int,
     Crea una sesión de Stripe Checkout. 
     El nombre del producto debe ser ASCII puro para evitar errores de encabezado.
     """
-    product_name = "Suscripcion iAlert"  # ASCII puro
+    product_name = "Suscripcion"  # ASCII puro
     return stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{
