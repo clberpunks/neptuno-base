@@ -45,7 +45,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, remember }),
       });
       await refresh();
-      router.push("/dashboard"); // ialert
+      router.push("/dashboard"); //
     } catch (err: any) {
       setError(err.message || t("login_error"));
     } finally {
@@ -66,7 +66,7 @@ export default function LoginPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          router.replace("/dashboard"); // ialert
+          router.replace("/dashboard"); //
         } else {
           window.location.href = `/rest/auth/login`;
         }

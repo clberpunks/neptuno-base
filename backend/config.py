@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     NODE_ENV: str = "development"
 
-    BACKEND_URL: str = "https://ialerts.ciberpunk.es/rest"
+    BACKEND_URL: str = "https://losguardias.com/rest"
     FRONTEND_URL: str = "https://losguardias.com"
 
     # Nuevas variables para Refresh Token
