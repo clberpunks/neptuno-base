@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { apiFetch } from "../utils/api";
 import { useTranslation } from "next-i18next";
 
@@ -291,4 +292,12 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
