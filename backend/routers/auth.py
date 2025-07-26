@@ -329,3 +329,16 @@ def ensure_subscription_with_plan(user: User, db: Session, plan: str):
     )
     db.add(sub)
     db.commit()
+
+
+# backend/auth.py
+@router.get("/check-auth")
+def check_auth(request: Request):
+    jwt_token = request.cookies.get("jwt_token")
+    if not jwt_token:
+        return {"authenticated": False}
+    try:
+        payload = jwt.decode(jwt_token, settings.CLIENT_SECRET, algorithms=["HS256"])
+        return {"authenticated": True}
+    except (jwt.ExpiredSignatureError, jwt.PyJWTError):
+        return {"authenticated": False}
