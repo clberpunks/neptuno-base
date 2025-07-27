@@ -26,7 +26,7 @@ app = FastAPI(
 origins = [
     "play.google.com", "accounts.google.com", "http://localhost:3000",
     "https://lh3.googleusercontent.com", "http://localhost:8001",
-    "https://losguardias.com", "http://172.80.0.200",
+    "https://losguardias.com", "http://172.80.0.200","https://wwww.losguardias.com",
     "http://172.80.0.200:8001"
 ]
 
