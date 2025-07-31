@@ -7,7 +7,7 @@ module.exports = {
   i18n: {
     locales: ["en", "es", "pt"],
     defaultLocale: "es",
-    localeDetection: true,
+    localeDetection: false, // Cambiado a false para evitar el error
   },
   images: {
     unoptimized: true,
@@ -32,10 +32,13 @@ module.exports = {
     ],
   }, 
   async rewrites() {
+    if (!backendUrl) {
+      throw new Error("BACKEND_URL no está definido en las variables de entorno.");
+    }
     return [
-{
+      {
         source: '/rest/:path*',
-        destination: `${backendUrl}/:path*`, 
+        destination: `${backendUrl}/:path*`, // Validación de backendUrl
       },
       {
         source: "/_next/static/:path*",
