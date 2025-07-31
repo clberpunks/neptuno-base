@@ -622,7 +622,32 @@
   "security_trends_aria": "Recent security trends",
   "malicious_activity": "Malicious activity",
   "coming_soon": "Coming soon",
-  "unknown": "Unknown"
+  "unknown": "Unknown",
+
+
+ 
+  "user_management": "Gestión de Usuarios",
+  "search": "Buscar",
+  "role": "Rol",
+  "all_roles": "Todos los roles",
+  "admin": "Administrador",
+  "all_plans": "Todos los planes",
+  "all_statuses": "Todos los estados",
+  "suspended": "Suspendido",
+  "no_users_found": "No se encontraron usuarios",
+  "collapse_details": "Ocultar detalles",
+  "expand_details": "Ver detalles",
+  "user_details": "Detalles del usuario",
+  "created": "Creado",
+  "never": "Nunca",
+  "account_info": "Información de cuenta",
+  "email": "Email",
+  "reset_password": "Restablecer contraseña",
+  "view_activity": "Ver actividad",
+  "change_plan": "Cambiar plan",
+  "add_new_user": "Añadir nuevo usuario"
+
+  
 
 
 }
