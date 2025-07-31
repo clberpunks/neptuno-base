@@ -1,5 +1,5 @@
 # backend/schemas.py
-from typing import Optional
+from typing import List, Optional
 from models.models import PaymentProvider
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
@@ -109,9 +109,6 @@ class PaymentRecordOut(BaseModel):
         orm_mode = True
 
 
-from pydantic import BaseModel
-from typing import List
-
 
 class BucketItem(BaseModel):
     key: str
@@ -137,3 +134,31 @@ class AdvancedInsightsOut(BaseModel):
 class BucketItem(BaseModel):
     key: str
     count: int
+
+
+class UserRole(str, Enum):
+    admin = "admin"
+    user = "user"
+
+class UserStatus(str, Enum):
+    active = "active"
+    suspended = "suspended"
+
+class PlanLevel(str, Enum):
+    free = "free"
+    pro = "pro"
+    business = "business"
+    enterprise = "enterprise"
+
+class UserOut(BaseModel):
+    id: str
+    name: str
+    email: str
+    role: UserRole
+    plan: PlanLevel
+    status: UserStatus
+    created_at: datetime
+    last_login: datetime | None
+
+    class Config:
+        orm_mode = True

@@ -18,9 +18,15 @@ import enum
 from db import Base
 
 
+
 class UserRole(str, enum.Enum):
     admin = "admin"
     user = "user"
+
+class UserStatus(str, enum.Enum):
+    active = "active"
+    suspended = "suspended"
+
 
 
 class Notification(Base):
@@ -44,6 +50,7 @@ class User(Base):
     password_hash = Column(String, nullable=True)
     picture = Column(String)
     role = Column(SqlEnum(UserRole), default=UserRole.user)
+    status = Column(SqlEnum(UserStatus), default=UserStatus.active)   # <-- Agregar esta línea
     auth_method = Column(String, default="google")
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime, default=datetime.utcnow)

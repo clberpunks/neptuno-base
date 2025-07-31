@@ -1,3 +1,4 @@
+// frontend/components/admin/AdminDashboard.tsx
 import { useState, useEffect } from "react";
 import { apiFetch } from "../../utils/api";
 import Spinner from "../shared/Spinner";
@@ -6,6 +7,7 @@ import { SummaryPanel } from "./panels/SummaryPanel";
 import { FirewallPanel } from "./panels/FirewallPanel";
 import { UserActivityPanel } from "./panels/UserActivityPanel";
 import { BotActivityPanel } from "./panels/BotActivityPanel";
+import UserManagementPanel from "./panels/UserManagementPanel";
 import SubscriptionPlansPanel from "./panels/SuscriptionPanel";
 import {
   ChartBarIcon,
@@ -13,6 +15,7 @@ import {
   ShieldCheckIcon,
   UsersIcon,
   ExclamationTriangleIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 import { useTranslation } from "next-i18next";
 
@@ -60,6 +63,7 @@ export default function AdminDashboard() {
   const { t } = useTranslation("common");
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(null);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
   const [botActivities, setBotActivities] = useState<BotActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +81,8 @@ export default function AdminDashboard() {
         setTopUsers(users);
         const bots = await apiFetch<BotActivity[]>("/rest/admin/bot-activities");
         setBotActivities(bots);
+        const allUsersData = await apiFetch<any[]>("/rest/admin/users");
+        setAllUsers(allUsersData); // Guardar todos los usuarios
       } catch (err) {
         setError(t("error_loading_data"));
         console.error(err);
@@ -94,7 +100,8 @@ export default function AdminDashboard() {
       </div>
     );
   }
-  if (error)
+  
+  if (error) {
     return (
       <div className="p-4">
         <div
@@ -106,6 +113,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     );
+  }
 
   if (!dashboardData || !firewallStats) return null;
 
@@ -155,6 +163,16 @@ export default function AdminDashboard() {
         statusColor="bg-purple-100 text-purple-800"
       >
         <UserActivityPanel topUsers={topUsers} />
+      </ExpandablePanel>
+
+      <ExpandablePanel
+        title={t("user_management")}
+        icon={<UserIcon className="h-6 w-6" />}
+        statusLabel={`${allUsers.length} ${t("users")}`}
+        statusColor="bg-blue-100 text-blue-800"
+        defaultExpanded
+      >
+        <UserManagementPanel users={allUsers} /> {/* Pasamos los usuarios */}
       </ExpandablePanel>
 
       <ExpandablePanel

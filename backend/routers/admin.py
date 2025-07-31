@@ -1,14 +1,15 @@
 # backend/routes/admin.py
 # backend/routes/admin.py (actualizado)
 from datetime import datetime, timedelta
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Optional
+import uuid
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, distinct, case
-from dependencies import get_current_user
+from dependencies import get_current_admin_user, get_current_user
 from db import get_db
-from models.models import SubscriptionPlan, User, Subscription, LoginHistory
-from schemas.schemas import SubscriptionPlanOut, SubscriptionPlanUpdate, UserInJWT
+from models.models import PlanLevel, SubscriptionPlan, User, Subscription, LoginHistory
+from schemas.schemas import SubscriptionPlanOut, SubscriptionPlanUpdate, UserInJWT, UserOut
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
@@ -177,3 +178,117 @@ def delete_plan(plan_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Plan eliminado"}
 
+
+@router.get("/users")
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    
+    user_list = []
+    for user in users:
+        subscription = db.query(Subscription).filter(Subscription.user_id == user.id).first()
+        user_data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "status": user.status.value if user.status else "active",  # Usar el valor del enum
+            "created_at": user.created_at.isoformat() if user.created_at else None,
+            "last_login": user.last_login.isoformat() if user.last_login else None,
+            "plan": subscription.plan if subscription else PlanLevel.free
+        }
+        user_list.append(user_data)
+    
+    return user_list
+
+
+@router.put("/users/{user_id}/role")
+def update_user_role(
+    user_id: str,
+    role: str,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Validar el rol
+    if role not in ["admin", "user"]:
+        raise HTTPException(status_code=400, detail="Rol no válido")
+    
+    user.role = role
+    db.commit()
+    return {"message": "Rol actualizado correctamente"}
+
+@router.put("/users/{user_id}/status")
+def update_user_status(
+    user_id: str,
+    status: str,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Validar el estado
+    if status not in ["active", "suspended"]:
+        raise HTTPException(status_code=400, detail="Estado no válido")
+    
+    user.status = status
+    db.commit()
+    return {"message": "Estado actualizado correctamente"}
+
+@router.put("/users/{user_id}/plan")
+def update_user_plan(
+    user_id: str,
+    plan: str,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Validar el plan
+    if plan not in ["free", "pro", "business", "enterprise"]:
+        raise HTTPException(status_code=400, detail="Plan no válido")
+    
+    # Actualizar la suscripción asociada si existe
+    subscription = db.query(Subscription).filter(Subscription.user_id == user_id).first()
+    if subscription:
+        subscription.plan = plan
+        db.commit()
+    else:
+        # Crear una nueva suscripción si no existe
+        new_subscription = Subscription(
+            id=str(uuid.uuid4()),
+            user_id=user_id,
+            plan=plan,
+            created_at=datetime.utcnow(),
+            # ... otros campos necesarios ...
+        )
+        db.add(new_subscription)
+        db.commit()
+    
+    return {"message": "Plan actualizado correctamente"}
+
+@router.delete("/users/{user_id}")
+def delete_user(
+    user_id: str,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Eliminar dependencias primero
+    db.query(Subscription).filter(Subscription.user_id == user_id).delete()
+    db.query(LoginHistory).filter(LoginHistory.user_id == user_id).delete()
+    db.query(AccessLog).filter(AccessLog.tenant_id == user_id).delete()
+    
+    # Finalmente eliminar el usuario
+    db.delete(user)
+    db.commit()
+    return {"message": "Usuario eliminado correctamente"}
