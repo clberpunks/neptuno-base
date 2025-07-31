@@ -1,0 +1,111 @@
+# /etc/nginx/sites-enabled/losguardias.com - CONFIGURACIÓN PARANOICA DEFINITIVA
+
+# --- Bloque HTTPS para www.losguardias.com ---
+server {
+    listen 443 ssl http2;
+    server_name www.losguardias.com;
+
+    ssl_certificate /etc/letsencrypt/live/losguardias.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/losguardias.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    return 301 https://losguardias.com$request_uri;
+}
+
+# --- Bloque HTTPS para losguardias.com ---
+server {
+    listen 443 ssl http2;
+    server_name losguardias.com;
+
+    # ===== CONFIGURACIÓN SSL PARANOICA =====
+    ssl_certificate /etc/letsencrypt/live/losguardias.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/losguardias.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # ===== PROTECCIÓN EXTREMA =====
+    modsecurity on;
+    modsecurity_rules_file /etc/nginx/modsec/main.conf;
+    
+    # ===== BLOQUEO DE ACCESOS =====
+    if ($blocked_agent) { return 403; }
+    if ($request_method !~ ^(GET|POST|HEAD)$ ) { return 405; }
+
+    # ===== MANEJO DE ERRORES =====
+    error_page 502 /502.html;
+    location = /502.html {
+        root /var/www/html;
+        internal;
+    }
+    error_page 504 /504.html;
+    location = /504.html {
+        root /var/www/html;
+        internal;
+    }
+
+    # ===== REDIRECCIONES IDIOMAS =====
+    location = /public/es { return 302 /public/; }
+    location = /public/en { return 302 /public/; }
+    location = /public/pt { return 302 /public/; }
+    location = /public/es/ { return 302 /public/; }
+    location = /public/en/ { return 302 /public/; }
+    location = /public/pt/ { return 302 /public/; }
+    location ~ ^/public/(es|en|pt)/ { return 302 /public/; }
+
+    # ===== REDIRECCIÓN RAÍZ =====
+    location = / { return 302 /public/; }
+
+    # ===== PROXY FRONTAL CON PARANOIA =====
+    location ^~ /public/ {
+        # AUTENTICACIÓN DE EMERGENCIA
+        auth_basic "Zona Restringida";
+        auth_basic_user_file /etc/nginx/.htpasswd_emergency;
+        
+        proxy_pass http://172.20.0.10:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_cache_bypass $http_upgrade;
+
+        # PROTECCIÓN CONTRA ATAQUES
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 10s;
+        proxy_send_timeout 10s;
+        proxy_set_header X-Proxy-Secret "S4lv4V1d4s";
+    }
+
+    # ===== BACKEND CON BUNKER =====
+    location ^~ /rest/ {
+        # AUTENTICACIÓN DE ALTA SEGURIDAD
+        satisfy any;
+        allow 127.0.0.1;
+        allow TU_IP_AQUÍ;  # ¡REEMPLAZAR CON TU IP!
+        deny all;
+        auth_basic "Acceso Restringido";
+        auth_basic_user_file /etc/nginx/.htpasswd_emergency;
+        
+        proxy_pass http://172.80.0.200:8001;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 15s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass_header Set-Cookie;
+        proxy_cookie_path / "/; Secure; HttpOnly; SameSite=Strict";
+    }
+
+    # ... (resto de configuraciones iguales) ...
+}
+
+# --- Redirección HTTP a HTTPS ---
+server {
+    listen 80;
+    server_name losguardias.com www.losguardias.com;
+    return 301 https://$host$request_uri;
+}
