@@ -45,7 +45,6 @@ class UserUpdateRequest(BaseModel):
     plan: Optional[str] = None
 
 
-
 class SubscriptionOut(BaseModel):
     plan: PlanLevel
     created_at: datetime
@@ -99,7 +98,9 @@ class UserRegister(BaseModel):
     name: str
     email: EmailStr
     password: str
-    plan: str = "free"  # ← plan opcional
+    plan: str = "free"
+    role: Optional[str] = "user"
+    status: Optional[str] = "active"
 
 
 class UserLogin(BaseModel):
@@ -187,3 +188,4 @@ class UserOut(BaseModel):
 
     class Config:
         orm_mode = True
+

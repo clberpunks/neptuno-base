@@ -88,7 +88,7 @@ export default function AdminDashboard() {
         );
         setBotActivities(bots);
         const allUsersData = await apiFetch<any[]>("/rest/admin/users");
-        setAllUsers(allUsersData); // Guardar todos los usuarios
+        setAllUsers(allUsersData);
       } catch (err) {
         setError(t("error_loading_data"));
         console.error(err);
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
         icon={<ChartBarIcon className="h-6 w-6" />}
         statusLabel={`${totalUsers} ${t("users")}`}
         statusColor="bg-blue-100 text-blue-800"
-        defaultExpanded={true}
+        defaultExpanded={false}
       >
         <SummaryPanel data={dashboardData} />
       </ExpandablePanel>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
         icon={<UserIcon className="h-6 w-6" />}
         statusLabel={`${allUsers.length} ${t("users")}`}
         statusColor="bg-blue-100 text-blue-800"
-        defaultExpanded
+        defaultExpanded={false}
       >
         <UserManagementPanel users={allUsers} onUsersChange={setAllUsers} />
       </ExpandablePanel>
@@ -159,6 +159,7 @@ export default function AdminDashboard() {
         icon={<CreditCardIcon className="h-6 w-6" />}
         statusLabel={`${activePlans} ${t("active_plans")}`}
         statusColor="bg-green-100 text-green-800"
+        defaultExpanded={false}
       >
         <SubscriptionPlansPanel />
       </ExpandablePanel>
@@ -168,6 +169,7 @@ export default function AdminDashboard() {
         icon={<ShieldCheckIcon className="h-6 w-6" />}
         statusLabel={`${activeRules} ${t("rules")}`}
         statusColor="bg-red-100 text-red-800"
+        defaultExpanded={false}
       >
         <FirewallPanel stats={firewallStats} />
       </ExpandablePanel>
@@ -177,6 +179,7 @@ export default function AdminDashboard() {
         icon={<UsersIcon className="h-6 w-6" />}
         statusLabel={`${activeUsers} ${t("active_users")}`}
         statusColor="bg-purple-100 text-purple-800"
+        defaultExpanded={false}
       >
         <UserActivityPanel topUsers={topUsers} />
       </ExpandablePanel>
@@ -186,6 +189,7 @@ export default function AdminDashboard() {
         icon={<ExclamationTriangleIcon className="h-6 w-6" />}
         statusLabel={`${detectedBots} ${t("detected_bots")}`}
         statusColor="bg-yellow-100 text-yellow-800"
+        defaultExpanded={false}
       >
         <BotActivityPanel botActivities={botActivities} />
       </ExpandablePanel>

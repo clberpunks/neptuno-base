@@ -47,13 +47,13 @@ class User(Base):
     id = Column(String, primary_key=True)
     name = Column(String)
     email = Column(String, unique=True, index=True)
-    password_hash = Column(String, nullable=True)
-    picture = Column(String)
+    password_hash = Column(String, nullable=True)  # Solo este campo para contraseñas
+    picture = Column(String)  # Mantener como requerido
     role = Column(SqlEnum(UserRole), default=UserRole.user)
-    status = Column(SqlEnum(UserStatus), default=UserStatus.active)   # <-- Agregar esta línea
+    status = Column(SqlEnum(UserStatus), default=UserStatus.active)
     auth_method = Column(String, default="google")
     created_at = Column(DateTime, default=datetime.utcnow)
-    last_login = Column(DateTime, default=datetime.utcnow)
+    last_login = Column(DateTime, default=datetime.utcnow)  # Campo requerido
 
     payment_records = relationship("PaymentRecord", back_populates="user")
 

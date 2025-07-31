@@ -241,7 +241,7 @@ export default function Sidebar({ onSelect, currentSection }: Props) {
             {/* Admin Settings Button (only for admin users) */}
             {user?.role === "admin" && (
               <button
-                onClick={() => router.push("/admin")}
+                onClick={() => onSelect("admin")}
                 className={`p-1 rounded-full ${
                   currentSection === "admin"
                     ? "bg-indigo-100 text-indigo-600"

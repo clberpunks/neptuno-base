@@ -1,5 +1,6 @@
 # backend/routes/admin.py
 # backend/routes/admin.py (actualizado)
+
 from datetime import datetime, timedelta
 from typing import List, Optional
 import uuid
@@ -288,43 +289,50 @@ def update_user(user_id: str,
 # - @router.put("/users/{user_id}/update")
 
 
+
 @router.post("/users")
-def create_user(user_data: UserRegister,
-                db: Session = Depends(get_db),
-                admin: User = Depends(get_current_admin_user)):
+def create_user(
+    user_data: UserRegister,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user)
+):
     # Verificar si el usuario ya existe
-    existing_user = db.query(User).filter(
-        User.email == user_data.email).first()
+    existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email ya registrado")
-
-    # Crear nuevo usuario
+    
+    # Crear nuevo usuario con todos los campos requeridos
     new_user = User(
         id=str(uuid.uuid4()),
         name=user_data.name,
         email=user_data.email,
-        password=hash_password(
-            user_data.password),  # Asegúrate de tener esta función
+        password_hash=hash_password(user_data.password),
         role=user_data.role if hasattr(user_data, 'role') else "user",
         status="active",
-        created_at=datetime.utcnow())
-
+        picture=f"https://ui-avatars.com/api/?name={user_data.name.replace(' ', '+')}",  # Campo requerido
+        auth_method="local",  # Campo requerido
+        created_at=datetime.utcnow(),
+        last_login=datetime.utcnow()  # Campo requerido
+    )
+    
     db.add(new_user)
     db.commit()
-    db.refresh(new_user)
-
-    # Crear suscripción
-    new_subscription = Subscription(id=str(uuid.uuid4()),
-                                    user_id=new_user.id,
-                                    plan=user_data.plan,
-                                    created_at=datetime.utcnow(),
-                                    traffic_limit=10000,
-                                    domain_limit=1,
-                                    user_limit=1,
-                                    price=0)
+    
+    # Crear suscripción con todos los campos requeridos
+    new_subscription = Subscription(
+        id=str(uuid.uuid4()),
+        user_id=new_user.id,
+        plan=user_data.plan,
+        created_at=datetime.utcnow(),
+        traffic_limit=10000,
+        domain_limit=1,
+        user_limit=1,
+        price=0,
+        renews_at=datetime.utcnow() + timedelta(days=365)  # Campo requerido
+    )
     db.add(new_subscription)
     db.commit()
-
+    
     return {
         "id": new_user.id,
         "name": new_user.name,
@@ -333,5 +341,5 @@ def create_user(user_data: UserRegister,
         "status": new_user.status,
         "plan": user_data.plan,
         "created_at": new_user.created_at.isoformat(),
-        "last_login": None
+        "last_login": new_user.last_login.isoformat()
     }
