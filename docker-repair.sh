@@ -3,7 +3,7 @@ sudo systemctl stop docker
 
 # Limpieza completa de Docker
 sudo docker system prune -a --volumes --force
-
+ 
 # Limpiar específicamente overlay2
 sudo rm -rf /var/lib/docker/overlay2/*
 sudo rm -f /var/lib/docker/overlay2/.l*
