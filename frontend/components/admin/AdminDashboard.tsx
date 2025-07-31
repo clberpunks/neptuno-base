@@ -61,8 +61,12 @@ interface BotActivity {
 
 export default function AdminDashboard() {
   const { t } = useTranslation("common");
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
+  const [firewallStats, setFirewallStats] = useState<FirewallStats | null>(
+    null
+  );
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
   const [botActivities, setBotActivities] = useState<BotActivity[]>([]);
@@ -79,7 +83,9 @@ export default function AdminDashboard() {
         setFirewallStats(stats);
         const users = await apiFetch<TopUser[]>("/rest/admin/top-users");
         setTopUsers(users);
-        const bots = await apiFetch<BotActivity[]>("/rest/admin/bot-activities");
+        const bots = await apiFetch<BotActivity[]>(
+          "/rest/admin/bot-activities"
+        );
         setBotActivities(bots);
         const allUsersData = await apiFetch<any[]>("/rest/admin/users");
         setAllUsers(allUsersData); // Guardar todos los usuarios
@@ -100,7 +106,7 @@ export default function AdminDashboard() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="p-4">
@@ -139,6 +145,16 @@ export default function AdminDashboard() {
       </ExpandablePanel>
 
       <ExpandablePanel
+        title={t("user_management")}
+        icon={<UserIcon className="h-6 w-6" />}
+        statusLabel={`${allUsers.length} ${t("users")}`}
+        statusColor="bg-blue-100 text-blue-800"
+        defaultExpanded
+      >
+        <UserManagementPanel users={allUsers} onUsersChange={setAllUsers} />
+      </ExpandablePanel>
+
+      <ExpandablePanel
         title={t("subscription_plans")}
         icon={<CreditCardIcon className="h-6 w-6" />}
         statusLabel={`${activePlans} ${t("active_plans")}`}
@@ -163,16 +179,6 @@ export default function AdminDashboard() {
         statusColor="bg-purple-100 text-purple-800"
       >
         <UserActivityPanel topUsers={topUsers} />
-      </ExpandablePanel>
-
-      <ExpandablePanel
-        title={t("user_management")}
-        icon={<UserIcon className="h-6 w-6" />}
-        statusLabel={`${allUsers.length} ${t("users")}`}
-        statusColor="bg-blue-100 text-blue-800"
-        defaultExpanded
-      >
-        <UserManagementPanel users={allUsers} /> {/* Pasamos los usuarios */}
       </ExpandablePanel>
 
       <ExpandablePanel

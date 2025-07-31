@@ -7,6 +7,7 @@ import { appWithTranslation } from "next-i18next";
 import Layout from "../components/Layout";
 import { AuthProvider } from "../hooks/useAuth";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import PixelTracking from "../components/PixelTracking";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -14,6 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ErrorBoundary>
         <Layout>
           <Component {...pageProps} />
+          <PixelTracking />
         </Layout>
       </ErrorBoundary>
     </AuthProvider>

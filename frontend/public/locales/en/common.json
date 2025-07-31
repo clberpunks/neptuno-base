@@ -645,7 +645,26 @@
   "reset_password": "Restablecer contraseña",
   "view_activity": "Ver actividad",
   "change_plan": "Cambiar plan",
-  "add_new_user": "Añadir nuevo usuario"
+  "add_new_user": "Añadir nuevo usuario",
+
+  "edit_user": "Editar usuario",
+  "delete_user": "Eliminar usuario",
+  "confirm_delete_user": "¿Estás seguro de que deseas eliminar este usuario?",
+  "user_deleted_success": "Usuario eliminado correctamente",
+  "error_deleting_user": "Error al eliminar el usuario",
+  "user_created_success": "Usuario creado correctamente",
+  "error_creating_user": "Error al crear el usuario",
+  "update_user": "Actualizar usuario",
+  "update_role": "Actualizar rol",
+  "update_plan": "Actualizar plan",
+  "user_updated": "Usuario actualizado",
+  "role_updated": "Rol actualizado",
+  "plan_updated": "Plan actualizado",
+  "update_user_success": "Usuario actualizado correctamente",
+  "user_updated_success": "Usuario actualizado correctamente",
+  "error_updating_user": "Error al actualizar el usuario",
+  "role_updated_success": "Rol actualizado correctamente",
+  "error_updating_role": "Error al actualizar el rol"
 
   
 

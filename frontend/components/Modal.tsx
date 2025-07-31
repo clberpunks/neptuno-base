@@ -1,5 +1,5 @@
 // components/Modal.tsx
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,13 +10,13 @@ interface ModalProps {
 const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 
@@ -26,8 +26,8 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* Fondo oscuro */}
-        <div 
-          className="fixed inset-0 transition-opacity" 
+        <div
+          className="fixed inset-0 transition-opacity"
           aria-hidden="true"
           onClick={onClose}
         >

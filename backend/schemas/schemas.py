@@ -7,6 +7,7 @@ from enum import Enum
 
 #model_config = ConfigDict(from_attributes=True)  # Reemplaza orm_mode
 
+
 class UserRole(str, Enum):
     admin = "admin"
     user = "user"
@@ -21,6 +22,28 @@ class PlanLevel(str, Enum):
 
 class PlanUpdate(BaseModel):
     plan: str
+
+class UserStatusUpdate(BaseModel):
+    status: str
+
+class UserPlanUpdate(BaseModel):
+    plan: str
+
+class UserRoleUpdate(BaseModel):
+    role: str
+
+class UserUpdateRequest(BaseModel):
+    status: Optional[str]
+    role: Optional[str]
+    plan: Optional[str]
+
+class UserUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    status: Optional[str] = None
+    role: Optional[str] = None
+    plan: Optional[str] = None
+
 
 
 class SubscriptionOut(BaseModel):
@@ -109,7 +132,6 @@ class PaymentRecordOut(BaseModel):
         orm_mode = True
 
 
-
 class BucketItem(BaseModel):
     key: str
     count: int
@@ -140,15 +162,18 @@ class UserRole(str, Enum):
     admin = "admin"
     user = "user"
 
+
 class UserStatus(str, Enum):
     active = "active"
     suspended = "suspended"
+
 
 class PlanLevel(str, Enum):
     free = "free"
     pro = "pro"
     business = "business"
     enterprise = "enterprise"
+
 
 class UserOut(BaseModel):
     id: str
