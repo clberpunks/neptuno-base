@@ -1,0 +1,3 @@
+#test
+git config --global user.email "vinxenx0@protonmail.com"
+  git config --global user.name "vinxenx0"
